@@ -3,6 +3,7 @@
 	"undef": true,
 	"unused": true,
 	"globals": {
+		"__dirname": true,
 		"module": true,
 		"exports": true,
 		"require": true,
