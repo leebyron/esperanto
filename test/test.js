@@ -86,7 +86,7 @@ function compare ( file, options ) {
 	it( 'to CommonJS (named)', function () {
 		return getSource.then( function ( source ) {
 			return sander.readFile( 'output/cjs', file ).then( String ).then( function ( expected ) {
-				assert.equal( esperanto.toCjs( source ), expected, 'AMD (named)' );
+				assert.equal( esperanto.toCjs( source ), expected, 'CommonJS (named)' );
 			});
 		});
 	});
@@ -103,7 +103,7 @@ function compare ( file, options ) {
 		it( 'to CommonJS (defaultOnly)', function () {
 			return getSource.then( function ( source ) {
 				return sander.readFile( 'output/cjsDefaults', file ).then( String ).then( function ( expected ) {
-					assert.equal( esperanto.toCjs( source, { defaultOnly: true }), expected, 'AMD (defaultOnly)' );
+					assert.equal( esperanto.toCjs( source, { defaultOnly: true }), expected, 'CommonJS (defaultOnly)' );
 				});
 			});
 		});

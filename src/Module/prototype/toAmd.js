@@ -24,6 +24,14 @@ export default function Module$toAmd ( options ) {
 		imports.map( function ( x, i ) {
 			var importName, variableDeclarations;
 
+			if ( options.defaultOnly || x.specifiers[0] && x.specifiers[0].batch ) {
+				return {
+					start: x.start,
+					end: x.end,
+					content: ''
+				};
+			}
+
 			importName = '__imports_' + i;
 			variableDeclarations = x.specifiers.map( function ( specifier ) {
 				return 'var ' + specifier.as + ' = ' + importName + '.' + specifier.name + ';';
@@ -106,6 +114,14 @@ export default function Module$toAmd ( options ) {
 
 	indent = options.indent || guessIndent( this.source );
 	return [ intro, applyIndent( code.trim(), indent ), outro ].join( '\n\n' );
+
+	function getImportName ( x, i ) {
+		if ( x.specifiers[0] && x.specifiers[0].batch ) {
+			return x.specifiers[0].name;
+		}
+
+		return ( options.defaultOnly && x.specifiers[0] ) ? x.specifiers[0].as : '__imports_' + i;
+	}
 }
 
 function quote ( str ) {
@@ -116,6 +132,3 @@ function getPath ( x ) {
 	return x.path;
 }
 
-function getImportName ( x, i ) {
-	return '__imports_' + i;
-}

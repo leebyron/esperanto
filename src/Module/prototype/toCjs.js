@@ -15,17 +15,27 @@ export default function Module$toCjs ( options ) {
 		this.exports.length === 1 &&
 		this.exports[0].node === this.ast.body[ this.ast.body.length - 1 ];
 
-	intro = imports.map( function ( x, i ) {
-		return ( x.specifiers.length ? 'var __imports_' + i + ' = ' : '' ) + 'require(\'' + x.path + '\');\n' + ( i === imports.length - 1 ? '\n' : '' );
-	}).join( '\n' );
-
-	intro += imports.map( function ( x, i ) {
-		var importName = '__imports_' + i;
-
-		return x.specifiers.map( function ( specifier ) {
-			return 'var ' + specifier.as + ' = ' + importName + '.' + specifier.name + ';';
+	if ( options.defaultOnly ) {
+		intro = imports.map( function ( x, i ) {
+			return ( x.specifiers.length ? 'var ' + ( x.specifiers[0].as || x.specifiers[0].name ) + ' = ' : '' ) + 'require(\'' + x.path + '\');\n' + ( i === imports.length - 1 ? '\n' : '' );
 		}).join( '\n' );
-	}).join( '\n' );
+	} else {
+		intro = imports.map( function ( x, i ) {
+			var name = getImportName( x, i );
+
+			return ( x.specifiers.length ? 'var ' + name + ' = ' : '' ) + 'require(\'' + x.path + '\');\n' + ( i === imports.length - 1 ? '\n' : '' );
+		}).join( '\n' );
+
+		intro += imports.filter( excludeBatchImports ).map( function ( x, i ) {
+			var importName = '__imports_' + i;
+
+			return x.specifiers.map( function ( specifier ) {
+				return 'var ' + specifier.as + ' = ' + importName + '.' + specifier.name + ';';
+			}).join( '\n' );
+		}).join( '\n' );
+	}
+
+
 
 	replacements = [].concat(
 		imports.map( clear ),
@@ -60,17 +70,25 @@ export default function Module$toCjs ( options ) {
 		})
 	);
 
-	if ( options.defaultOnly && !singleFinalExport ) {
+	if ( options.defaultOnly && !singleFinalExport && exports.length ) {
 		code = 'var __export;\n\n';
 	}
 
 	code += replaceChunks( this.source, replacements );
 
-	if ( options.defaultOnly && !singleFinalExport ) {
+	if ( options.defaultOnly && !singleFinalExport && exports.length ) {
 		code += 'module.exports = __export;';
 	}
 
 	return intro + code.trim() + outro;
+
+	function getImportName ( x, i ) {
+		if ( x.specifiers[0] && x.specifiers[0].batch ) {
+			return x.specifiers[0].name;
+		}
+
+		return ( options.defaultOnly && x.specifiers[0] ) ? x.specifiers[0].as : '__imports_' + i;
+	}
 }
 
 function clear ( x ) {
@@ -79,4 +97,12 @@ function clear ( x ) {
 		end: x.end,
 		content: ''
 	};
+}
+
+function excludeBatchImports ( x ) {
+	if ( x.specifiers[0] && x.specifiers[0].batch ) {
+		return false;
+	}
+
+	return true;
 }
