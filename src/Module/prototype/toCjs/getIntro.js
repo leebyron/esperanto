@@ -2,14 +2,14 @@ export default function ( module, options ) {
 	var intro;
 
 	if ( options.defaultOnly ) {
-		intro = module.imports.map( function ( x, i ) {
-			return ( x.specifiers.length ? 'var ' + ( x.specifiers[0].as || x.specifiers[0].name ) + ' = ' : '' ) + 'require(\'' + x.path + '\');\n' + ( i === module.imports.length - 1 ? '\n' : '' );
+		intro = module.imports.map( function ( x ) {
+			return ( x.specifiers.length ? 'var ' + ( x.specifiers[0].as || x.specifiers[0].name ) + ' = ' : '' ) + 'require(\'' + x.path + '\');';
 		}).join( '\n' );
 	} else {
 		intro = module.imports.map( function ( x, i ) {
 			var name = getImportName( x, i );
 
-			return ( x.specifiers.length ? 'var ' + name + ' = ' : '' ) + 'require(\'' + x.path + '\');\n' + ( i === module.imports.length - 1 ? '\n' : '' );
+			return ( x.specifiers.length ? 'var ' + name + ' = ' : '' ) + 'require(\'' + x.path + '\');' + ( i === module.imports.length - 1 ? '\n' : '' );
 		}).join( '\n' );
 
 		intro += module.imports.filter( excludeBatchImports ).map( function ( x, i ) {

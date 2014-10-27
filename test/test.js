@@ -24,7 +24,7 @@ describe( 'esperanto', function () {
 		return compare( 'earlyExport', { namedOnly: false });
 	});
 
-	describe( 'transpiles empty imports', function () {
+	describe( 'transpiles empty imports with no exports', function () {
 		return compare( 'emptyImport', { namedOnly: false });
 	});
 
