@@ -4,7 +4,6 @@ import replaceChunks from '../../helpers/replaceChunks';
 
 export default function ( module, options ) {
 	var code = '',
-		imports = module.imports.slice(),
 		hasExports = !!module.exports.length,
 		indent,
 		replacements,
@@ -17,7 +16,7 @@ export default function ( module, options ) {
 		module.exports[0].node === module.ast.body[ module.ast.body.length - 1 ];
 
 	replacements = [].concat(
-		imports.map( function ( x, i ) {
+		module.imports.map( function ( x, i ) {
 			var importName, variableDeclarations;
 
 			if ( options.defaultOnly || x.specifiers[0] && x.specifiers[0].batch ) {

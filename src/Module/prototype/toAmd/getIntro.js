@@ -15,7 +15,13 @@ export default function ( module, options ) {
 		}
 
 		importPaths[i] = x.path;
-		importNames[i] = name;
+
+		// exclude empty imports, e.g. `import 'polyfills'`
+		if ( !x.specifiers.length && ( i === module.imports.length - 1 ) ) {
+			// don't include
+		} else {
+			importNames[i] = name;
+		}
 	});
 
 	// Add `exports`, if we need to use it
@@ -28,7 +34,7 @@ export default function ( module, options ) {
 		'define(',
 		( importPaths.length ? '[' + importPaths.map( quote ) + '],' : '' ),
 		'function (',
-		importNames.join( ',' ),
+		importNames.join( ', ' ),
 		') {'
 	].join( '' );
 
