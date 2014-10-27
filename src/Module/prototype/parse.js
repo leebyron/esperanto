@@ -10,11 +10,13 @@ export default function Module$parse () {
 	this.ast.body.forEach( function ( node ) {
 		var declaration;
 
-		if ( previousDeclaration && node.type === 'EmptyStatement' ) {
-			previousDeclaration.end = node.end;
-		}
+		if ( previousDeclaration ) {
+			previousDeclaration.next = node.start;
 
-		previousDeclaration = null;
+			if ( node.type !== 'EmptyStatement' ) {
+				previousDeclaration = null;
+			}
+		}
 
 		if ( node.type === 'ImportDeclaration' ) {
 			declaration = processImport( node, source );
@@ -34,4 +36,9 @@ export default function Module$parse () {
 			previousDeclaration = declaration;
 		}
 	});
+
+	// catch any trailing semicolons
+	if ( previousDeclaration ) {
+		previousDeclaration.next = source.length;
+	}
 }

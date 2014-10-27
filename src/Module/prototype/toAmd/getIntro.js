@@ -38,7 +38,7 @@ export default function ( module, options ) {
 		') {'
 	].join( '' );
 
-	return intro;
+	return intro + '\n\n';
 }
 
 function quote ( str ) {
