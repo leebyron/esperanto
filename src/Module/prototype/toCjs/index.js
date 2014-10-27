@@ -1,5 +1,6 @@
 import Source from '../../../Source';
 import getIntro from './getIntro';
+import getExportReplacement from './getExportReplacement';
 
 export default function Module$toCjs ( options ) {
 	var source,
@@ -19,39 +20,23 @@ export default function Module$toCjs ( options ) {
 		source.remove( x.start, x.next );
 	});
 
-	source.trim();
-
+	// Replace export statements
 	this.exports.forEach( function ( x ) {
-		var content;
-
-		if ( x.declaration ) {
-			content = x.value + '\n' + 'exports.' + x.name + ' = ' + x.name + ';';
-		}
-
-		else if ( x.specifiers ) {
-			if ( options.defaultOnly ) {
-				throw new Error( 'Named exports used in defaultOnly mode' );
-			}
-
-			content = x.specifiers.map( function ( specifier ) {
-				return 'exports.' + specifier.name + ' = ' + specifier.name;
-			}).join( ';\n' );
-		}
-
-		else {
-			content = ( trailingExport ? 'module.exports = ' : ( options.defaultOnly ? '__export' : 'exports.' + x.name ) + ' = ' ) + x.value + ';';
-		}
+		var content = getExportReplacement( x, {
+			defaultOnly: options.defaultOnly,
+			trailingExport: trailingExport
+		});
 
 		source.replace( x.start, x.end, content );
 	});
 
+	// Trim the fat
 	source.trim();
 
+	// If we're in defaultOnly mode, and we're exporting a default value,
+	// we wrap the module body
 	if ( options.defaultOnly && !trailingExport && this.exports.length ) {
 		source.prepend( 'var __export;\n\n' );
-	}
-
-	if ( options.defaultOnly && !trailingExport && this.exports.length ) {
 		source.append( 'module.exports = __export;' );
 	}
 

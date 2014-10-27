@@ -1,26 +1,31 @@
 export default function processExport ( node, source ) {
-	if ( node.declaration ) {
-		if ( /Declaration/.test( node.declaration.type ) ) {
+	var d, value;
+
+	if ( d = node.declaration ) {
+		value = source.slice( d.start, d.end );
+
+		if ( /Declaration/.test( d.type ) ) {
+			// inline declarations, e.g
+			//
+			//     export var foo = 'bar';
+			//     export function baz () {...}
 			return {
 				declaration: true,
-				name: node.default ? 'default' : getDeclarationName( node.declaration ),
-				value: source.slice( node.declaration.start, node.declaration.end )
+				name: node.default ? 'default' : getDeclarationName( d ),
+				value: value
 			};
 		}
 
+		// literals, e.g. `export default 42`
 		return {
-			name: node.default ? 'default' : node.declaration.name,
-			//value: node.declaration.raw
-			value: source.slice( node.declaration.start, node.declaration.end )
+			name:'default',
+			value: value
 		};
 	}
 
+	// named exports, e.g. `export { foo, bar };`
 	return {
-		specifiers: node.specifiers.map( function ( specifier ) {
-			return {
-				name: specifier.id.name
-			};
-		})
+		specifiers: node.specifiers.map( s => ({ name: s.id.name }) )
 	};
 }
 
