@@ -1,6 +1,4 @@
 import Module from './Module';
-import amd from './generators/amd';
-import cjs from './generators/cjs';
 
 export default {
 	toAmd: function ( source, options ) {

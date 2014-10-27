@@ -1,5 +1,5 @@
-import processImport from '../helpers/processImport';
-import processExport from '../helpers/processExport';
+import processImport from './processImport';
+import processExport from './processExport';
 
 export default function Module$parse () {
 	var source = this.source,

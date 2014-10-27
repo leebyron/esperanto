@@ -201,10 +201,4 @@ function adjust ( chunks, d ) {
 	});
 }
 
-// s = new Source( 'abcdefghijkl ' );
-// s.trim();
-// s.replace( 3, 6, 'DEF' );
-
-// console.log( 's.toString():\n%s', s.toString() );
-
 export default Source;
