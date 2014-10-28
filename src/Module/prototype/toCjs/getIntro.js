@@ -7,9 +7,11 @@ export default function ( module, options ) {
 		return getImportReplacement( x, i, options );
 	}).join( '\n' );
 
-	intro += module.imports.filter( excludeBatchImports ).map( ( x, i ) => {
-		return x.specifiers.map( s => `var ${s.as} = __imports_${i}.${s.name};` ).join( '\n' );
-	}).join( '\n' );
+	if ( !options.defaultOnly ) {
+		intro += module.imports.filter( excludeBatchImports ).map( ( x, i ) => {
+			return x.specifiers.map( s => `var ${s.as} = __imports_${i}.${s.name};` ).join( '\n' );
+		}).join( '\n' );
+	}
 
 	return intro;
 }

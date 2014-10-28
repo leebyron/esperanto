@@ -37,11 +37,11 @@ export default function Module$toCjs ( options ) {
 	// we wrap the module body
 	if ( options.defaultOnly && !trailingExport && this.exports.length ) {
 		source.prepend( 'var __export;\n\n' );
-		source.append( 'module.exports = __export;' );
+		source.append( '\nmodule.exports = __export;' );
 	}
 
 	intro = getIntro( this, options );
 	source.prepend( intro + '\n' );
 
-	return source.toString();
+	return source.toString().trim();
 }
