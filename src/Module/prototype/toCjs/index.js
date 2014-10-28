@@ -40,8 +40,8 @@ export default function Module$toCjs ( options ) {
 		source.append( '\nmodule.exports = __export;' );
 	}
 
-	intro = getIntro( this, options );
-	source.prepend( intro + '\n' );
+	intro = getIntro( this, options ).trim();
+	source.prepend( intro + '\n\n' );
 
 	return source.toString().trim();
 }

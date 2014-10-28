@@ -8,7 +8,7 @@ export default function ( module, options ) {
 	}).join( '\n' );
 
 	if ( !options.defaultOnly ) {
-		intro += module.imports.filter( excludeBatchImports ).map( ( x, i ) => {
+		intro += '\n\n' + module.imports.filter( excludeBatchImports ).map( ( x, i ) => {
 			return x.specifiers.map( s => `var ${s.as} = __imports_${i}.${s.name};` ).join( '\n' );
 		}).join( '\n' );
 	}
