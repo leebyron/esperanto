@@ -2,6 +2,7 @@ import acorn from 'acorn';
 import parse from './prototype/parse';
 import toAmd from './prototype/toAmd';
 import toCjs from './prototype/toCjs';
+import toUmd from './prototype/toUmd';
 
 var Module = function ( options ) {
 	this.source = options.source;
@@ -21,7 +22,8 @@ var Module = function ( options ) {
 Module.prototype = {
 	parse: parse,
 	toAmd: toAmd,
-	toCjs: toCjs
+	toCjs: toCjs,
+	toUmd: toUmd
 };
 
 export default Module;

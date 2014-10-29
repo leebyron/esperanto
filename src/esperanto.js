@@ -7,5 +7,9 @@ export default {
 
 	toCjs: function ( source, options ) {
 		return new Module({ source: source }).toCjs( options || {} );
+	},
+
+	toUmd: function ( source, options ) {
+		return new Module({ source: source }).toUmd( options || {} );
 	}
 };
