@@ -41,9 +41,6 @@ export default function Module$toCjs ( options ) {
 	}
 
 	intro = getIntro( this, options ).trim();
-
-	// console.log( 'intro "%s"', intro );
-	// console.log( 'source "%s"', source.toString() );
 	source.prepend( intro + '\n\n' );
 
 	return source.toString().trim();

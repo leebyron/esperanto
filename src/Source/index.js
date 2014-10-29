@@ -105,7 +105,7 @@ Source.prototype = {
 		while ( i-- ) {
 			chunk = this.chunks[i];
 
-			if ( /^\s+$/.test( chunk.content ) ) {
+			if ( /^\s*$/.test( chunk.content ) ) {
 				this.chunks.pop();
 			} else {
 				match = /\s+$/.exec( chunk.content );
