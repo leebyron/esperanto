@@ -14,6 +14,10 @@ export default function ( x, options ) {
 	//     function baz () {...}
 	//     exports.baz = baz;
 	if ( x.declaration ) {
+		if ( options.defaultOnly ) {
+			throw new Error( 'Named exports used in defaultOnly mode' );
+		}
+
 		return x.value + '\n' +
 		       `exports.${x.name} = ${x.name};`;
 	}

@@ -17,6 +17,17 @@ export default function Module$toCjs ( options ) {
 
 	// Remove import statements, these are prepended separately
 	this.imports.forEach( function ( x ) {
+		// Throw error if we're using named imports in defaultOnly mode
+		if ( options.defaultOnly ) {
+			if ( x.specifiers.length > 1 ) {
+				throw new Error( 'Named import used in defaultOnly mode' );
+			}
+
+			if ( x.specifiers.length === 1 && !x.specifiers[0].default && !x.specifiers[0].batch ) {
+				throw new Error( 'Named import used in defaultOnly mode' );
+			}
+		}
+
 		source.remove( x.start, x.next );
 	});
 

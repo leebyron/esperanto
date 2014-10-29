@@ -17,6 +17,10 @@ export default function ( source, module, options ) {
 		} else {
 			importName = '__imports_' + i;
 			variableDeclarations = x.specifiers.map( function ( specifier ) {
+				if ( options.defaultOnly && !specifier.default ) {
+					throw new Error( 'Named import used in defaultOnly mode (' + specifier.as + ')' );
+				}
+
 				return 'var ' + specifier.as + ' = ' + importName + '.' + specifier.name + ';\n';
 			});
 
@@ -31,6 +35,10 @@ export default function ( source, module, options ) {
 		var content;
 
 		if ( x.declaration ) {
+			if ( options.defaultOnly ) {
+				throw new Error( 'Named exports used in defaultOnly mode (' + x.name + ')' );
+			}
+
 			content = x.value + '\n' + 'exports.' + x.name + ' = ' + x.name + ';';
 		}
 

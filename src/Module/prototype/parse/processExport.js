@@ -18,7 +18,8 @@ export default function processExport ( node, source ) {
 
 		// literals, e.g. `export default 42`
 		return {
-			name:'default',
+			default: true,
+			name: 'default',
 			value: value
 		};
 	}
