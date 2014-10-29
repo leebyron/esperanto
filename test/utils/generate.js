@@ -16,6 +16,11 @@ require( './build' )().then( function ( esperanto ) {
 				options: {}
 			},
 			{
+				outputdir: 'umd',
+				method: 'toUmd',
+				options: { name: 'myModule' }
+			},
+			{
 				outputdir: 'amdDefaults',
 				method: 'toAmd',
 				options: { defaultOnly: true }
@@ -24,6 +29,11 @@ require( './build' )().then( function ( esperanto ) {
 				outputdir: 'cjsDefaults',
 				method: 'toCjs',
 				options: { defaultOnly: true }
+			},
+			{
+				outputdir: 'umdDefaults',
+				method: 'toUmd',
+				options: { name: 'myModule', defaultOnly: true }
 			}
 		];
 
@@ -49,10 +59,15 @@ require( './build' )().then( function ( esperanto ) {
 					return sander.writeFile( '../output', profile.outputdir, sourceFile, transpiled );
 				} catch ( err ) {
 					// some modules can't be transpiled with defaultOnly
+					if ( !/defaultOnly/.test( err.message ) ) {
+						setTimeout( function () { throw err; });
+					}
 				}
 			});
 
 			return Promise.all( promises );
 		});
 	}
+}).catch( function ( err ) {
+	console.log( 'err', err );
 });
