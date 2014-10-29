@@ -4,7 +4,7 @@ module.exports = function () {
 	return require( 'sander' ).rimraf( libdir ).then( function () {
 		process.env.GOBBLE_ENV = 'test';
 
-		return require( '../../gobblefile' ).build({
+		return require( '../../gobble/lib' ).build({
 			dest: libdir
 		}).then( function () {
 			return require( '../lib/esperanto' );

@@ -40,6 +40,10 @@ describe( 'esperanto', function () {
 		return compare( 'exportVar', { namedOnly: true });
 	});
 
+	describe( 'transpiles named inline let exports', function () {
+		return compare( 'exportLet', { namedOnly: true });
+	});
+
 	describe( 'transpiles import * as foo from "foo"', function () {
 		return compare( 'importAll', { namedOnly: false });
 	});
