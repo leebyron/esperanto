@@ -1,19 +1,21 @@
 import getImportReplacement from './getImportReplacement';
 
 export default function ( module, options ) {
-	var intro;
+	var importStatements, specifiers;
 
-	intro = module.imports.map( ( x, i ) => {
+	importStatements = module.imports.map( ( x, i ) => {
 		return getImportReplacement( x, i, options );
 	}).join( '\n' );
 
 	if ( !options.defaultOnly ) {
-		intro += '\n\n' + module.imports.filter( excludeBatchImports ).map( ( x, i ) => {
+		specifiers = module.imports.filter( excludeBatchImports ).map( ( x, i ) => {
 			return x.specifiers.map( s => `var ${s.as} = __imports_${i}.${s.name};` ).join( '\n' );
-		}).join( '\n' );
+		}).filter( Boolean ).join( '\n' );
+
+		return importStatements + '\n\n' + specifiers;
 	}
 
-	return intro;
+	return importStatements;
 }
 
 function excludeBatchImports ( x ) {

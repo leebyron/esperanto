@@ -55,14 +55,11 @@ export default function ( source, module, options ) {
 
 	if ( !trailingExport && options.defaultOnly && hasExports ) {
 		source.prepend( 'var __export;\n\n' );
+		source.append( '\nreturn __export;' );
 	}
 
 	if ( options.addUseStrict !== false ) {
 		source.prepend( "'use" + " strict';\n\n" );
-	}
-
-	if ( !trailingExport && options.defaultOnly && hasExports ) {
-		source.append( '\nreturn __export;' );
 	}
 
 	source.trim();
