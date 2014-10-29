@@ -8,6 +8,7 @@ gobble.cwd( __dirname );
 
 // Compile a UMD version, via RequireJS and AMDClean
 dist = gobble( 'src' ).transform( 'esperanto', { defaultOnly: true, addUseStrict: false })
+	.transform( 'es6-transpiler', { globals: { define: true }})
 	.transform( 'requirejs', {
 		out: 'esperanto.js',
 		name: 'esperanto',
@@ -28,16 +29,18 @@ dist = gobble( 'src' ).transform( 'esperanto', { defaultOnly: true, addUseStrict
 		preserve_newlines: true
 	}).moveTo( 'dist' );
 
-lib = gobble( 'src' ).transform( 'esperanto', { type: 'cjs', defaultOnly: true });
+lib = gobble( 'src' )
+	.transform( 'esperanto', { type: 'cjs', defaultOnly: true })
+	.transform( 'es6-transpiler' );
 
-if ( gobble.env() === 'test' ) {
+//if ( gobble.env() === 'test' ) {
 	module.exports = lib;
-} else {
-	module.exports = gobble([
-		dist,
-		dist.transform( 'uglifyjs', { ext: '.min.js' }),
+// } else {
+// 	module.exports = gobble([
+// 		dist,
+// 		dist.transform( 'uglifyjs', { ext: '.min.js' }),
 
-		// Compile a node.js version
-		lib.moveTo( 'lib' )
-	]);
-}
+// 		// Compile a node.js version
+// 		lib.moveTo( 'lib' )
+// 	]);
+// }
