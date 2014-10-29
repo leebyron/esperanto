@@ -1,4 +1,5 @@
 {
+	"boss": true,
 	"globals": {
 		"describe": true,
 		"it": true

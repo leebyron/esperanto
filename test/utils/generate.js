@@ -1,5 +1,7 @@
 var sander = require( 'sander' );
 
+process.chdir( __dirname );
+
 require( './build' )().then( function ( esperanto ) {
 	var sander = require( 'sander' ),
 		profiles = [
@@ -25,24 +27,26 @@ require( './build' )().then( function ( esperanto ) {
 			}
 		];
 
-	return cleanup().then( buildAll );
+	return cleanup().then( buildAll ).catch( function ( err ) {
+		console.log( 'err', err );
+	});
 
 	function cleanup () {
-		return sander.rimraf( 'output' );
+		return sander.rimraf( '../output' );
 	}
 
 	function buildAll () {
-		return sander.lsr( 'input' ).then( function ( sourceFiles ) {
+		return sander.lsr( '../input' ).then( function ( sourceFiles ) {
 			return Promise.all( sourceFiles.map( build ) );
 		});
 	}
 
 	function build ( sourceFile ) {
-		return sander.readFile( 'input', sourceFile ).then( String ).then( function ( source ) {
+		return sander.readFile( '../input', sourceFile ).then( String ).then( function ( source ) {
 			var promises = profiles.map( function ( profile ) {
 				try {
-					var transpiled = esperanto[ profile.method ]( profile.options );
-					return sander.writeFile( 'output', profile.outputdir, transpiled );
+					var transpiled = esperanto[ profile.method ]( source, profile.options );
+					return sander.writeFile( '../output', profile.outputdir, sourceFile, transpiled );
 				} catch ( err ) {
 					// some modules can't be transpiled with defaultOnly
 				}
