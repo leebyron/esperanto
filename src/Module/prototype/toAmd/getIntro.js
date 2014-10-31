@@ -1,3 +1,5 @@
+var template = 'define(__IMPORT_PATHS__function (__IMPORT_NAMES__) {\n\n';
+
 export default function ( module, options ) {
 	var intro,
 		importPaths = [],
@@ -8,7 +10,7 @@ export default function ( module, options ) {
 
 		// Empty imports (e.g. `import 'polyfills'`) have no name
 		if ( !x.specifiers.length ) {
-			name = '__imports_' + i;
+			name = x.name;
 		}
 
 		// If this is a batch import, like `import * as fs from 'fs'`,
@@ -25,7 +27,7 @@ export default function ( module, options ) {
 				}
 			}
 
-			name = ( options.defaultOnly && x.specifiers[0] ) ? x.specifiers[0].as : '__imports_' + i;
+			name = ( options.defaultOnly && x.specifiers[0] ) ? x.specifiers[0].as : x.name;
 		}
 
 		importPaths[i] = x.path;
@@ -44,15 +46,9 @@ export default function ( module, options ) {
 		importNames.unshift( 'exports' );
 	}
 
-	intro = [
-		'define(',
-		( importPaths.length ? '[' + importPaths.map( quote ) + '],' : '' ),
-		'function (',
-		importNames.join( ', ' ),
-		') {'
-	].join( '' );
-
-	return intro + '\n\n';
+	return template
+		.replace( '__IMPORT_PATHS__', importPaths.length ? '[' + importPaths.map( quote ) + '],' : '' )
+		.replace( '__IMPORT_NAMES__', importNames.join( ', ' ) );
 }
 
 function quote ( str ) {

@@ -1,5 +1,4 @@
-var template = `
-(function (global, factory) {
+var template = `(function (global, factory) {
 
 	'use strict';
 
@@ -26,7 +25,7 @@ export default function ( module, options ) {
 
 		// Empty imports (e.g. `import 'polyfills'`) have no name
 		if ( !x.specifiers.length ) {
-			name = '__imports_' + i;
+			name = x.name;
 		}
 
 		// If this is a batch import, like `import * as fs from 'fs'`,
@@ -43,7 +42,7 @@ export default function ( module, options ) {
 				}
 			}
 
-			name = ( options.defaultOnly && x.specifiers[0] ) ? x.specifiers[0].as : '__imports_' + i;
+			name = ( options.defaultOnly && x.specifiers[0] ) ? x.specifiers[0].as : x.name;
 		}
 
 		importPaths[i] = x.path;
@@ -55,12 +54,6 @@ export default function ( module, options ) {
 			importNames[i] = name;
 		}
 	});
-
-	// Add `exports`, if we need to use it
-	if ( module.exports.length && !options.defaultOnly ) {
-		importPaths.unshift( 'exports' );
-		importNames.unshift( 'exports' );
-	}
 
 	intro = template
 		.replace( '__AMD_DEPS__',     importPaths.map( quote ).join( ', ' ) )

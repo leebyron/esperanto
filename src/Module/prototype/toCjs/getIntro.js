@@ -9,7 +9,7 @@ export default function ( module, options ) {
 
 	if ( !options.defaultOnly ) {
 		specifiers = module.imports.filter( excludeBatchImports ).map( ( x, i ) => {
-			return x.specifiers.map( s => `var ${s.as} = __imports_${i}.${s.name};` ).join( '\n' );
+			return x.specifiers.map( s => `var ${s.as} = ${x.name}.${s.name};` ).join( '\n' );
 		}).filter( Boolean ).join( '\n' );
 
 		return importStatements + '\n\n' + specifiers;

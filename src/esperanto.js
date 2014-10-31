@@ -1,15 +1,16 @@
 import Module from './Module';
 
-export default {
-	toAmd: function ( source, options ) {
-		return new Module({ source: source }).toAmd( options || {} );
-	},
-
-	toCjs: function ( source, options ) {
-		return new Module({ source: source }).toCjs( options || {} );
-	},
-
-	toUmd: function ( source, options ) {
-		return new Module({ source: source }).toUmd( options || {} );
+function transpileMethod ( methodName ) {
+	return function ( source, options ) {
+		return new Module({
+			source: source,
+			getModuleName: options.getModuleName
+		})[ methodName ]( options || {} );
 	}
+}
+
+export default {
+	toAmd: transpileMethod( 'toAmd' ),
+	toCjs: transpileMethod( 'toCjs' ),
+	toUmd: transpileMethod( 'toUmd' )
 };

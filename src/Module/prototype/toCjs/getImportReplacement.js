@@ -9,7 +9,7 @@ export default function ( x, i, options ) {
 		} else if ( x.specifiers[0] && x.specifiers[0].batch ) {
 			name = x.specifiers[0].name;
 		} else {
-			name = '__imports_' + i;
+			name = x.name;
 		}
 
 		lhs = `var ${name} = `;

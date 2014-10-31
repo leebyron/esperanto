@@ -16,7 +16,9 @@ var Module = function ( options ) {
 	this.imports = [];
 	this.exports = [];
 
-	this.parse();
+	this.parse({
+		getModuleName: options.getModuleName
+	});
 };
 
 Module.prototype = {
