@@ -1,4 +1,4 @@
-export default function ( x, options ) {
+export default function ( x, options, trailingExportLhs ) {
 	var lhs;
 
 	// inline var/function declarations, e.g
@@ -44,16 +44,16 @@ export default function ( x, options ) {
 	if ( options.trailingExport ) {
 		// This is the last statement, and we're in defaultOnly mode
 		// so we can do `module.exports = foo`
-		lhs = 'module.exports';
+		lhs = trailingExportLhs;
 	} else if ( options.defaultOnly ) {
 		// This *isn't* the last statement, so we assign to __export
 		// for now. It'll be exported later with `module.exports = __export`
-		lhs = '__export';
+		lhs = '__export =';
 	} else {
 		// Named imports/exports are allowed, so we assign this
 		// to 'default'
-		lhs = `exports.default`;
+		lhs = `exports.default =`;
 	}
 
-	return `${lhs} = ${x.value};`;
+	return `${lhs} ${x.value};`;
 }

@@ -1,13 +1,21 @@
+var promise;
+
 module.exports = function () {
-	var libdir = require( 'path' ).resolve( __dirname, '../lib' );
+	var libdir;
 
-	return require( 'sander' ).rimraf( libdir ).then( function () {
-		process.env.GOBBLE_ENV = 'test';
+	if ( !promise ) {
+		libdir = require( 'path' ).resolve( __dirname, '../lib' );
 
-		return require( '../../gobble/lib' ).build({
-			dest: libdir
-		}).then( function () {
-			return require( '../lib/esperanto' );
+		promise = require( 'sander' ).rimraf( libdir ).then( function () {
+			process.env.GOBBLE_ENV = 'test';
+
+			return require( '../../gobble/lib' ).build({
+				dest: libdir
+			}).then( function () {
+				return require( '../lib/esperanto' );
+			});
 		});
-	});
+	}
+
+	return promise;
 };

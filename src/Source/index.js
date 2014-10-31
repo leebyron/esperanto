@@ -1,9 +1,10 @@
 import guessIndent from './guessIndent';
 
-var Source = function ( str ) {
+var Source = function ( str, file ) {
 	var chunk;
 
 	this.str = str;
+	this.file = file;
 	this.indentStr = guessIndent( str );
 
 	chunk = new Chunk({

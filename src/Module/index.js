@@ -6,7 +6,6 @@ import toUmd from './prototype/toUmd';
 
 var Module = function ( options ) {
 	this.source = options.source;
-	this.file = options.file;
 
 	this.ast = acorn.parse( this.source, {
 		ecmaVersion: 6,
@@ -19,6 +18,11 @@ var Module = function ( options ) {
 	this.parse({
 		getModuleName: options.getModuleName
 	});
+
+	this.hasTrailingExport = (
+		this.exports.length === 1 &&
+		this.exports[0].node === this.ast.body[ this.ast.body.length - 1 ]
+	);
 };
 
 Module.prototype = {

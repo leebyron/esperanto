@@ -1,4 +1,5 @@
 import Module from './Module';
+import Bundle from './Bundle';
 
 function transpileMethod ( methodName ) {
 	return function ( source, options ) {
@@ -12,5 +13,10 @@ function transpileMethod ( methodName ) {
 export default {
 	toAmd: transpileMethod( 'toAmd' ),
 	toCjs: transpileMethod( 'toCjs' ),
-	toUmd: transpileMethod( 'toUmd' )
+	toUmd: transpileMethod( 'toUmd' ),
+
+	bundle: function ( options ) {
+		var bundle = new Bundle( options );
+		return bundle.collect().then( () => bundle );
+	}
 };
