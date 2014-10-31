@@ -1,5 +1,7 @@
 {
 	"boss": true,
+	"unused": true,
+	"undef": true,
 	"globals": {
 		"describe": true,
 		"it": true

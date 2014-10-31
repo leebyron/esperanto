@@ -5,6 +5,10 @@ var assert = require( 'assert' ),
 
 process.chdir( __dirname );
 
+function getModuleName ( path ) {
+	return '__' + path.split( '/' ).pop();
+}
+
 describe( 'esperanto', function () {
 	before( function () {
 		return require( './utils/build' )().then( function ( lib ) {
@@ -82,7 +86,11 @@ function compare ( file, options ) {
 	it( 'to AMD (named)', function () {
 		return getSource.then( function ( source ) {
 			return sander.readFile( 'output/amd', file ).then( String ).then( function ( expected ) {
-				assert.equal( esperanto.toAmd( source ), expected, 'AMD (named)' );
+				var actual = esperanto.toAmd( source, {
+					defaultOnly: false
+				});
+
+				assert.equal( actual, expected, 'AMD (named): Expected\n>\n' + actual + '\n>\n\nto match\n\n>\n' + expected + '\n>' );
 			});
 		});
 	});
@@ -90,7 +98,25 @@ function compare ( file, options ) {
 	it( 'to CommonJS (named)', function () {
 		return getSource.then( function ( source ) {
 			return sander.readFile( 'output/cjs', file ).then( String ).then( function ( expected ) {
-				assert.equal( esperanto.toCjs( source ), expected, 'CommonJS (named)' );
+				var actual = esperanto.toCjs( source, {
+					defaultOnly: false
+				});
+
+				assert.equal( actual, expected, 'CommonJS (named): Expected\n>\n' + actual + '\n>\n\nto match\n\n>\n' + expected + '\n>' );
+			});
+		});
+	});
+
+	it( 'to UMD (named)', function () {
+		return getSource.then( function ( source ) {
+			return sander.readFile( 'output/umd', file ).then( String ).then( function ( expected ) {
+				var actual = esperanto.toUmd( source, {
+					defaultOnly: false,
+					name: 'myModule',
+					getModuleName: getModuleName
+				});
+
+				assert.equal( actual, expected, 'UMD (named): Expected\n>\n' + actual + '\n>\n\nto match\n\n>\n' + expected + '\n>' );
 			});
 		});
 	});
@@ -99,7 +125,11 @@ function compare ( file, options ) {
 		it( 'to AMD (defaultOnly)', function () {
 			return getSource.then( function ( source ) {
 				return sander.readFile( 'output/amdDefaults', file ).then( String ).then( function ( expected ) {
-					assert.equal( esperanto.toAmd( source, { defaultOnly: true }), expected, 'AMD (defaultOnly)' );
+					var actual = esperanto.toAmd( source, {
+						defaultOnly: true
+					});
+
+					assert.equal( actual, expected, 'AMD (defaultOnly): Expected\n>\n' + actual + '\n>\n\nto match\n\n>\n' + expected + '\n>' );
 				});
 			});
 		});
@@ -107,7 +137,24 @@ function compare ( file, options ) {
 		it( 'to CommonJS (defaultOnly)', function () {
 			return getSource.then( function ( source ) {
 				return sander.readFile( 'output/cjsDefaults', file ).then( String ).then( function ( expected ) {
-					assert.equal( esperanto.toCjs( source, { defaultOnly: true }), expected, 'CommonJS (defaultOnly)' );
+					var actual = esperanto.toCjs( source, {
+						defaultOnly: true
+					});
+
+					assert.equal( actual, expected, 'CommonJS (defaultOnly): Expected\n>\n' + actual + '\n>\n\nto match\n\n>\n' + expected + '\n>' );
+				});
+			});
+		});
+
+		it( 'to UMD (defaultOnly)', function () {
+			return getSource.then( function ( source ) {
+				return sander.readFile( 'output/umdDefaults', file ).then( String ).then( function ( expected ) {
+					var actual = esperanto.toUmd( source, {
+						name: 'myModule',
+						defaultOnly: true
+					});
+
+					assert.equal( actual, expected, 'UMD (defaultOnly): Expected\n>\n' + actual + '\n>\n\nto match\n\n>\n' + expected + '\n>' );
 				});
 			});
 		});
