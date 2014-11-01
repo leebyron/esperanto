@@ -1,22 +1,11 @@
-export default function getFooter ( mod, options ) {
-	var x;
-
+export default function getFooter ( mod, options, defaultLhs ) {
 	if ( !mod.exports.length ) {
 		return '';
 	}
 
 	// In default only mode, we just do e.g. `return foo`
 	if ( options.defaultOnly ) {
-		if ( mod.exports.length > 1 ) {
-			throw new Error( 'Multiple exports used in defaultOnly mode' );
-		}
-
-		x = mod.exports[0];
-		if ( !x.default ) {
-			throw new Error( 'Named export used in defaultOnly mode' );
-		}
-
-		return 'return ' + x.value + ';';
+		return defaultLhs + mod.exports[0].value + ';';
 	}
 
 	// Otherwise, we assign to `exports`

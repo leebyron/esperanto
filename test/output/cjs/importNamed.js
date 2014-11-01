@@ -1,3 +1,5 @@
+'use strict';
+
 var __imports_0 = require('baz');
 
 var foo = __imports_0.foo;

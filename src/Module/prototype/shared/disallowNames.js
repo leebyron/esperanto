@@ -11,7 +11,7 @@ export default function disallowNames ( mod ) {
 			throw new Error( importMessage );
 		}
 
-		if ( !x.specifiers[0].default ) {
+		if ( !x.specifiers[0].default && !x.specifiers[0].batch ) {
 			throw new Error( importMessage );
 		}
 	});

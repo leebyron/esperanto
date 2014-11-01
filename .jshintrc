@@ -2,6 +2,7 @@
 	"esnext": true,
 	"undef": true,
 	"unused": true,
+	"expr": true,
 	"globals": {
 		"__dirname": true,
 		"module": true,

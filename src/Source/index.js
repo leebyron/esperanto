@@ -18,11 +18,15 @@ var Source = function ( str, file ) {
 
 Source.prototype = {
 	append: function ( str ) {
-		var chunk = new Chunk({
+		var lastChunk, chunk;
+
+		lastChunk = this.chunks[ this.chunks.length - 1 ];
+
+		chunk = new Chunk({
 			start: this.str.length,
 			end: this.str.length,
 			content: str,
-			offset: this.chunks[ this.chunks.length - 1 ].offset
+			offset: lastChunk ? lastChunk.offset : 0
 		});
 
 		this.chunks.push( chunk );

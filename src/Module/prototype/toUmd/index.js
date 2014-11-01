@@ -1,56 +1,52 @@
 import Source from '../../../Source';
-import getHeader from './getHeader';
-import getExportReplacement from '../shared/getExportReplacement';
-import getImportReplacement from '../shared/getImportReplacement';
+import getIntro from './getIntro';
+import getHeader from '../shared/getHeader';
+import getFooter from '../shared/getFooter';
+import disallowNames from '../shared/disallowNames';
 
-export default function Module$toUmd ( options ) {
-	var source, trailingExport;
+export default function Module$toAmd ( options ) {
+	var source,
+		intro,
+		header,
+		footer,
+		outro;
 
-	if ( !options.name ) {
-		throw new Error( 'You must specify a `name` option to export as for UMD exports' );
+	if ( options.defaultOnly ) {
+		disallowNames( this );
 	}
 
 	source = new Source( this.source );
 
-	// We might be able to just return the exported value, rather
-	// than assigning it to __exports to return later
-	trailingExport = options.defaultOnly && this.hasTrailingExport;
+	intro = getIntro( this, options );
+	header = getHeader( this, options );
+	footer = getFooter( this, options, 'return ' );
+	outro = '\n\n}));';
 
-	// Replace import statements
-	this.imports.forEach( function ( x, i ) {
-		var content = getImportReplacement( x, {
-			defaultOnly: options.defaultOnly
-		});
+	// Remove import statements
+	this.imports.forEach( x => {
+		source.remove( x.start, x.next );
+	});
 
-		source.replace( x.start, x.next, content );
+	// Remove export statements
+	this.exports.forEach( function ( x ) {
+		if ( x.declaration ) {
+			source.replace( x.start, x.end, x.value );
+		} else {
+			source.remove( x.start, x.next );
+		}
 	});
 
 	source.trim();
-
-	// Replace export statements
-	this.exports.forEach( function ( x ) {
-		var content = getExportReplacement( x, {
-			defaultOnly: options.defaultOnly,
-			trailingExport: trailingExport
-		}, 'return' );
-
-		source.replace( x.start, x.end, content );
-	});
-
-	if ( !trailingExport && !!this.exports.length ) {
-		source.prepend( 'var __exports;\n\n' );
-		source.append( '\nreturn __exports;' );
-	}
+	header && source.prepend( header + '\n\n' ).trim();
+	footer && source.append( '\n\n' + footer ).trim();
 
 	if ( options.addUseStrict !== false ) {
-		source.prepend( "'use" + " strict';\n\n" );
+		source.prepend( "'use strict';\n\n" ).trim();
 	}
 
-	source.trim();
 	source.indent();
 
-	source.prepend( getHeader( this, options ) );
-	source.append( '\n\n}));' );
+	source.prepend( intro ).append( outro );
 
 	return source.toString();
 }

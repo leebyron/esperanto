@@ -18,6 +18,7 @@
 	'use strict';
 	
 	var qux = foo( bar( baz ) );
+	
 	return qux;
 
 }));

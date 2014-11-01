@@ -1,8 +1,7 @@
-var __export;
-
-__export = foo;
+'use strict';
 
 function foo () {
 	console.log( 'fooing' );
 }
-module.exports = __export;
+
+module.exports = foo;

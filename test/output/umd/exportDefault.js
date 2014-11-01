@@ -4,22 +4,20 @@
 
 	if (typeof define === 'function' && define.amd) {
 		// export as AMD
-		define([], factory);
+		define(['exports'], factory);
 	} else if ( typeof module !== 'undefined' && module.exports && typeof require === 'function' ) {
 		// node/browserify
-		module.exports = factory();
+		factory(exports);
 	} else {
 		// browser global
-		global.myModule = factory();
+		global.myModule = {};
+		factory(global.myModule);
 	}
 
-}(typeof window !== 'undefined' ? window : this, function () {
+}(typeof window !== 'undefined' ? window : this, function (exports) {
 
 	'use strict';
 	
-	var __exports;
-	
-	__exports.default = 'foo';
-	return __exports;
+	exports.default = 'foo';
 
 }));

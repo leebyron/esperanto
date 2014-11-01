@@ -17,13 +17,10 @@
 
 	'use strict';
 	
-	var __exports;
-	
-	__exports = foo;
-	
 	function foo () {
 		console.log( 'fooing' );
 	}
-	return __exports;
+	
+	return foo;
 
 }));

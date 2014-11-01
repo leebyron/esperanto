@@ -1,7 +1,7 @@
 import Source from '../../../Source';
 import getIntro from './getIntro';
-import getHeader from './getHeader';
-import getFooter from './getFooter';
+import getHeader from '../shared/getHeader';
+import getFooter from '../shared/getFooter';
 import disallowNames from '../shared/disallowNames';
 
 export default function Module$toAmd ( options ) {
@@ -19,7 +19,7 @@ export default function Module$toAmd ( options ) {
 
 	intro = getIntro( this, options );
 	header = getHeader( this, options );
-	footer = getFooter( this, options );
+	footer = getFooter( this, options, 'return ' );
 	outro = '\n\n});';
 
 	// Remove import statements
@@ -39,6 +39,11 @@ export default function Module$toAmd ( options ) {
 	source.trim();
 	header && source.prepend( header + '\n\n' ).trim();
 	footer && source.append( '\n\n' + footer ).trim();
+
+	if ( options.addUseStrict !== false ) {
+		source.prepend( "'use strict';\n\n" ).trim();
+	}
+
 	source.indent();
 
 	source.prepend( intro ).append( outro );

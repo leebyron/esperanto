@@ -106,19 +106,19 @@ module.exports = function () {
 			});
 		});
 
-		// it( 'to UMD (named)', function () {
-		// 	return getSource.then( function ( source ) {
-		// 		return sander.readFile( 'output/umd', file ).then( String ).then( function ( expected ) {
-		// 			var actual = esperanto.toUmd( source, {
-		// 				defaultOnly: false,
-		// 				name: 'myModule',
-		// 				getModuleName: getModuleName
-		// 			});
+		it( 'to UMD (named)', function () {
+			return getSource.then( function ( source ) {
+				return sander.readFile( 'output/umd', file ).then( String ).then( function ( expected ) {
+					var actual = esperanto.toUmd( source, {
+						defaultOnly: false,
+						name: 'myModule',
+						getModuleName: getModuleName
+					});
 
-		// 			assert.equal( actual, expected, 'UMD (named): Expected\n>\n' + actual + '\n>\n\nto match\n\n>\n' + expected + '\n>' );
-		// 		});
-		// 	});
-		// });
+					assert.equal( actual, expected, 'UMD (named): Expected\n>\n' + actual + '\n>\n\nto match\n\n>\n' + expected + '\n>' );
+				});
+			});
+		});
 
 		if ( !options.namedOnly ) {
 			it( 'to AMD (defaultOnly)', function () {
@@ -145,18 +145,18 @@ module.exports = function () {
 				});
 			});
 
-			// it( 'to UMD (defaultOnly)', function () {
-			// 	return getSource.then( function ( source ) {
-			// 		return sander.readFile( 'output/umdDefaults', file ).then( String ).then( function ( expected ) {
-			// 			var actual = esperanto.toUmd( source, {
-			// 				name: 'myModule',
-			// 				defaultOnly: true
-			// 			});
+			it( 'to UMD (defaultOnly)', function () {
+				return getSource.then( function ( source ) {
+					return sander.readFile( 'output/umdDefaults', file ).then( String ).then( function ( expected ) {
+						var actual = esperanto.toUmd( source, {
+							name: 'myModule',
+							defaultOnly: true
+						});
 
-			// 			assert.equal( actual, expected, 'UMD (defaultOnly): Expected\n>\n' + actual + '\n>\n\nto match\n\n>\n' + expected + '\n>' );
-			// 		});
-			// 	});
-			// });
+						assert.equal( actual, expected, 'UMD (defaultOnly): Expected\n>\n' + actual + '\n>\n\nto match\n\n>\n' + expected + '\n>' );
+					});
+				});
+			});
 		}
 	}
 };

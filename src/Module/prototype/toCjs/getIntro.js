@@ -1,7 +1,5 @@
-export default function ( module, options ) {
-	var importStatements;
-
-	importStatements = module.imports.map( ( x, i ) => {
+export default function getIntro ( module, options ) {
+	return module.imports.map( x => {
 		var name, lhs, rhs;
 
 		rhs = `require('${x.path}');`;
@@ -22,6 +20,4 @@ export default function ( module, options ) {
 
 		return rhs;
 	}).join( '\n' );
-
-	return importStatements;
 }
