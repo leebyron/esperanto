@@ -1,4 +1,5 @@
 import acorn from 'acorn';
+import Source from '../Source';
 import parse from './prototype/parse';
 import toAmd from './prototype/toAmd';
 import toCjs from './prototype/toCjs';
@@ -19,10 +20,18 @@ var Module = function ( options ) {
 		getModuleName: options.getModuleName
 	});
 
-	this.hasTrailingExport = (
-		this.exports.length === 1 &&
-		this.exports[0].node === this.ast.body[ this.ast.body.length - 1 ]
-	);
+	// remove imports and exports from body
+	this.body = new Source( options.source );
+
+	this.imports.forEach( x => this.body.remove( x.start, x.next ) );
+
+	this.exports.forEach( x => {
+		if ( x.declaration ) {
+			this.body.replace( x.start, x.end, x.value );
+		} else {
+			this.body.remove( x.start, x.next );
+		}
+	});
 };
 
 Module.prototype = {

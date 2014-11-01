@@ -33,6 +33,13 @@ Source.prototype = {
 		return this;
 	},
 
+	clone: function () {
+		var clone = new Source( this.str, this.file );
+		clone.chunks = this.chunks.map( cloneChunk );
+
+		return clone;
+	},
+
 	indent: function () {
 		var indentStr = this.indentStr, offset = indentStr.length;
 
@@ -210,6 +217,15 @@ Chunk.prototype = {
 function adjust ( chunks, d ) {
 	chunks.forEach( function ( chunk ) {
 		chunk.adjust( d );
+	});
+}
+
+function cloneChunk ( chunk ) {
+	return new Chunk({
+		start: chunk.start,
+		end: chunk.end,
+		content: chunk.content,
+		offset: chunk.offset
 	});
 }
 
