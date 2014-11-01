@@ -150,7 +150,8 @@ module.exports = function () {
 					return sander.readFile( 'output/umdDefaults', file ).then( String ).then( function ( expected ) {
 						var actual = esperanto.toUmd( source, {
 							name: 'myModule',
-							defaultOnly: true
+							defaultOnly: true,
+							getModuleName: getModuleName
 						});
 
 						assert.equal( actual, expected, 'UMD (defaultOnly): Expected\n>\n' + actual + '\n>\n\nto match\n\n>\n' + expected + '\n>' );

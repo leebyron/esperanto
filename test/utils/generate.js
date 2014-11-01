@@ -1,10 +1,14 @@
-var sander = require( 'sander' );
+var sander = require( 'sander' ),
+	Promise = sander.Promise;
 
 process.chdir( __dirname );
 
+function getModuleName ( path ) {
+	return '__' + path.split( '/' ).pop();
+}
+
 require( './build' )().then( function ( esperanto ) {
-	var sander = require( 'sander' ),
-		profiles = [
+	var profiles = [
 			{
 				outputdir: 'amd',
 				method: 'toAmd',
@@ -18,7 +22,7 @@ require( './build' )().then( function ( esperanto ) {
 			{
 				outputdir: 'umd',
 				method: 'toUmd',
-				options: { name: 'myModule' }
+				options: { name: 'myModule', getModuleName: getModuleName }
 			},
 			{
 				outputdir: 'amdDefaults',
@@ -33,7 +37,7 @@ require( './build' )().then( function ( esperanto ) {
 			{
 				outputdir: 'umdDefaults',
 				method: 'toUmd',
-				options: { name: 'myModule', defaultOnly: true }
+				options: { name: 'myModule', defaultOnly: true, getModuleName: getModuleName }
 			}
 		];
 

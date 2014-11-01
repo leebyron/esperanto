@@ -11,14 +11,14 @@
 	} else {
 		// browser global
 		global.myModule = {};
-		factory(global.myModule, global.__imports_0);
+		factory(global.myModule, global.__foo);
 	}
 
-}(typeof window !== 'undefined' ? window : this, function (exports, __imports_0) {
+}(typeof window !== 'undefined' ? window : this, function (exports, __foo) {
 
 	'use strict';
 	
-	var foo = __imports_0.default;
+	var foo = __foo.default;
 	
 	exports.default = 'baz';
 

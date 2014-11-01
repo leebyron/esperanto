@@ -3,7 +3,12 @@
 	"unused": true,
 	"undef": true,
 	"globals": {
+		"process": true,
+		"require": true,
+		"__dirname": true,
 		"describe": true,
-		"it": true
+		"it": true,
+		"setTimeout": true,
+		"console": true
 	}
 }

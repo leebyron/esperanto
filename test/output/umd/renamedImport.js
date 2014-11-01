@@ -10,13 +10,13 @@
 		module.exports = factory(require('fs'));
 	} else {
 		// browser global
-		global.myModule = factory(global.__imports_0);
+		global.myModule = factory(global.__fs);
 	}
 
-}(typeof window !== 'undefined' ? window : this, function (__imports_0) {
+}(typeof window !== 'undefined' ? window : this, function (__fs) {
 
 	'use strict';
 	
-	var rm = __imports_0.unlink;
+	var rm = __fs.unlink;
 
 }));

@@ -10,14 +10,14 @@
 		module.exports = factory(require('asap'));
 	} else {
 		// browser global
-		global.myModule = factory(global.__imports_0);
+		global.myModule = factory(global.__asap);
 	}
 
-}(typeof window !== 'undefined' ? window : this, function (__imports_0) {
+}(typeof window !== 'undefined' ? window : this, function (__asap) {
 
 	'use strict';
 	
-	var asap = __imports_0.default;
-	var later = __imports_0.later;
+	var asap = __asap.default;
+	var later = __asap.later;
 
 }));

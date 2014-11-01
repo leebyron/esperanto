@@ -10,14 +10,14 @@
 		module.exports = factory(require('baz'));
 	} else {
 		// browser global
-		global.myModule = factory(global.__imports_0);
+		global.myModule = factory(global.__baz);
 	}
 
-}(typeof window !== 'undefined' ? window : this, function (__imports_0) {
+}(typeof window !== 'undefined' ? window : this, function (__baz) {
 
 	'use strict';
 	
-	var foo = __imports_0.foo;
-	var bar = __imports_0.bar;
+	var foo = __baz.foo;
+	var bar = __baz.bar;
 
 }));

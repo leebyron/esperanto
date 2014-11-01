@@ -11,16 +11,16 @@
 	} else {
 		// browser global
 		global.myModule = {};
-		factory(global.myModule, global.__imports_0, global.__imports_1, global.__imports_2);
+		factory(global.myModule, global.__foo, global.__bar, global.__baz);
 	}
 
-}(typeof window !== 'undefined' ? window : this, function (exports, __imports_0, __imports_1, __imports_2) {
+}(typeof window !== 'undefined' ? window : this, function (exports, __foo, __bar, __baz) {
 
 	'use strict';
 	
-	var foo = __imports_0.default;
-	var bar = __imports_1.default;
-	var baz = __imports_2.default;
+	var foo = __foo.default;
+	var bar = __bar.default;
+	var baz = __baz.default;
 	
 	var qux = foo( bar( baz ) );
 	
