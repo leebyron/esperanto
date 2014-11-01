@@ -26,6 +26,7 @@ Source.prototype = {
 		});
 
 		this.chunks.push( chunk );
+		return this;
 	},
 
 	indent: function () {
@@ -40,6 +41,8 @@ Source.prototype = {
 				return match + indentStr;
 			});
 		});
+
+		return this;
 	},
 
 	prepend: function ( str ) {
@@ -55,10 +58,12 @@ Source.prototype = {
 		});
 
 		this.chunks.unshift( chunk );
+		return this;
 	},
 
 	remove: function ( start, end ) {
 		this.replace( start, end, '' );
+		return this;
 	},
 
 	replace: function ( start, end, content ) {
@@ -84,7 +89,7 @@ Source.prototype = {
 				spliceArgs = [ i, 1 ].concat( chunk.split( start, end, content ) );
 				this.chunks.splice.apply( this.chunks, spliceArgs );
 
-				return;
+				return this;
 			}
 		}
 
@@ -139,6 +144,8 @@ Source.prototype = {
 		if ( characters ) {
 			adjust( this.chunks, characters );
 		}
+
+		return this;
 	}
 };
 
