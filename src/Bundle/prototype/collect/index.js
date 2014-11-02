@@ -1,38 +1,17 @@
-import path from 'path';
 import sander from 'sander';
 import Module from '../../../Module';
+import resolve from '../../../utils/resolve';
+import sortModules from '../../utils/sortModules';
 
 export default function Bundle$collect () {
-	var modules = this.modules,
-		moduleByPath = this.moduleByPath,
-		getImportName = this.getImportName,
-		baseUrl = this.baseUrl,
+	var modules = [],
+		promiseByPath = {},
+		getModuleName = this.getModuleName,
+		base = this.base,
 		externalModules = this.externalModules;
 
-	return fetchModule( path.resolve( baseUrl, this.entry ) ).then( function () {
-		modules.sort( ( a, b ) => {
-			var i, importedPath;
-
-			// if a depends on b, b must go first
-			i = a.imports.length;
-			while ( i-- ) {
-				importedPath = resolve( a.imports[i].path, a.path, baseUrl );
-
-				if ( b.path === importedPath ) {
-					return 1;
-				}
-			}
-
-			// and vice versa
-			i = b.imports.length;
-			while ( i-- ) {
-				importedPath = resolve( b.imports[i].path, b.path, baseUrl );
-
-				if ( a.path === importedPath ) {
-					return 1;
-				}
-			}
-		});
+	return fetchModule( this.entry ).then( () => {
+		this.modules = sortModules( modules[0], modules );
 	});
 
 	function fetchModule ( modulePath ) {
@@ -40,51 +19,41 @@ export default function Bundle$collect () {
 			modulePath += '.js';
 		}
 
-		if ( moduleByPath[ modulePath ] ) {
-			return Promise.resolve( moduleByPath[ modulePath ] );
+		if ( !promiseByPath[ modulePath ] ) {
+			promiseByPath[ modulePath ] = sander.readFile( base, modulePath ).catch( function ( err ) {
+				if ( err.code === 'ENOENT' ) {
+					return sander.readFile( modulePath.replace( /\.js$/, '/index.js' ) );
+				}
+
+				throw err;
+			}).then( String ).then( function ( source ) {
+				var module, promises;
+
+				module = new Module({
+					source: source,
+					file: modulePath,
+					getModuleName: getModuleName
+				});
+
+				modules.push( module );
+
+				promises = module.imports.map( x => {
+					var importPath = resolve( x.path, modulePath );
+					return fetchModule( importPath );
+				});
+
+				return Promise.all( promises );
+			}).catch( function ( err ) {
+				if ( err.code === 'ENOENT' ) {
+					if ( !~externalModules.indexOf( modulePath ) ) {
+						externalModules.push( modulePath );
+					}
+				} else {
+					throw err;
+				}
+			});
 		}
 
-		return sander.readFile( modulePath ).catch( function ( err ) {
-			if ( err.code === 'ENOENT' ) {
-				console.log( 'trying index.js' );
-				return sander.readFile( modulePath.replace( /\.js$/, '/index.js' ) );
-			}
-
-			throw err;
-		}).then( String ).then( function ( source ) {
-			var module, promises;
-
-			module = new Module({
-				source: source,
-				path: modulePath,
-				getImportName: getImportName
-			});
-
-			moduleByPath[ modulePath ] = module;
-			modules.push( module );
-
-			promises = module.imports.map( x => {
-				var importPath = resolve( x.path, modulePath, baseUrl );
-				return fetchModule( importPath );
-			});
-
-			return Promise.all( promises );
-		}).catch( function ( err ) {
-			if ( err.code === 'ENOENT' ) {
-				if ( !~externalModules.indexOf( modulePath ) ) {
-					externalModules.push( modulePath );
-				}
-			} else {
-				throw err;
-			}
-		});
+		return promiseByPath[ modulePath ];
 	}
-}
-
-function resolve ( importPath, importerPath, baseUrl ) {
-	if ( importPath[0] !== '.' ) {
-		return path.resolve( baseUrl, importPath );
-	}
-
-	return path.resolve( path.dirname( importerPath ), importPath );
 }

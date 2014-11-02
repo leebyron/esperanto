@@ -1,5 +1,8 @@
 export default function Bundle$toEs6 ( options ) {
 	return this.modules.map( m => {
-		return m.source.toString();
+		return m.toStatement({
+			defaultOnly: options.defaultOnly,
+			name: this.getModuleName( m.file )
+		});
 	}).join( '\n\n' );
 }

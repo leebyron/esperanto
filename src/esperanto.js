@@ -7,12 +7,13 @@ function transpileMethod ( methodName ) {
 			source: source,
 			getModuleName: options.getModuleName
 		})[ methodName ]( options || {} );
-	}
+	};
 }
 
 export default {
 	toAmd: transpileMethod( 'toAmd' ),
 	toCjs: transpileMethod( 'toCjs' ),
+	toStatement: transpileMethod( 'toStatement' ),
 	toUmd: transpileMethod( 'toUmd' ),
 
 	bundle: function ( options ) {

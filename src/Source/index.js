@@ -43,7 +43,9 @@ Source.prototype = {
 	indent: function () {
 		var indentStr = this.indentStr, offset = indentStr.length;
 
-		this.chunks[0].content = indentStr + this.chunks[0].content;
+		if ( this.chunks[0] ) {
+			this.chunks[0].content = indentStr + this.chunks[0].content;
+		}
 
 		this.chunks.forEach( function ( chunk ) {
 			chunk.adjust( offset );

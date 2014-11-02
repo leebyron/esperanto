@@ -1,3 +1,5 @@
+import resolve from '../../../utils/resolve';
+import sanitize from '../../../utils/sanitize';
 import processImport from './processImport';
 import processExport from './processExport';
 
@@ -8,7 +10,7 @@ export default function Module$parse ( options ) {
 		previousDeclaration,
 		uid = 0;
 
-	this.ast.body.forEach( function ( node ) {
+	this.ast.body.forEach( node => {
 		var declaration, name;
 
 		if ( previousDeclaration ) {
@@ -25,7 +27,7 @@ export default function Module$parse ( options ) {
 			// give each imported module a name, falling back to
 			// __imports_x
 			if ( options.getModuleName ) {
-				name = options.getModuleName( declaration.path );
+				name = options.getModuleName( resolve( declaration.path, this.file, '' ) );
 			}
 
 			declaration.name = name ? sanitize( name ) : '__imports_' + uid++;
@@ -51,13 +53,4 @@ export default function Module$parse ( options ) {
 	if ( previousDeclaration ) {
 		previousDeclaration.next = source.length;
 	}
-}
-
-function sanitize ( name ) {
-	name = name.replace( /[^a-zA-Z0-9_$]/g, '_' );
-	if ( /[^a-zA-Z_$]/.test( name[0] ) ) {
-		name = '_' + name;
-	}
-
-	return name;
 }
