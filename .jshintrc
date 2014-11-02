@@ -3,11 +3,12 @@
 	"undef": true,
 	"unused": true,
 	"expr": true,
+	"boss": true,
 	"globals": {
+		"process": true,
 		"__dirname": true,
 		"module": true,
 		"exports": true,
-		"require": true,
-		"define": true
+		"require": true
 	}
 }

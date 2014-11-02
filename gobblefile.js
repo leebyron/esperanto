@@ -4,6 +4,6 @@ var gobble = require( 'gobble' ),
 
 module.exports = gobble([
 	lib,
-	dist,
-	dist.transform( 'uglifyjs', { ext: '.min.js' })
+	// dist,
+	// dist.transform( 'uglifyjs', { ext: '.min.js' })
 ]);

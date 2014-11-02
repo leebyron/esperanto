@@ -11,6 +11,7 @@ export default function processExport ( node, source ) {
 			//     export function baz () {...}
 			return {
 				declaration: true,
+				default: !!node.default,
 				name: node.default ? 'default' : getDeclarationName( d ),
 				value: value
 			};

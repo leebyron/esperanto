@@ -1,4 +1,4 @@
-import getIntro from './getIntro';
+import getUmdIntro from '../../../utils/getUmdIntro';
 import getHeader from '../shared/getHeader';
 import getFooter from '../shared/getFooter';
 import disallowNames from '../shared/disallowNames';
@@ -16,7 +16,7 @@ export default function Module$toAmd ( options ) {
 
 	body = this.body.clone();
 
-	intro = getIntro( this, options );
+	intro = getUmdIntro( this.imports, this.exports, options );
 	header = getHeader( this, options );
 	footer = getFooter( this, options, 'return ' );
 	outro = '\n\n}));';
