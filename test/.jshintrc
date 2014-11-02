@@ -5,9 +5,13 @@
 	"globals": {
 		"process": true,
 		"require": true,
+		"module": true,
 		"__dirname": true,
+
 		"describe": true,
 		"it": true,
+		"before": true,
+
 		"setTimeout": true,
 		"console": true
 	}
