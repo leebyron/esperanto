@@ -4,13 +4,15 @@ import resolve from '../../../utils/resolve';
 import sortModules from '../../utils/sortModules';
 
 export default function Bundle$collect () {
-	var modules = [],
+	var entry = this.entry,
+		modules = [],
+		moduleLookup = this.moduleLookup,
 		promiseByPath = {},
 		getModuleName = this.getModuleName,
 		base = this.base,
 		externalModules = this.externalModules;
 
-	return fetchModule( this.entry ).then( () => {
+	return fetchModule( entry ).then( () => {
 		this.modules = sortModules( modules[0], modules );
 	});
 
@@ -22,7 +24,7 @@ export default function Bundle$collect () {
 		if ( !promiseByPath[ modulePath ] ) {
 			promiseByPath[ modulePath ] = sander.readFile( base, modulePath ).catch( function ( err ) {
 				if ( err.code === 'ENOENT' ) {
-					return sander.readFile( modulePath.replace( /\.js$/, '/index.js' ) );
+					return sander.readFile( base, modulePath.replace( /\.js$/, '/index.js' ) );
 				}
 
 				throw err;
@@ -36,6 +38,7 @@ export default function Bundle$collect () {
 				});
 
 				modules.push( module );
+				moduleLookup[ modulePath ] = module;
 
 				promises = module.imports.map( x => {
 					var importPath = resolve( x.path, modulePath );
@@ -45,6 +48,16 @@ export default function Bundle$collect () {
 				return Promise.all( promises );
 			}).catch( function ( err ) {
 				if ( err.code === 'ENOENT' ) {
+					if ( modulePath === entry || modulePath === entry + '.js' ) {
+						throw new Error( 'Could not find entry module (' + entry + ')' );
+					}
+
+					if ( modulePath[0] === '.' ) {
+						// we're missing a local module
+						throw err;
+					}
+
+					// Most likely an external module
 					if ( !~externalModules.indexOf( modulePath ) ) {
 						externalModules.push( modulePath );
 					}
