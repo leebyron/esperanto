@@ -1,9 +1,12 @@
-define(['exports','foo','polyfills'],function (exports, __imports_0) {
+define(['foo','polyfills'],function (foo) {
 
 	'use strict';
 	
-	var foo = __imports_0.default;
+	import foo from 'foo';
+	import 'polyfills';
 	
-	exports.default = 'baz';
+	export default 'baz';
+	
+	return 'baz';
 
 });

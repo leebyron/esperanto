@@ -1,7 +1,9 @@
-define(['exports'],function (exports) {
+define(function () {
 
 	'use strict';
 	
-	exports.default = 'foo';
+	export default 'foo';
+	
+	return 'foo';
 
 });

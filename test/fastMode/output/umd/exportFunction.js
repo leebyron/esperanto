@@ -4,21 +4,24 @@
 
 	if (typeof define === 'function' && define.amd) {
 		// export as AMD
-		define(['exports'], factory);
+		define([], factory);
 	} else if ( typeof module !== 'undefined' && module.exports && typeof require === 'function' ) {
 		// node/browserify
-		factory(exports);
+		module.exports = factory();
 	} else {
 		// browser global
-		global.myModule = {};
-		factory(global.myModule);
+		global.myModule = factory();
 	}
 
-}(typeof window !== 'undefined' ? window : this, function (exports) {
+}(typeof window !== 'undefined' ? window : this, function () {
 
 	'use strict';
 	
-	exports.default = function foo ( str ) {
+	export default function foo ( str ) {
+		return str.toUpperCase();
+	}
+	
+	return function foo ( str ) {
 		return str.toUpperCase();
 	};
 

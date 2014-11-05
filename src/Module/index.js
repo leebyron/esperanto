@@ -1,5 +1,5 @@
 import acorn from 'acorn';
-import Source from '../Source';
+import MagicString from 'magic-string';
 import parse from './prototype/parse';
 import toAmd from './prototype/toAmd';
 import toCjs from './prototype/toCjs';
@@ -12,7 +12,8 @@ var Module = function ( options ) {
 
 	this.ast = acorn.parse( this.source, {
 		ecmaVersion: 6,
-		locations: true
+		locations: true,
+		forbidReserved: false
 	});
 
 	this.imports = [];
@@ -23,17 +24,7 @@ var Module = function ( options ) {
 	});
 
 	// remove imports and exports from body
-	this.body = new Source( options.source, options.file );
-
-	this.imports.forEach( x => this.body.remove( x.start, x.next ) );
-
-	this.exports.forEach( x => {
-		if ( x.declaration ) {
-			this.body.replace( x.start, x.end, x.value );
-		} else {
-			this.body.remove( x.start, x.next );
-		}
-	});
+	this.body = new MagicString( options.source );
 };
 
 Module.prototype = {

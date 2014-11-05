@@ -79,7 +79,7 @@ module.exports = function () {
 		var getSource;
 
 		file += '.js';
-		getSource = sander.readFile( 'fastMode/input', file ).then( String );
+		getSource = sander.readFile( 'samples', file ).then( String );
 
 		it( 'to AMD (named)', function () {
 			return getSource.then( function ( source ) {

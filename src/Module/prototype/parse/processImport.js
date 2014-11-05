@@ -1,4 +1,4 @@
-export default function processImport ( node ) {
+export default function processImport ( node, passthrough ) {
 	return {
 		path: node.source.value,
 		specifiers: node.specifiers.map( s => {
@@ -18,6 +18,7 @@ export default function processImport ( node ) {
 				name: s.default ? 'default' : id,
 				as: s.name ? s.name.name : id
 			};
-		})
+		}),
+		passthrough: !!passthrough
 	};
 }

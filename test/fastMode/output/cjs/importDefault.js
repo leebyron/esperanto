@@ -1,7 +1,7 @@
-'use strict';
-
-var __imports_0 = require('foo');
-
-var foo = __imports_0.default;
-
-console.log( foo );
+(function(){
+	'use strict';
+	
+	var foo = require('foo');
+	
+	console.log( foo );
+}).call(global);

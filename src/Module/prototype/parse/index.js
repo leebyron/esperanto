@@ -5,13 +5,24 @@ import processExport from './processExport';
 
 export default function Module$parse ( options ) {
 	var source = this.source,
+		getModuleName,
 		imports = this.imports,
 		exports = this.exports,
 		previousDeclaration,
 		uid = 0;
 
+	getModuleName = path => {
+		var name;
+
+		if ( options.getModuleName ) {
+			name = options.getModuleName( resolve( path, this.file ) );
+		}
+
+		return name ? sanitize( name ) : '__imports_' + uid++;
+	};
+
 	this.ast.body.forEach( node => {
-		var declaration, name;
+		var passthrough, declaration, name;
 
 		if ( previousDeclaration ) {
 			previousDeclaration.next = node.start;
@@ -22,15 +33,11 @@ export default function Module$parse ( options ) {
 		}
 
 		if ( node.type === 'ImportDeclaration' ) {
-			declaration = processImport( node, source );
+			declaration = processImport( node );
 
 			// give each imported module a name, falling back to
 			// __imports_x
-			if ( options.getModuleName ) {
-				name = options.getModuleName( resolve( declaration.path, this.file, '' ) );
-			}
-
-			declaration.name = name ? sanitize( name ) : '__imports_' + uid++;
+			declaration.name = getModuleName( declaration.path );
 
 			imports.push( declaration );
 		}
@@ -38,6 +45,21 @@ export default function Module$parse ( options ) {
 		else if ( node.type === 'ExportDeclaration' ) {
 			declaration = processExport( node, source );
 			exports.push( declaration );
+
+			if ( node.source ) {
+				// it's both an import and an export, e.g.
+				//
+				//     `export { foo } from './bar';
+				passthrough = processImport( node, true );
+				passthrough.name = getModuleName( passthrough.path );
+
+				passthrough.node = node;
+				passthrough.start = node.start;
+				passthrough.end = node.end;
+				imports.push( passthrough );
+
+				declaration.passthrough = passthrough;
+			}
 		}
 
 		if ( declaration ) {

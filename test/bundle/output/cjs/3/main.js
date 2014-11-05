@@ -21,13 +21,22 @@
 	var foo = {};
 	(function () {
 		var bar = 'yes';
+		export default bar;
 		
-		exports.default = bar;
+		
+		(function (__export) {
+		;
+		}(function(prop,get) {
+			Object.defineProperty(exports,prop,{enumerable:true,get:get,set:function(){throw new Error('Cannot reassign imported binding of namespace `'+prop+'`');}});
+		}));
 	}());
 	
 	(function () {
 		var foo = foo.default;
 		var external = external.default;
+		
+		import foo from './foo';
+		import external from 'external';
 		
 		console.log( external( foo ) );
 	}());

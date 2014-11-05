@@ -1,6 +1,6 @@
-'use strict';
-
-require('polyfills');
-var __imports_1 = require('foo');
-
-var foo = __imports_1.default;
+(function(){
+	'use strict';
+	
+	require('polyfills');
+	var foo = require('foo');
+}).call(global);

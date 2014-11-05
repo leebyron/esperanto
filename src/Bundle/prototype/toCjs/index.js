@@ -1,4 +1,4 @@
-import Source from '../../../Source';
+import MagicString from 'magic-string';
 import getUmdIntro from '../../../utils/getUmdIntro';
 
 export default function Bundle$toUmd ( options ) {
@@ -11,7 +11,7 @@ export default function Bundle$toUmd ( options ) {
 		});
 	}).join( '\n\n' );
 
-	body = new Source( body );
+	body = new MagicString( body );
 
 	if ( options.addUseStrict !== false ) {
 		body.prepend( "'use strict';\n\n" );
@@ -24,7 +24,7 @@ export default function Bundle$toUmd ( options ) {
 			specifiers: []
 		};
 	});
-	//console.log( 'this.entry', this.entry );
+
 	exports = [ this.getModuleName( this.entry ) ];
 
 	intro = getUmdIntro( imports, exports, options );

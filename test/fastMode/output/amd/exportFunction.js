@@ -1,8 +1,12 @@
-define(['exports'],function (exports) {
+define(function () {
 
 	'use strict';
 	
-	exports.default = function foo ( str ) {
+	export default function foo ( str ) {
+		return str.toUpperCase();
+	}
+	
+	return function foo ( str ) {
 		return str.toUpperCase();
 	};
 

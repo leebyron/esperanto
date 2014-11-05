@@ -10,13 +10,14 @@
 		module.exports = factory(require('polyfills'), require('foo'));
 	} else {
 		// browser global
-		global.myModule = factory(global.__polyfills_js, global.__foo_js);
+		global.myModule = factory(global.__polyfills_js, global.foo);
 	}
 
-}(typeof window !== 'undefined' ? window : this, function (__polyfills_js, __foo_js) {
+}(typeof window !== 'undefined' ? window : this, function (__polyfills_js, foo) {
 
 	'use strict';
 	
-	var foo = __foo_js.default;
+	import 'polyfills';
+	import foo from 'foo';
 
 }));

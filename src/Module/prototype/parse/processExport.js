@@ -13,7 +13,8 @@ export default function processExport ( node, source ) {
 				declaration: true,
 				default: !!node.default,
 				name: node.default ? 'default' : getDeclarationName( d ),
-				value: value
+				value: value,
+				valueStart: d.start
 			};
 		}
 
@@ -21,7 +22,8 @@ export default function processExport ( node, source ) {
 		return {
 			default: true,
 			name: 'default',
-			value: value
+			value: value,
+			valueStart: d.start
 		};
 	}
 
