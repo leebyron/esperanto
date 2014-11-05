@@ -2,6 +2,7 @@ import getIntro from './getIntro';
 import getHeader from '../shared/getHeader';
 import getFooter from '../shared/getFooter';
 import disallowNames from '../shared/disallowNames';
+import defaults from './defaults';
 
 export default function Module$toAmd ( options ) {
 	var body,
@@ -15,6 +16,10 @@ export default function Module$toAmd ( options ) {
 	}
 
 	body = this.body.clone();
+
+	if ( options.defaultOnly ) {
+		return defaults( this, body, options );
+	}
 
 	intro = getIntro( this, options );
 	header = getHeader( this, options );
