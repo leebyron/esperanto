@@ -1,7 +1,6 @@
 import getIntro from './getIntro';
 import getHeader from '../shared/getHeader';
-import getFooter from '../shared/getFooter';
-import disallowNames from '../shared/disallowNames';
+//import getFooter from '../shared/getFooter';
 import defaults from './defaults';
 
 export default function Module$toAmd ( options ) {
@@ -11,10 +10,6 @@ export default function Module$toAmd ( options ) {
 		footer,
 		outro;
 
-	if ( options.defaultOnly ) {
-		disallowNames( this );
-	}
-
 	body = this.body.clone();
 
 	if ( options.defaultOnly ) {
@@ -23,7 +18,7 @@ export default function Module$toAmd ( options ) {
 
 	intro = getIntro( this, options );
 	header = getHeader( this, options );
-	footer = getFooter( this, options, 'return ' );
+	//footer = getFooter( this, options, 'return ' );
 	outro = '\n\n});';
 
 	body.trim();

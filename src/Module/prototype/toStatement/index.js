@@ -1,5 +1,5 @@
 import getHeader from '../shared/getHeader';
-import getFooter from '../shared/getFooter';
+//import getFooter from '../shared/getFooter';
 import disallowNames from '../shared/disallowNames';
 import getNakedStatement from '../../../utils/getNakedStatement';
 
@@ -63,7 +63,7 @@ export default function Module$toStatement ( options ) {
 	}
 
 	header = getHeader( this, options );
-	footer = getFooter( this, options, 'return ' );
+	//footer = getFooter( this, options, 'return ' );
 
 	body.trim();
 	header && body.prepend( header + '\n\n' ).trim();

@@ -1,13 +1,30 @@
 import getIntro from './getIntro';
 import getHeader from '../shared/getHeader';
-import getFooter from '../shared/getFooter';
+import getExportBlock from '../shared/getExportBlock';
 import disallowNames from '../shared/disallowNames';
 import removeImportsAndExports from '../shared/removeImportsAndExports';
 import replaceReferences from '../../../utils/replaceReferences';
 
+var outroWithExports = `
+
+}).call(global, function(prop, get) {
+
+	Object.defineProperty(exports, prop, {
+		enumerable: true,
+		get: get,
+		set: function () {
+			throw new Error('Cannot reassign imported binding of namespace \`' + prop + '\`');
+		}
+	});
+
+});`;
+
 export default function strict ( mod, body, options ) {
 	var intro,
 		defaultValue,
+		hasNonDefaultExports,
+		importBlock,
+		exportBlock,
 		header,
 		footer;
 
@@ -20,7 +37,7 @@ export default function strict ( mod, body, options ) {
 
 	// remove import statements...
 	mod.imports.forEach( x => {
-		if ( !x.passthrough ) {
+		if ( !x.passthrough ) { // this is actually a chained export statement, e.g. `export { foo } from 'foo'`
 			body.remove( x.start, x.next );
 		}
 	});
@@ -50,6 +67,8 @@ export default function strict ( mod, body, options ) {
 			return;
 		}
 
+		hasNonDefaultExports = true;
+
 		if ( x.declaration ) {
 			body.remove( x.start, x.valueStart );
 		} else {
@@ -57,15 +76,39 @@ export default function strict ( mod, body, options ) {
 		}
 	});
 
-	footer = getFooter( mod, options, 'module.exports = ', defaultValue );
+	// Create block of require statements
+	importBlock = mod.imports.map( x => {
+		var specifier, name, replacement;
 
-	body.trim();
+		specifier = x.specifiers[0];
 
-	intro && body.prepend( intro + '\n\n' ).trim();
-	footer && body.prepend( footer + '\n\n' ).trim();
-	header && body.prepend( header + '\n\n' ).trim();
+		if ( !specifier ) {
+			// empty import
+			replacement = `require('${x.path}');`;
+		} else {
+			name = specifier.batch ? specifier.name : x.name;
+			replacement = `var ${name} = require('${x.path}');`;
+		}
 
-	body.indent().prepend( '(function(){\n' ).append( '\n}).call(global);' );
+		return replacement;
+	}).join( '\n' );
+
+	// ...and a block of export statements
+	exportBlock = getExportBlock( mod, options, 'module.exports = ', defaultValue );
+
+	body.trim()
+		.prepend( importBlock ? ( importBlock + '\n\n' ) : '' )
+		.prepend( exportBlock ? ( exportBlock + '\n\n' ) : '' )
+		.prepend( "'use strict';\n\n" ).trim()
+		.indent();
+
+	if ( hasNonDefaultExports ) {
+		body.prepend( '(function (__export) {\n\n' )
+			.append( outroWithExports.replace( /\t/g, mod.body.indentStr ) );
+	} else {
+		body.prepend( '(function () {\n\n' )
+			.append( '\n\n}).call(global);' );
+	}
 
 	return body.toString();
 }
