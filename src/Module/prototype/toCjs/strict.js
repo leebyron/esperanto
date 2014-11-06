@@ -13,7 +13,7 @@ var outroWithExports = `
 		enumerable: true,
 		get: get,
 		set: function () {
-			throw new Error('Cannot reassign imported binding of namespace \`' + prop + '\`');
+			throw new Error('Cannot reassign imported binding of namespace \u0060' + prop + '\u0060');
 		}
 	});
 

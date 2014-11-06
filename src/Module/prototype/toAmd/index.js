@@ -2,6 +2,7 @@ import getIntro from './getIntro';
 import getHeader from '../shared/getHeader';
 //import getFooter from '../shared/getFooter';
 import defaults from './defaults';
+import strict from './strict';
 
 export default function Module$toAmd ( options ) {
 	var body,
@@ -14,6 +15,8 @@ export default function Module$toAmd ( options ) {
 
 	if ( options.defaultOnly ) {
 		return defaults( this, body, options );
+	} else {
+		return strict( this, body, options );
 	}
 
 	intro = getIntro( this, options );
