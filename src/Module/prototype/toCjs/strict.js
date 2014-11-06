@@ -31,9 +31,7 @@ export default function strict ( mod, body, options ) {
 	intro = getIntro( mod, options );
 
 	// replace all references to imported values
-	if ( !options.defaultOnly ) {
-		replaceReferences( mod, body );
-	}
+	replaceReferences( mod, body );
 
 	// remove import statements...
 	mod.imports.forEach( x => {
