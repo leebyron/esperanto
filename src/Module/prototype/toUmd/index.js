@@ -1,7 +1,7 @@
 import getUmdIntro from '../../../utils/getUmdIntro';
 import getHeader from '../shared/getHeader';
 //import getFooter from '../shared/getFooter';
-import disallowNames from '../shared/disallowNames';
+import defaults from './defaults';
 
 export default function Module$toAmd ( options ) {
 	var body,
@@ -10,11 +10,11 @@ export default function Module$toAmd ( options ) {
 		footer,
 		outro;
 
-	if ( options.defaultOnly ) {
-		disallowNames( this );
-	}
-
 	body = this.body.clone();
+
+	if ( options.defaultOnly ) {
+		return defaults( this, body, options );
+	}
 
 	intro = getUmdIntro( this.imports, this.exports, options );
 	header = getHeader( this, options );
