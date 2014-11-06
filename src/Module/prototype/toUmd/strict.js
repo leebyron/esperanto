@@ -1,63 +1,64 @@
 import replaceReferences from '../../../utils/replaceReferences';
 import getExportBlock from '../shared/getExportBlock';
+import template from '../../../utils/template';
 
 var introWithExports, introWithoutExports;
 
-introWithExports = `(function (global, factory) {
+introWithExports = template( `(function (global, factory) {
 
 	'use strict';
 
 	if (typeof define === 'function' && define.amd) {
 		// export as AMD
-		define(__AMD_DEPS__exporter);
+		define([<%= AMD_DEPS %>], exporter);
 	} else if (typeof module !== 'undefined' && module.exports && typeof require === 'function') {
 		// node/browserify
-		module.exports = exporter(__CJS_DEPS__);
+		exporter(<%= CJS_DEPS %>);
 	} else {
 		// browser global
-		global.__NAME__ = {};
-		exporter(__GLOBAL_DEPS__);
+		global.<%= NAME %> = {};
+		exporter(<%= GLOBAL_DEPS %>);
 	}
 
-	function exporter (__EXPORTER_ARGS__) {
-		exports.default = factory.call( global, function (get, prop) {
+	function exporter (<%= EXPORTER_ARGS %>) {
+		exports.default = factory.call(global, function (prop, get) {
 			Object.defineProperty(exports, prop, {
 				enumerable: true,
 				get: get,
 				set: function () {
-					throw new Error('Cannot reassign imported binding of namespace \`' + prop + '\`');
+					throw new Error('Cannot reassign imported binding of namespace \u0060' + prop + '\u0060');
 				}
 			});
-		}__PREFIXED_IMPORT_NAMES__);
+		}<%= PREFIXED_IMPORT_NAMES %>);
 	}
 
-}(typeof window !== 'undefined' ? window : this, function (__IMPORT_NAMES__) {
+}(typeof window !== 'undefined' ? window : this, function (<%= IMPORT_NAMES %>) {
 
 	'use strict';
 
-`;
+` );
 
-introWithoutExports = `(function (global, factory) {
+introWithoutExports = template( `(function (global, factory) {
 
 	'use strict';
 
 	if (typeof define === 'function' && define.amd) {
 		// export as AMD
-		define(__AMD_DEPS__factory);
+		define(<%= AMD_DEPS %>factory);
 	} else if (typeof module !== 'undefined' && module.exports && typeof require === 'function') {
 		// node/browserify
-		factory(__CJS_DEPS__);
+		factory(<%= CJS_DEPS %>);
 	} else {
 		// browser global
-		global.__NAME__ = {};
-		factory(__GLOBAL_DEPS__);
+		global.<%= NAME %> = {};
+		factory(<%= GLOBAL_DEPS %>);
 	}
 
-}(typeof window !== 'undefined' ? window : this, function (__IMPORT_NAMES__) {
+}(typeof window !== 'undefined' ? window : this, function (<%= IMPORT_NAMES %>) {
 
 	'use strict';
 
-`;
+` );
 
 export default function strict ( mod, body, options ) {
 	var importPaths = [],
@@ -137,15 +138,15 @@ export default function strict ( mod, body, options ) {
 
 		body.append( '\n\n' + exportBlock );
 
-		intro = introWithExports
-			.replace( '__AMD_DEPS__', importPaths.length ? '[' + importPaths.map( quote ).join( ', ' ) + '], ' : '' )
-			.replace( '__CJS_DEPS__', importPaths.map( req ).join( ', ' ) )
-			.replace( '__GLOBAL_DEPS__', importNames.map( globalify ).join( ', ' ) )
-			.replace( '__IMPORT_NAMES__', [ '__export' ].concat( importNames ).join( ', ' ) )
-			.replace( '__PREFIXED_IMPORT_NAMES__', importNames.map( x => ', ' + x ).join( '' ) )
-			.replace( '__EXPORTER_ARGS__', [ 'exports' ].concat( importNames ).join( ', ' ) )
-			.replace( '__NAME__', options.name )
-			.replace( /\t/g, body.indentStr );
+		intro = introWithExports({
+			AMD_DEPS: [ 'exports' ].concat( importPaths ).map( quote ).join( ', ' ),
+			CJS_DEPS: [ 'exports' ].concat( importPaths.map( req ) ).join( ', ' ),
+			GLOBAL_DEPS: [ `global.${options.name}` ].concat( importNames.map( globalify ) ).join( ', ' ),
+			IMPORT_NAMES: [ '__export' ].concat( importNames ).join( ', ' ),
+			PREFIXED_IMPORT_NAMES: importNames.map( x => ', ' + x ).join( '' ),
+			EXPORTER_ARGS: [ 'exports' ].concat( importNames ).join( ', ' ),
+			NAME: options.name
+		}).replace( /\t/g, body.indentStr );
 
 
 	} else {
@@ -161,13 +162,13 @@ export default function strict ( mod, body, options ) {
 			cjsDeps = importPaths.map( req );
 		}
 
-		intro = introWithoutExports
-			.replace( '__AMD_DEPS__', importPaths.length ? '[' + importPaths.map( quote ).join( ', ' ) + '], ' : '' )
-			.replace( '__CJS_DEPS__', cjsDeps.join( ', ' ) )
-			.replace( '__GLOBAL_DEPS__', globalNames.join( ',  ' ) )
-			.replace( '__IMPORT_NAMES__', importNames.join( ', ' ) )
-			.replace( '__NAME__', options.name )
-			.replace( /\t/g, body.indentStr );
+		intro = introWithoutExports({
+			AMD_DEPS: importPaths.length ? '[' + importPaths.map( quote ).join( ', ' ) + '], ' : '',
+			CJS_DEPS: cjsDeps.join( ', ' ),
+			GLOBAL_DEPS: globalNames.join( ',  ' ),
+			IMPORT_NAMES: importNames.join( ', ' ),
+			NAME: options.name
+		}).replace( /\t/g, body.indentStr );
 	}
 
 	body.trim().indent().prepend( intro ).append( '\n\n}));' );
