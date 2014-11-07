@@ -12,10 +12,10 @@ export default function defaults ( mod, body, options ) {
 
 		if ( !specifier ) {
 			// empty import
-			replacement = `require('${x.path}');`;
+			replacement = `require('${x.path}')`;
 		} else {
 			name = specifier.batch ? specifier.name : specifier.as;
-			replacement = `var ${name} = require('${x.path}');`;
+			replacement = `var ${name} = require('${x.path}')`;
 		}
 
 		body.replace( x.start, x.end, replacement );

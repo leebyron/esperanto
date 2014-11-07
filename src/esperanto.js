@@ -3,10 +3,12 @@ import Bundle from './Bundle';
 
 function transpileMethod ( methodName ) {
 	return function ( source, options ) {
+		options = options || {};
+
 		return new Module({
 			source: source,
 			getModuleName: options.getModuleName
-		})[ methodName ]( options || {} );
+		})[ methodName ]( options );
 	};
 }
 
