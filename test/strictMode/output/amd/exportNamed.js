@@ -1,5 +1,7 @@
 define(['exports'], function (exports) {
 
+	'use strict';
+	
 	var foo = 'bar', answer = 42;
 	
 	__export('foo', function () { return foo; });

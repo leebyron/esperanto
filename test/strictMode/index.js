@@ -7,138 +7,158 @@ var path = require( 'path' ),
 global.assert = assert;
 
 module.exports = function () {
-	function getModuleName ( path ) {
-		return '__' + path.split( '/' ).pop().replace( /\.js$/, '' );
-	}
+	describe( 'strict mode', function () {
+		var tests;
 
-	describe( 'esperanto', function () {
+		function getModuleName ( path ) {
+			return '__' + path.split( '/' ).pop().replace( /\.js$/, '' );
+		}
+
+		tests = [
+			{ file: 'exportDefault', description: 'transpiles default exports' },
+			{ file: 'exportNamed', description: 'transpiles named exports' },
+			{ file: 'earlyExport', description: 'transpiles exports that are not the final statement' },
+			{ file: 'emptyImport', description: 'transpiles empty imports with no exports' },
+			{ file: 'emptyImportWithDefaultExport', description: 'transpiles empty imports with default exports' },
+			{ file: 'exportInlineFunction', description: 'transpiles named inline function exports' },
+			{ file: 'exportVar', description: 'transpiles named inline variable exports' },
+			{ file: 'exportLet', description: 'transpiles named inline let exports' },
+			{ file: 'importAll', description: 'transpiles import * as foo from "foo"' },
+			{ file: 'importDefault', description: 'transpiles default imports' },
+			{ file: 'importNamed', description: 'transpiles named imports' },
+			{ file: 'mixedImports', description: 'transpiles mixed named/default imports' },
+			{ file: 'multipleImports', description: 'transpiles multiple imports' },
+			{ file: 'renamedImport', description: 'transpiles renamed imports' },
+			{ file: 'trailingEmptyImport', description: 'transpiles trailing empty imports' }
+		];
+
+		tests.forEach( function ( t ) {
+			t.file += '.js',
+			t.source = sander.readFileSync( 'samples', t.file ).toString();
+		});
+
 		before( function () {
 			return require( '../utils/build' )().then( function ( lib ) {
 				esperanto = lib;
 			});
 		});
 
-		// Check results match expectations
-		// compare( 'exportDefault', 'transpiles default exports' );
-		// compare( 'exportNamed', 'transpiles named exports' );
-		// compare( 'earlyExport', 'transpiles exports that are not the final statement' );
-		// compare( 'emptyImport', 'transpiles empty imports with no exports' );
-		// compare( 'emptyImportWithDefaultExport', 'transpiles empty imports with default exports' );
-		// compare( 'exportInlineFunction', 'transpiles named inline function exports' );
-		// compare( 'exportVar', 'transpiles named inline variable exports' );
-		// compare( 'exportLet', 'transpiles named inline let exports' );
-		// compare( 'importAll', 'transpiles import * as foo from "foo"' );
-		// compare( 'importDefault', 'transpiles default imports' );
-		// compare( 'importNamed', 'transpiles named imports' );
-		// compare( 'mixedImports', 'transpiles mixed named/default imports' );
-		// compare( 'multipleImports', 'transpiles multiple imports' );
-		// compare( 'renamedImport', 'transpiles renamed imports' );
-		// compare( 'trailingEmptyImport', 'transpiles trailing empty imports' );
-
-		// TODO handle tests that cause errors
-		verifySemantics( 'importer', 'bare-import' );
-		verifySemantics( 'importer', 'bindings' );
-		verifySemantics( 'c', 'cycles' );
-		verifySemantics( 'importer', 'cycles-defaults' );
-		verifySemantics( 'main', 'cycles-immediate' );
-		verifySemantics( 'importer', 'duplicate-import-fails' );
-		verifySemantics( 'importer', 'duplicate-import-specifier-fails' );
-		verifySemantics( 'second', 'export-and-import-reference-share-var' );
-		verifySemantics( 'importer', 'export-default' );
-		verifySemantics( 'importer', 'export-default-function' );
-		verifySemantics( 'importer', 'export-default-named-function' );
-		verifySemantics( 'third', 'export-from' );
-		// verifySemantics( 'third', 'export-from-default' ); // pending https://github.com/marijnh/acorn/pull/154
-		verifySemantics( 'importer', 'export-function' );
-		verifySemantics( 'importer', 'export-list' );
-		verifySemantics( 'importer', 'export-mixins' );
-		verifySemantics( 'index', 'export-not-at-top-level-fails', 'Unexpected reserved word' );
-		verifySemantics( 'importer', 'export-var' );
-		verifySemantics( 'importer', 'import-as' );
-		verifySemantics( 'third', 'import-chain' );
-		verifySemantics( 'index', 'import-not-at-top-level-fails', 'Unexpected reserved word' );
-		verifySemantics( 'mod', 'module-level-declarations' );
-		verifySemantics( 'importer', 'named-function-expression' );
-		verifySemantics( 'importer', 'namespace-reassign-import-fails', 'Cannot reassign imported binding of namespace `exp`' );
-		verifySemantics( 'importer', 'namespace-update-import-fails', 'Cannot reassign imported binding of namespace `exp`' );
-		verifySemantics( 'importer', 'namespaces' );
-		verifySemantics( 'third', 're-export-default-import' );
-		verifySemantics( 'importer', 'reassign-import-fails', 'Cannot reassign imported binding `x`' );
-		verifySemantics( 'importer', 'reassign-import-not-at-top-level-fails', 'Cannot reassign imported binding `x`' ); // not a runtime check...
-		verifySemantics( 'mod', 'this-is-global' );
-		verifySemantics( 'importer', 'update-expression-of-import-fails', 'Cannot reassign imported binding `a`' );
-	});
-
-	function compare ( file, description ) {
-		var getSource;
-
-		file += '.js';
-		getSource = sander.readFile( 'samples', file ).then( String );
-
-		it( description + ' to AMD', function () {
-			return getSource.then( function ( source ) {
-				return sander.readFile( 'strictMode/output/amd', file ).then( String ).then( function ( expected ) {
-					var actual = esperanto.toAmd( source, {
-						mode: 'strict'
-					});
-
-					assert.equal( actual, expected, 'AMD: Expected\n>\n' + actual + '\n>\n\nto match\n\n>\n' + expected + '\n>' );
-				});
-			});
-		});
-
-		it( description + ' to CommonJS', function () {
-			return getSource.then( function ( source ) {
-				return sander.readFile( 'strictMode/output/cjs', file ).then( String ).then( function ( expected ) {
-					var actual = esperanto.toCjs( source, {
-						mode: 'strict'
-					});
-
-					assert.equal( actual, expected, 'CommonJS: Expected\n>\n' + actual + '\n>\n\nto match\n\n>\n' + expected + '\n>' );
-				});
-			});
-		});
-
-		it( description + ' to UMD', function () {
-			return getSource.then( function ( source ) {
-				return sander.readFile( 'strictMode/output/umd', file ).then( String ).then( function ( expected ) {
-					var actual = esperanto.toUmd( source, {
-						mode: 'strict',
-						name: 'myModule',
-						getModuleName: getModuleName
-					});
-
-					assert.equal( actual, expected, 'UMD: Expected\n>\n' + actual + '\n>\n\nto match\n\n>\n' + expected + '\n>' );
-				});
-			});
-		});
-	}
-
-	function verifySemantics ( entry, dir, errorMessage ) {
-		it( 'should satisfy ' + dir + ' tests', function () {
-			// Create CommonJS modules, then require the entry module
-			return sander.readdir( 'semantics', dir ).then( function ( files ) {
-				var promises = files.map( function ( file ) {
-					return sander.readFile( 'semantics', dir, file ).then( String ).then( function ( source ) {
-						var transpiled = esperanto.toCjs( source, {
-							mode: 'strict'
+		describe( 'esperanto.toAmd()', function () {
+			tests.forEach( function ( t ) {
+				it( t.description, function () {
+					return sander.readFile( 'strictMode/output/amd', t.file ).then( String ).then( function ( expected ) {
+						var actual = esperanto.toAmd( t.source, {
+							getModuleName: getModuleName
 						});
 
-						return sander.writeFile( '.semantics-tmp', dir, file, transpiled );
+						assert.equal( actual, expected, 'AMD: Expected\n>\n' + actual + '\n>\n\nto match\n\n>\n' + expected + '\n>' );
 					});
 				});
-
-				return Promise.all( promises ).then( function () {
-					require( path.resolve( '.semantics-tmp', dir, entry ) );
-				});
-			}).catch( function ( err ) {
-				if ( errorMessage && ~err.message.indexOf( errorMessage ) ) {
-					// copacetic
-					return;
-				}
-
-				throw err;
 			});
 		});
-	}
+
+		describe( 'esperanto.toCjs()', function () {
+			tests.forEach( function ( t ) {
+				it( t.description, function () {
+					return sander.readFile( 'strictMode/output/cjs', t.file ).then( String ).then( function ( expected ) {
+						var actual = esperanto.toCjs( t.source, {
+							getModuleName: getModuleName
+						});
+
+						assert.equal( actual, expected, 'CJS: Expected\n>\n' + actual + '\n>\n\nto match\n\n>\n' + expected + '\n>' );
+					});
+				});
+			});
+		});
+
+		describe( 'esperanto.toUmd()', function () {
+			tests.forEach( function ( t ) {
+				it( t.description, function () {
+					return sander.readFile( 'strictMode/output/umd', t.file ).then( String ).then( function ( expected ) {
+						var actual = esperanto.toUmd( t.source, {
+							name: 'myModule',
+							getModuleName: getModuleName
+						});
+
+						assert.equal( actual, expected, 'UMD: Expected\n>\n' + actual + '\n>\n\nto match\n\n>\n' + expected + '\n>' );
+					});
+				});
+			});
+		});
+
+		describe( 'ES6 module semantics tests from es6-module-transpiler:', function () {
+			var tests = [
+				{ entry: 'importer', dir: 'bare-import' },
+				{ entry: 'importer', dir: 'bindings' },
+				{ entry: 'c', dir: 'cycles' },
+				{ entry: 'importer', dir: 'cycles-defaults' },
+				{ entry: 'main', dir: 'cycles-immediate' },
+				{ entry: 'importer', dir: 'duplicate-import-fails' },
+				{ entry: 'importer', dir: 'duplicate-import-specifier-fails' },
+				{ entry: 'second', dir: 'export-and-import-reference-share-var' },
+				{ entry: 'importer', dir: 'export-default' },
+				{ entry: 'importer', dir: 'export-default-function' },
+				{ entry: 'importer', dir: 'export-default-named-function' },
+				{ entry: 'third', dir: 'export-from' },
+				//{ entry: 'third', dir: 'export-from-default' }, // pending https://github.com/marijnh/acorn/pull/15
+				{ entry: 'importer', dir: 'export-function' },
+				{ entry: 'importer', dir: 'export-list' },
+				{ entry: 'importer', dir: 'export-mixins' },
+				{ entry: 'index', dir: 'export-not-at-top-level-fails', expectedError: 'Unexpected reserved word' },
+				{ entry: 'importer', dir: 'export-var' },
+				{ entry: 'importer', dir: 'import-as' },
+				{ entry: 'third', dir: 'import-chain' },
+				{ entry: 'index', dir: 'import-not-at-top-level-fails', expectedError: 'Unexpected reserved word' },
+				{ entry: 'mod', dir: 'module-level-declarations' },
+				{ entry: 'importer', dir: 'named-function-expression' },
+				{ entry: 'importer', dir: 'namespace-reassign-import-fails', expectedError: 'Cannot reassign imported binding of namespace `exp`' },
+				{ entry: 'importer', dir: 'namespace-update-import-fails', expectedError: 'Cannot reassign imported binding of namespace `exp`' },
+				{ entry: 'importer', dir: 'namespaces' },
+				{ entry: 'third', dir: 're-export-default-import' },
+				{ entry: 'importer', dir: 'reassign-import-fails', expectedError: 'Cannot reassign imported binding `x`' },
+				{ entry: 'importer', dir: 'reassign-import-not-at-top-level-fails', expectedError: 'Cannot reassign imported binding `x`' },
+				{ entry: 'mod', dir: 'this-is-global' },
+				{ entry: 'importer', dir: 'update-expression-of-import-fails', expectedError: 'Cannot reassign imported binding `a`' }
+			];
+
+			tests.forEach( function ( t ) {
+				it( t.dir, function () {
+					// Create CommonJS modules, then require the entry module
+					return sander.readdir( 'es6-module-transpiler', t.dir ).then( function ( files ) {
+						var promises = files.map( function ( file ) {
+							return sander.readFile( 'es6-module-transpiler', t.dir, file ).then( String ).then( function ( source ) {
+								var transpiled = esperanto.toCjs( source );
+
+								return sander.writeFile( '.tmp', t.dir, file, transpiled );
+							});
+						});
+
+						return Promise.all( promises );
+					})
+					.then( function () {
+						var missingError;
+
+						try {
+							require( path.resolve( '.tmp', t.dir, t.entry ) );
+							if ( t.expectedError ) {
+								missingError = true;
+							}
+						} catch( err ) {
+							if ( !t.expectedError || !~err.message.indexOf( t.expectedError ) ) {
+								throw err;
+							}
+						}
+
+						if ( missingError ) {
+							throw new Error( 'Expected error "' + t.expectedError + '"' );
+						}
+					}, function ( err ) {
+						if ( !t.expectedError || !~err.message.indexOf( t.expectedError ) ) {
+							throw err;
+						}
+					});
+				});
+			});
+		});
+	});
 };

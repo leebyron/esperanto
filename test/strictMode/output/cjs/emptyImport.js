@@ -3,6 +3,6 @@
 	'use strict';
 	
 	require('polyfills');
-	var __imports_1 = require('foo');
+	var __foo = require('foo');
 
 }).call(global);

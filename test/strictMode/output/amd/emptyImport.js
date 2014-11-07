@@ -1,5 +1,5 @@
-define(['foo', 'polyfills'], function (__imports_1) {
+define(['foo', 'polyfills'], function (__foo) {
 
-	
+	'use strict';
 
 });

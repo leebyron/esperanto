@@ -11,13 +11,11 @@
 	} else {
 		// browser global
 		global.myModule = {};
-		factory(global.__fs_js);
+		factory(global.__fs);
 	}
 
-}(typeof window !== 'undefined' ? window : this, function (__fs_js) {
+}(typeof window !== 'undefined' ? window : this, function (__fs) {
 
 	'use strict';
-
-	
 
 }));

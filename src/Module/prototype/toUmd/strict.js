@@ -171,7 +171,7 @@ export default function strict ( mod, body, options ) {
 		}).replace( /\t/g, body.indentStr );
 	}
 
-	body.trim().indent().prepend( intro ).append( '\n\n}));' );
+	body.trim().indent().prepend( intro ).trim().append( '\n\n}));' );
 
 	return body.toString();
 }

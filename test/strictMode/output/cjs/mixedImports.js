@@ -2,6 +2,6 @@
 
 	'use strict';
 	
-	var __imports_0 = require('asap');
+	var __asap = require('asap');
 
 }).call(global);

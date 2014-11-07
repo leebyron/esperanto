@@ -3,160 +3,76 @@ var assert = require( 'assert' ),
 	esperanto;
 
 module.exports = function () {
-	function getModuleName ( path ) {
-		return '__' + path.split( '/' ).pop().replace( /\.js$/, '' );
-	}
+	describe( 'fast mode', function () {
+		var tests;
 
-	describe( 'esperanto', function () {
+		function getModuleName ( path ) {
+			return '__' + path.split( '/' ).pop().replace( /\.js$/, '' );
+		}
+
+		tests = [
+			{ file: 'exportDefault', description: 'transpiles default exports' },
+			{ file: 'earlyExport', description: 'transpiles exports that are not the final statement' },
+			{ file: 'emptyImport', description: 'transpiles empty imports with no exports' },
+			{ file: 'emptyImportWithDefaultExport', description: 'transpiles empty imports with default exports' },
+			{ file: 'importAll', description: 'transpiles `import * as foo from "foo"`' },
+			{ file: 'importDefault', description: 'transpiles default imports' },
+			{ file: 'multipleImports', description: 'transpiles multiple imports' },
+			{ file: 'trailingEmptyImport', description: 'transpiles trailing empty imports' }
+		];
+
+		tests.forEach( function ( t ) {
+			t.file += '.js';
+			t.source = sander.readFileSync( 'samples', t.file ).toString();
+		});
+
 		before( function () {
 			return require( '../utils/build' )().then( function ( lib ) {
 				esperanto = lib;
 			});
 		});
 
-		describe( 'transpiles default exports', function () {
-			return compare( 'exportDefault', { namedOnly: false });
+		describe( 'esperanto.toAmd()', function () {
+			tests.forEach( function ( t ) {
+				it( t.description, function () {
+					return sander.readFile( 'fastMode/output/amd', t.file ).then( String ).then( function ( expected ) {
+						var actual = esperanto.toAmd( t.source, {
+							defaultOnly: true
+						});
+
+						assert.equal( actual, expected, 'AMD: Expected\n>\n' + actual + '\n>\n\nto match\n\n>\n' + expected + '\n>' );
+					});
+				});
+			});
 		});
 
-		describe( 'transpiles named exports', function () {
-			return compare( 'exportNamed', { namedOnly: true });
+		describe( 'esperanto.toCjs()', function () {
+			tests.forEach( function ( t ) {
+				it( t.description, function () {
+					return sander.readFile( 'fastMode/output/cjs', t.file ).then( String ).then( function ( expected ) {
+						var actual = esperanto.toCjs( t.source, {
+							defaultOnly: true
+						});
+
+						assert.equal( actual, expected, 'CJS: Expected\n>\n' + actual + '\n>\n\nto match\n\n>\n' + expected + '\n>' );
+					});
+				});
+			});
 		});
 
-		describe( 'transpiles exports that are not the final statement', function () {
-			return compare( 'earlyExport', { namedOnly: false });
-		});
+		describe( 'esperanto.toUmd()', function () {
+			tests.forEach( function ( t ) {
+				it( t.description, function () {
+					return sander.readFile( 'fastMode/output/umd', t.file ).then( String ).then( function ( expected ) {
+						var actual = esperanto.toUmd( t.source, {
+							defaultOnly: true,
+							name: 'myModule'
+						});
 
-		describe( 'transpiles empty imports with no exports', function () {
-			return compare( 'emptyImport', { namedOnly: false });
-		});
-
-		describe( 'transpiles empty imports with default exports', function () {
-			return compare( 'emptyImportWithDefaultExport', { namedOnly: false });
-		});
-
-		describe( 'transpiles named inline function exports', function () {
-			return compare( 'exportInlineFunction', { namedOnly: true });
-		});
-
-		describe( 'transpiles named inline variable exports', function () {
-			return compare( 'exportVar', { namedOnly: true });
-		});
-
-		describe( 'transpiles named inline let exports', function () {
-			return compare( 'exportLet', { namedOnly: true });
-		});
-
-		describe( 'transpiles import * as foo from "foo"', function () {
-			return compare( 'importAll', { namedOnly: false });
-		});
-
-		describe( 'transpiles default imports', function () {
-			return compare( 'importDefault', { namedOnly: false });
-		});
-
-		describe( 'transpiles named imports', function () {
-			return compare( 'importNamed', { namedOnly: true });
-		});
-
-		describe( 'transpiles mixed named/default imports', function () {
-			return compare( 'mixedImports', { namedOnly: true });
-		});
-
-		describe( 'transpiles multiple imports', function () {
-			return compare( 'multipleImports', { namedOnly: false });
-		});
-
-		describe( 'transpiles renamed imports', function () {
-			return compare( 'renamedImport', { namedOnly: true });
-		});
-
-		describe( 'transpiles trailing empty imports', function () {
-			return compare( 'trailingEmptyImport', { namedOnly: false });
+						assert.equal( actual, expected, 'UMD: Expected\n>\n' + actual + '\n>\n\nto match\n\n>\n' + expected + '\n>' );
+					});
+				});
+			});
 		});
 	});
-
-	function compare ( file, options ) {
-		var getSource;
-
-		file += '.js';
-		getSource = sander.readFile( 'samples', file ).then( String );
-
-		it( 'to AMD (named)', function () {
-			return getSource.then( function ( source ) {
-				return sander.readFile( 'fastMode/output/amd', file ).then( String ).then( function ( expected ) {
-					var actual = esperanto.toAmd( source, {
-						defaultOnly: false
-					});
-
-					assert.equal( actual, expected, 'AMD (named): Expected\n>\n' + actual + '\n>\n\nto match\n\n>\n' + expected + '\n>' );
-				});
-			});
-		});
-
-		it( 'to CommonJS (named)', function () {
-			return getSource.then( function ( source ) {
-				return sander.readFile( 'fastMode/output/cjs', file ).then( String ).then( function ( expected ) {
-					var actual = esperanto.toCjs( source, {
-						defaultOnly: false
-					});
-
-					assert.equal( actual, expected, 'CommonJS (named): Expected\n>\n' + actual + '\n>\n\nto match\n\n>\n' + expected + '\n>' );
-				});
-			});
-		});
-
-		it( 'to UMD (named)', function () {
-			return getSource.then( function ( source ) {
-				return sander.readFile( 'fastMode/output/umd', file ).then( String ).then( function ( expected ) {
-					var actual = esperanto.toUmd( source, {
-						defaultOnly: false,
-						name: 'myModule',
-						getModuleName: getModuleName
-					});
-
-					assert.equal( actual, expected, 'UMD (named): Expected\n>\n' + actual + '\n>\n\nto match\n\n>\n' + expected + '\n>' );
-				});
-			});
-		});
-
-		if ( !options.namedOnly ) {
-			it( 'to AMD (defaultOnly)', function () {
-				return getSource.then( function ( source ) {
-					return sander.readFile( 'fastMode/output/amdDefaults', file ).then( String ).then( function ( expected ) {
-						var actual = esperanto.toAmd( source, {
-							defaultOnly: true
-						});
-
-						assert.equal( actual, expected, 'AMD (defaultOnly): Expected\n>\n' + actual + '\n>\n\nto match\n\n>\n' + expected + '\n>' );
-					});
-				});
-			});
-
-			it( 'to CommonJS (defaultOnly)', function () {
-				return getSource.then( function ( source ) {
-					return sander.readFile( 'fastMode/output/cjsDefaults', file ).then( String ).then( function ( expected ) {
-						var actual = esperanto.toCjs( source, {
-							defaultOnly: true
-						});
-
-						assert.equal( actual, expected, 'CommonJS (defaultOnly): Expected\n>\n' + actual + '\n>\n\nto match\n\n>\n' + expected + '\n>' );
-					});
-				});
-			});
-
-			it( 'to UMD (defaultOnly)', function () {
-				return getSource.then( function ( source ) {
-					return sander.readFile( 'fastMode/output/umdDefaults', file ).then( String ).then( function ( expected ) {
-						var actual = esperanto.toUmd( source, {
-							name: 'myModule',
-							defaultOnly: true,
-							getModuleName: getModuleName
-						});
-
-						assert.equal( actual, expected, 'UMD (defaultOnly): Expected\n>\n' + actual + '\n>\n\nto match\n\n>\n' + expected + '\n>' );
-					});
-				});
-			});
-		}
-	}
 };

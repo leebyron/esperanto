@@ -5,7 +5,7 @@ var path = require( 'path' ),
 process.chdir( __dirname );
 
 function getModuleName ( path ) {
-	return '__' + path.split( '/' ).pop();
+	return '__' + path.replace( /\.js$/, '' ).split( '/' ).pop();
 }
 
 require( './build' )().then( function ( esperanto ) {
@@ -64,8 +64,8 @@ require( './build' )().then( function ( esperanto ) {
 
 	function generateStrictModeOutput () {
 		var profiles = [
-			{ outputdir: 'amd', method: 'toAmd', options: {} },
-			{ outputdir: 'cjs', method: 'toCjs', options: {} },
+			{ outputdir: 'amd', method: 'toAmd', options: { getModuleName: getModuleName } },
+			{ outputdir: 'cjs', method: 'toCjs', options: { getModuleName: getModuleName } },
 			{ outputdir: 'umd', method: 'toUmd', options: { name: 'myModule', getModuleName: getModuleName } }
 		];
 

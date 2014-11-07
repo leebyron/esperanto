@@ -1,5 +1,5 @@
-define(['baz'], function (__imports_0) {
+define(['baz'], function (__baz) {
 
-	
+	'use strict';
 
 });

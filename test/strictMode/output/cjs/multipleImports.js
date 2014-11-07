@@ -2,11 +2,11 @@
 
 	'use strict';
 	
-	var __imports_0 = require('foo');
-	var __imports_1 = require('bar');
-	var __imports_2 = require('baz');
+	var __foo = require('foo');
+	var __bar = require('bar');
+	var __baz = require('baz');
 	
-	var qux = __imports_0.default( __imports_1.default( __imports_2.default ) );
+	var qux = __foo.default( __bar.default( __baz.default ) );
 	exports.default = qux;
 
 }).call(global);

@@ -114,7 +114,7 @@ export default function strict ( mod, body, options ) {
 		IMPORT_NAMES: importNames.join( ', ' )
 	}).replace( /\t/g, body.indentStr );
 
-	body.trim().indent().prepend( intro ).append( outro );
+	body.trim().prepend( "'use strict';\n\n" ).trim().indent().prepend( intro ).append( outro );
 
 	return body.toString();
 }

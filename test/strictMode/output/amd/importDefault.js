@@ -1,5 +1,7 @@
-define(['foo'], function (__imports_0) {
+define(['foo'], function (__foo) {
 
-	console.log( __imports_0.default );
+	'use strict';
+	
+	console.log( __foo.default );
 
 });

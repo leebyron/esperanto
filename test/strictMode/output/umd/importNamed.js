@@ -11,13 +11,11 @@
 	} else {
 		// browser global
 		global.myModule = {};
-		factory(global.__baz_js);
+		factory(global.__baz);
 	}
 
-}(typeof window !== 'undefined' ? window : this, function (__baz_js) {
+}(typeof window !== 'undefined' ? window : this, function (__baz) {
 
 	'use strict';
-
-	
 
 }));

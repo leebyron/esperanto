@@ -1,5 +1,7 @@
-define(['exports', 'foo', 'polyfills'], function (exports, __imports_0) {
+define(['exports', 'foo', 'polyfills'], function (exports, __foo) {
 
+	'use strict';
+	
 	exports.default = 'baz';
 
 });

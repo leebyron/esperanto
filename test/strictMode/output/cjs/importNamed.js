@@ -2,6 +2,6 @@
 
 	'use strict';
 	
-	var __imports_0 = require('baz');
+	var __baz = require('baz');
 
 }).call(global);

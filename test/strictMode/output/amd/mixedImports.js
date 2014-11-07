@@ -1,5 +1,5 @@
-define(['asap'], function (__imports_0) {
+define(['asap'], function (__asap) {
 
-	
+	'use strict';
 
 });
