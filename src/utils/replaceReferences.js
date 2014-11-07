@@ -1,10 +1,37 @@
 import estraverse from 'estraverse';
 
-export default function replaceReferences ( mod, body ) {
-	var scopeChain = [], scope, blockScopeChain = [], blockScope, importRefs, replacementByName;
+var Scope = function ( options ) {
+	options = options || {};
 
-	scope = scopeChain[0] = [];
-	blockScope = blockScopeChain[0] = [];
+	this.parent = options.parent;
+	this.names = options.params || [];
+};
+
+Scope.prototype = {
+	add: function ( name ) {
+		this.names.push( name );
+	},
+
+	contains: function ( name ) {
+		if ( ~this.names.indexOf( name ) ) {
+			return true;
+		}
+
+		if ( this.parent ) {
+			return this.parent.contains( name );
+		}
+
+		return false;
+	}
+};
+
+export default function replaceReferences ( mod, body ) {
+	var scope, blockScope, importRefs, replacementByName;
+
+	scope = new Scope();
+	blockScope = new Scope();
+
+	scope.global = true;// TMP
 
 	// First, store scope into on nodes
 	estraverse.traverse( mod.ast, {
@@ -18,29 +45,24 @@ export default function replaceReferences ( mod, body ) {
 			}
 
 			if ( createsScope( node ) ) {
-				node._scope = node.params.map( x => x.name ); // TODO rest params?
-				node._scope.parent = scope;
-
-				scope = node._scope;
-				scopeChain.push( scope );
-
-				// add params to scope
+				scope = node._scope = new Scope({
+					parent: scope,
+					params: node.params.map( x => x.name ) // TODO rest params?
+				});
 			}
 
 			else if ( createsBlockScope( node ) ) {
-				node._blockScope = [];
-				node._blockScope.parent = blockScope;
-
-				blockScope = node._blockScope;
-				blockScopeChain.push( blockScope );
+				blockScope = node._blockScope = new Scope({
+					parent: blockScope
+				});
 			}
 
 			if ( declaresVar( node ) ) {
-				scope.push( node.id.name );
+				scope.add( node.id.name );
 			}
 
 			else if ( declaresLet( node ) ) {
-				blockScope.push( node.id.name );
+				blockScope.add( node.id.name );
 			}
 
 			// Make a note of which children we should skip
@@ -54,11 +76,11 @@ export default function replaceReferences ( mod, body ) {
 		},
 		leave: function ( node ) {
 			if ( createsScope( node ) ) {
-				scope = scopeChain.pop();
+				scope = scope.parent;
 			}
 
 			else if ( createsBlockScope( node ) ) {
-				blockScope = blockScopeChain.pop();
+				blockScope = blockScope.parent;
 			}
 		}
 	});
@@ -108,7 +130,7 @@ export default function replaceReferences ( mod, body ) {
 				ref = node.name;
 				replacement = replacementByName[ ref ];
 
-				if ( replacement && !inScopeChain( scope, ref ) ) {
+				if ( replacement && !scope.contains( ref ) ) {
 					// rewrite
 					body.replace( node.start, node.end, replacement );
 				}
@@ -147,14 +169,6 @@ function shouldSkip ( node ) {
 	return false; // TODO
 }
 
-function inScopeChain ( scope, name ) {
-	do {
-		if ( ~scope.indexOf( name ) ) {
-			return true;
-		}
-	} while ( scope = scope.parent );
-}
-
 function disallowIllegalReassignment ( node, replacementByName, scope ) {
 	var assignee, name, replacement, message;
 
@@ -180,7 +194,7 @@ function disallowIllegalReassignment ( node, replacementByName, scope ) {
 	name = assignee.name;
 	replacement = replacementByName[ name ];
 
-	if ( !!replacement && !inScopeChain( scope, name ) ) {
+	if ( !!replacement && !scope.contains( name ) ) {
 		throw new Error( message + '`' + name + '`' );
 	}
 }
