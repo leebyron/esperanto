@@ -15,7 +15,6 @@ function transpileMethod ( methodName ) {
 export default {
 	toAmd: transpileMethod( 'toAmd' ),
 	toCjs: transpileMethod( 'toCjs' ),
-	toStatement: transpileMethod( 'toStatement' ),
 	toUmd: transpileMethod( 'toUmd' ),
 
 	bundle: function ( options ) {

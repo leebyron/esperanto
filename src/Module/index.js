@@ -3,7 +3,6 @@ import MagicString from 'magic-string';
 import parse from './prototype/parse';
 import toAmd from './prototype/toAmd';
 import toCjs from './prototype/toCjs';
-import toStatement from './prototype/toStatement';
 import toUmd from './prototype/toUmd';
 
 var Module = function ( options ) {
@@ -31,7 +30,6 @@ Module.prototype = {
 	parse: parse,
 	toAmd: toAmd,
 	toCjs: toCjs,
-	toStatement: toStatement,
 	toUmd: toUmd
 };
 
