@@ -1,10 +1,5 @@
-define(['asap'],function (__imports_0) {
+define(['asap'], function (__imports_0) {
 
-	'use strict';
 	
-	var asap = __imports_0.default;
-	var later = __imports_0.later;
-	
-	import asap, { later } from 'asap';
 
 });

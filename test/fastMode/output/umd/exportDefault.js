@@ -4,8 +4,8 @@
 
 	if (typeof define === 'function' && define.amd) {
 		// export as AMD
-		define([], factory);
-	} else if ( typeof module !== 'undefined' && module.exports && typeof require === 'function' ) {
+		define(factory);
+	} else if (typeof module !== 'undefined' && module.exports && typeof require === 'function') {
 		// node/browserify
 		module.exports = factory();
 	} else {
@@ -16,8 +16,6 @@
 }(typeof window !== 'undefined' ? window : this, function () {
 
 	'use strict';
-	
-	export default 'foo';
 	
 	return 'foo';
 

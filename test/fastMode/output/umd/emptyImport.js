@@ -4,20 +4,17 @@
 
 	if (typeof define === 'function' && define.amd) {
 		// export as AMD
-		define(['polyfills', 'foo'], factory);
-	} else if ( typeof module !== 'undefined' && module.exports && typeof require === 'function' ) {
+		define(['foo', 'polyfills'], factory);
+	} else if (typeof module !== 'undefined' && module.exports && typeof require === 'function') {
 		// node/browserify
-		module.exports = factory(require('polyfills'), require('foo'));
+		module.exports = factory(require('foo'), require('polyfills'));
 	} else {
 		// browser global
-		global.myModule = factory(global.__polyfills_js, global.foo);
+		global.myModule = factory(global.foo);
 	}
 
-}(typeof window !== 'undefined' ? window : this, function (__polyfills_js, foo) {
+}(typeof window !== 'undefined' ? window : this, function (foo) {
 
 	'use strict';
-	
-	import 'polyfills';
-	import foo from 'foo';
 
 }));

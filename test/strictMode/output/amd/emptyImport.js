@@ -1,10 +1,5 @@
-define(['polyfills','foo'],function (__imports_0, __imports_1) {
+define(['foo', 'polyfills'], function (__imports_1) {
 
-	'use strict';
 	
-	var foo = __imports_1.default;
-	
-	import 'polyfills';
-	import foo from 'foo';
 
 });

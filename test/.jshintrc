@@ -7,12 +7,14 @@
 		"require": true,
 		"module": true,
 		"__dirname": true,
+		"define": true,
 
 		"describe": true,
 		"it": true,
 		"before": true,
 
 		"setTimeout": true,
-		"console": true
+		"console": true,
+		"window": true
 	}
 }

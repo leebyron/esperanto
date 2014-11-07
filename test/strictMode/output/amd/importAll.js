@@ -1,7 +1,5 @@
-define(['fs'],function (fs) {
+define(['fs'], function (__imports_0) {
 
-	'use strict';
 	
-	import * as fs from 'fs';
 
 });

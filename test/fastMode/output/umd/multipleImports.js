@@ -5,7 +5,7 @@
 	if (typeof define === 'function' && define.amd) {
 		// export as AMD
 		define(['foo', 'bar', 'baz'], factory);
-	} else if ( typeof module !== 'undefined' && module.exports && typeof require === 'function' ) {
+	} else if (typeof module !== 'undefined' && module.exports && typeof require === 'function') {
 		// node/browserify
 		module.exports = factory(require('foo'), require('bar'), require('baz'));
 	} else {
@@ -17,12 +17,7 @@
 
 	'use strict';
 	
-	import foo from 'foo';
-	import bar from 'bar';
-	import baz from 'baz';
-	
 	var qux = foo( bar( baz ) );
-	export default qux;
 	
 	return qux;
 

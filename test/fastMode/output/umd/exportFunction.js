@@ -4,8 +4,8 @@
 
 	if (typeof define === 'function' && define.amd) {
 		// export as AMD
-		define([], factory);
-	} else if ( typeof module !== 'undefined' && module.exports && typeof require === 'function' ) {
+		define(factory);
+	} else if (typeof module !== 'undefined' && module.exports && typeof require === 'function') {
 		// node/browserify
 		module.exports = factory();
 	} else {
@@ -17,12 +17,10 @@
 
 	'use strict';
 	
-	export default function foo ( str ) {
+	function foo ( str ) {
 		return str.toUpperCase();
 	}
 	
-	return function foo ( str ) {
-		return str.toUpperCase();
-	};
+	return foo;
 
 }));

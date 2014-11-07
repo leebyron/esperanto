@@ -5,7 +5,7 @@
 	if (typeof define === 'function' && define.amd) {
 		// export as AMD
 		define(['foo'], factory);
-	} else if ( typeof module !== 'undefined' && module.exports && typeof require === 'function' ) {
+	} else if (typeof module !== 'undefined' && module.exports && typeof require === 'function') {
 		// node/browserify
 		module.exports = factory(require('foo'));
 	} else {
@@ -16,8 +16,6 @@
 }(typeof window !== 'undefined' ? window : this, function (foo) {
 
 	'use strict';
-	
-	import foo from 'foo';
 	
 	console.log( foo );
 
