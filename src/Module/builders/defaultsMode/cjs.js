@@ -1,4 +1,4 @@
-import disallowNames from '../shared/disallowNames';
+import disallowNames from './utils/disallowNames';
 
 export default function defaults ( mod, body, options ) {
 	var replacement, exportDeclaration;

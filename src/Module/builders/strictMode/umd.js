@@ -1,5 +1,5 @@
 import replaceReferences from '../../../utils/replaceReferences';
-import getExportBlock from '../shared/getExportBlock';
+import getExportBlock from './utils/getExportBlock';
 import template from '../../../utils/template';
 
 var introWithExports, introWithoutExports;

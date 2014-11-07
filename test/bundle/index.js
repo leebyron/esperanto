@@ -15,14 +15,14 @@ module.exports = function () {
 			});
 		});
 
-		it( 'bundles modules', function () {
+		it( 'bundles as CommonJS', function () {
 			return esperanto.bundle({
 				base: 'bundle/input/1',
-				entry: 'foo'
+				entry: 'main'
 			}).then( function ( bundle ) {
-				var result = bundle.toUmd({
+				var result = bundle.toCjs({
 					defaultOnly: true,
-					name: 'foo',
+					name: 'main',
 					getModuleName: function ( path ) {
 						return path.split( '/' ).pop();
 					}
@@ -32,38 +32,55 @@ module.exports = function () {
 			});
 		});
 
-		it( 'follows /index.js paths', function () {
-			return esperanto.bundle({
-				base: 'bundle/input/2',
-				entry: 'foo'
-			}).then( function ( bundle ) {
-				var result = bundle.toUmd({
-					defaultOnly: true,
-					name: 'foo',
-					getModuleName: function ( path ) {
-						return path.split( '/' ).pop();
-					}
-				});
+		// it( 'bundles modules', function () {
+		// 	return esperanto.bundle({
+		// 		base: 'bundle/input/1',
+		// 		entry: 'foo'
+		// 	}).then( function ( bundle ) {
+		// 		var result = bundle.toUmd({
+		// 			defaultOnly: true,
+		// 			name: 'foo',
+		// 			getModuleName: function ( path ) {
+		// 				return path.split( '/' ).pop();
+		// 			}
+		// 		});
 
-				console.log( 'bundle\n>\n%s\n>\n', result );
-			});
-		});
+		// 		console.log( 'bundle\n>\n%s\n>\n', result );
+		// 	});
+		// });
 
-		it( 'keeps imports it can\'t resolve', function () {
-			return esperanto.bundle({
-				base: 'bundle/input/3',
-				entry: 'foo'
-			}).then( function ( bundle ) {
-				var result = bundle.toUmd({
-					defaultOnly: true,
-					name: 'foo',
-					getModuleName: function ( path ) {
-						return path.split( '/' ).pop();
-					}
-				});
+		// it( 'follows /index.js paths', function () {
+		// 	return esperanto.bundle({
+		// 		base: 'bundle/input/2',
+		// 		entry: 'foo'
+		// 	}).then( function ( bundle ) {
+		// 		var result = bundle.toUmd({
+		// 			defaultOnly: true,
+		// 			name: 'foo',
+		// 			getModuleName: function ( path ) {
+		// 				return path.split( '/' ).pop();
+		// 			}
+		// 		});
 
-				console.log( 'bundle\n>\n%s\n>\n', result );
-			});
-		});
+		// 		console.log( 'bundle\n>\n%s\n>\n', result );
+		// 	});
+		// });
+
+		// it( 'keeps imports it can\'t resolve', function () {
+		// 	return esperanto.bundle({
+		// 		base: 'bundle/input/3',
+		// 		entry: 'foo'
+		// 	}).then( function ( bundle ) {
+		// 		var result = bundle.toUmd({
+		// 			defaultOnly: true,
+		// 			name: 'foo',
+		// 			getModuleName: function ( path ) {
+		// 				return path.split( '/' ).pop();
+		// 			}
+		// 		});
+
+		// 		console.log( 'bundle\n>\n%s\n>\n', result );
+		// 	});
+		// });
 	});
 };

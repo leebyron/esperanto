@@ -1,6 +1,7 @@
 import path from 'path';
 import moduleNameHelper from './utils/moduleNameHelper';
 import collect from './prototype/collect';
+import combine from './prototype/combine';
 import toAmd from './prototype/toAmd';
 import toCjs from './prototype/toCjs';
 import toEs6 from './prototype/toEs6';
@@ -19,6 +20,7 @@ var Bundle = function ( options ) {
 
 Bundle.prototype = {
 	collect: collect,
+	combine: combine,
 	toAmd: toAmd,
 	toCjs: toCjs,
 	toEs6: toEs6,

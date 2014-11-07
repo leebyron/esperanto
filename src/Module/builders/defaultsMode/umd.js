@@ -1,6 +1,23 @@
-import disallowNames from '../shared/disallowNames';
+import disallowNames from './utils/disallowNames';
 
-var template = 'define(__IMPORT_PATHS__function (__IMPORT_NAMES__) {\n\n';
+var template = `(function (global, factory) {
+
+	'use strict';
+
+	if (typeof define === 'function' && define.amd) {
+		// export as AMD
+		define(__AMD_DEPS__factory);
+	} else if (typeof module !== 'undefined' && module.exports && typeof require === 'function') {
+		// node/browserify
+		module.exports = factory(__CJS_DEPS__);
+	} else {
+		// browser global
+		global.__NAME__ = factory(__GLOBAL_DEPS__);
+	}
+
+}(typeof window !== 'undefined' ? window : this, function (__IMPORT_NAMES__) {
+
+`;
 
 export default function defaults ( mod, body, options ) {
 	var importNames = [],
@@ -63,10 +80,13 @@ export default function defaults ( mod, body, options ) {
 	}
 
 	intro = template
-		.replace( '__IMPORT_PATHS__', importPaths.length ? '[' + importPaths.map( quote ).join( ', ' ) + '], ' : '' )
-		.replace( '__IMPORT_NAMES__', importNames.join( ', ' ) );
+		.replace( '__AMD_DEPS__', importPaths.length ? '[' + importPaths.map( quote ).join( ', ' ) + '], ' : '' )
+		.replace( '__CJS_DEPS__', importPaths.map( req ).join( ', ' ) )
+		.replace( '__GLOBAL_DEPS__', importNames.map( globalify ).join( ', ' ) )
+		.replace( '__IMPORT_NAMES__', importNames.join( ', ' ) )
+		.replace( '__NAME__', options.name );
 
-	body.indent().prepend( intro ).append( '\n\n});' );
+	body.indent().prepend( intro ).append( '\n\n}));' );
 
 	return body.toString();
 }
@@ -77,4 +97,12 @@ function isFunctionDeclaration ( x ) {
 
 function quote ( str ) {
 	return "'" + str + "'";
+}
+
+function req ( path ) {
+	return `require('${path}')`;
+}
+
+function globalify ( name ) {
+	return `global.${name}`;
 }

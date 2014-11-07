@@ -1,8 +1,4 @@
-import getIntro from './getIntro';
-import getHeader from '../shared/getHeader';
-import getExportBlock from '../shared/getExportBlock';
-import disallowNames from '../shared/disallowNames';
-import removeImportsAndExports from '../shared/removeImportsAndExports';
+import getExportBlock from './utils/getExportBlock';
 import replaceReferences from '../../../utils/replaceReferences';
 
 var outroWithExports = `
@@ -12,9 +8,7 @@ var outroWithExports = `
 	Object.defineProperty(exports, prop, {
 		enumerable: true,
 		get: get,
-		set: function () {
-			throw new Error('Cannot reassign imported binding of namespace \u0060' + prop + '\u0060');
-		}
+		set: function () {}
 	});
 
 });`;
@@ -28,7 +22,25 @@ export default function strict ( mod, body, options ) {
 		header,
 		footer;
 
-	intro = getIntro( mod, options );
+	intro = mod.imports.map( x => {
+		var name, lhs, rhs;
+
+		rhs = `require('${x.path}');`;
+
+		if ( x.specifiers.length ) {
+			if ( x.specifiers[0] && x.specifiers[0].batch ) {
+				name = x.specifiers[0].name;
+			} else {
+				name = x.name;
+			}
+
+			lhs = `var ${name} = `;
+
+			return lhs + rhs;
+		}
+
+		return rhs;
+	}).join( '\n' );
 
 	// replace all references to imported values
 	replaceReferences( mod, body );

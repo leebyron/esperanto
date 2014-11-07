@@ -1,34 +1,6 @@
-(function (global, factory) {
+var foo__message = 'yes';
+var foo__default = foo__message;
 
-	'use strict';
-
-	if (typeof define === 'function' && define.amd) {
-		// export as AMD
-		define(['exports'], factory);
-	} else if ( typeof module !== 'undefined' && module.exports && typeof require === 'function' ) {
-		// node/browserify
-		factory(exports);
-	} else {
-		// browser global
-		global.myModule = {};
-		factory(global.myModule);
-	}
-
-}(typeof window !== 'undefined' ? window : this, function (exports) {
-
-	'use strict';
-	
-	var foo = {};
-	(function () {
-		var message = 'yes';
-		export default message;
-	}());
-	
-	(function () {
-		var foo = foo.default;
-		
-		import foo from './foo';
-		console.log( foo );
-	}());
-
-}));
+console.log( foo__default );
+console.log( external__default );
+console.log( other__named );

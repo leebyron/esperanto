@@ -14,6 +14,7 @@ export default function Bundle$collect () {
 
 	return fetchModule( entry ).then( () => {
 		this.modules = sortModules( modules[0], modules );
+		this.combine();
 	});
 
 	function fetchModule ( modulePath ) {
