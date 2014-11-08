@@ -1,4 +1,3 @@
-import replaceReferences from '../../../utils/replaceReferences';
 import getExportBlock from './utils/getExportBlock';
 import template from '../../../utils/template';
 
@@ -38,8 +37,6 @@ export default function strict ( mod, body, options ) {
 		header,
 		footer,
 		i;
-
-	replaceReferences( mod, body );
 
 	// ensure empty imports are at the end
 	i = mod.imports.length;

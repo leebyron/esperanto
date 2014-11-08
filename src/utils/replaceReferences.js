@@ -1,4 +1,3 @@
-import annotateAst from './annotateAst';
 import getImportReplacements from './getImportReplacements';
 import estraverse from 'estraverse';
 
@@ -8,7 +7,6 @@ export default function replaceReferences ( mod, body, options ) {
 	options = options || {};
 	joiner = options.joiner || '.';
 
-	annotateAst( mod.ast );
 	scope = mod.ast._scope;
 	blockScope = mod.ast._blockScope;
 

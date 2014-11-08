@@ -1,5 +1,4 @@
 import getExportBlock from './utils/getExportBlock';
-import replaceReferences from '../../../utils/replaceReferences';
 
 var outroWithExports = `
 
@@ -41,9 +40,6 @@ export default function strict ( mod, body, options ) {
 
 		return rhs;
 	}).join( '\n' );
-
-	// replace all references to imported values
-	replaceReferences( mod, body );
 
 	// remove import statements...
 	mod.imports.forEach( x => {

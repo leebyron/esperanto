@@ -1,21 +1,23 @@
-var template = `(function (global, factory) {
+import template from '../../../utils/template';
+
+var introTemplate = template( `(function (global, factory) {
 
 	'use strict';
 
 	if (typeof define === 'function' && define.amd) {
 		// export as AMD
-		define(__AMD_DEPS__factory);
+		define(<%= AMD_DEPS %>factory);
 	} else if (typeof module !== 'undefined' && module.exports && typeof require === 'function') {
 		// node/browserify
-		module.exports = factory(__CJS_DEPS__);
+		module.exports = factory(<%= CJS_DEPS %>);
 	} else {
 		// browser global
-		global.__NAME__ = factory(__GLOBAL_DEPS__);
+		global.<%= NAME %> = factory(<%= GLOBAL_DEPS %>);
 	}
 
-}(typeof window !== 'undefined' ? window : this, function (__IMPORT_NAMES__) {
+}(typeof window !== 'undefined' ? window : this, function (<%= IMPORT_NAMES %>) {
 
-`;
+` );
 
 export default function defaults ( mod, body, options ) {
 	var importNames = [],
@@ -75,12 +77,13 @@ export default function defaults ( mod, body, options ) {
 		body.prepend( "'use strict';\n\n" ).trim();
 	}
 
-	intro = template
-		.replace( '__AMD_DEPS__', importPaths.length ? '[' + importPaths.map( quote ).join( ', ' ) + '], ' : '' )
-		.replace( '__CJS_DEPS__', importPaths.map( req ).join( ', ' ) )
-		.replace( '__GLOBAL_DEPS__', importNames.map( globalify ).join( ', ' ) )
-		.replace( '__IMPORT_NAMES__', importNames.join( ', ' ) )
-		.replace( '__NAME__', options.name );
+	intro = introTemplate({
+		AMD_DEPS: importPaths.length ? '[' + importPaths.map( quote ).join( ', ' ) + '], ' : '',
+		CJS_DEPS: importPaths.map( req ).join( ', ' ),
+		GLOBAL_DEPS: importNames.map( globalify ).join( ', ' ),
+		IMPORT_NAMES: importNames.join( ', ' ),
+		NAME: options.name
+	}).replace( /\t/g, body.indentStr );
 
 	body.indent().prepend( intro ).append( '\n\n}));' );
 
