@@ -33,7 +33,7 @@ export default function replaceReferences ( mod, body ) {
 			disallowIllegalReassignment( node, importReplacements, scope );
 
 			// Rewrite assignments to exports
-			rewriteExportAssignments( body, node, exportNames, scope, alreadyExported );
+			rewriteExportAssignments( body, node, exportNames, scope, alreadyExported, ~mod.ast.body.indexOf( parent ) );
 
 			// Rewrite import identifiers
 			rewriteImportIdentifiers( body, node, importReplacements, scope );
@@ -129,7 +129,7 @@ function disallowIllegalReassignment ( node, importReplacements, scope ) {
 	}
 }
 
-function rewriteExportAssignments ( body, node, exports, scope, alreadyExported ) {
+function rewriteExportAssignments ( body, node, exports, scope, alreadyExported, isTopLevelNode ) {
 	var assignee, name;
 
 	if ( node.type === 'AssignmentExpression' ) {
@@ -155,10 +155,9 @@ function rewriteExportAssignments ( body, node, exports, scope, alreadyExported 
 
 		// keep track of what we've already exported - we don't need to
 		// export it again later
-		// TODO this doesn't work as expected... investigate
-		/*if ( isTopLevelNode ) {
+		if ( isTopLevelNode ) {
 			alreadyExported[ name ] = true;
-		}*/
+		}
 	}
 }
 
