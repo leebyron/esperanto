@@ -2,7 +2,6 @@ import Module from './Module';
 import builders from './Module/builders';
 import disallowNames from './utils/disallowNames';
 import annotateAst from './utils/annotateAst';
-import replaceReferences from './utils/replaceReferences';
 import Bundle from './Bundle';
 
 function transpileMethod ( format ) {
@@ -18,15 +17,10 @@ function transpileMethod ( format ) {
 		if ( options.defaultOnly ) {
 			// ensure there are no named imports/exports
 			disallowNames( module );
-
 			builder = builders.defaultsMode[ format ];
 		} else {
 			// annotate AST with scope info
 			annotateAst( module.ast );
-
-			// replace references
-			replaceReferences( module, body );
-
 			builder = builders.strictMode[ format ];
 		}
 

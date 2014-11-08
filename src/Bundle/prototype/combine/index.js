@@ -1,5 +1,5 @@
 import MagicString from 'magic-string';
-import replaceReferences from '../../../utils/replaceReferences';
+//import replaceReferences from '../../../utils/replaceReferences';
 
 export default function combine ( options ) {
 	var getModuleName = this.getModuleName;
@@ -10,10 +10,10 @@ export default function combine ( options ) {
 		var modBody = m.body.clone(),
 			prefix = getModuleName( m.file );
 
-		replaceReferences( m, modBody, {
-			varPrefix: prefix,
-			joiner: '__'
-		});
+		// replaceReferences( m, modBody, {
+		// 	varPrefix: prefix,
+		// 	joiner: '__'
+		// });
 
 		// remove imports
 		m.imports.forEach( x => {

@@ -1,5 +1,6 @@
 import template from '../../../utils/template';
 import reorderImports from './utils/reorderImports';
+import transformBody from './utils/transformBody';
 
 var introTemplate;
 
@@ -33,7 +34,10 @@ export default function strict ( mod, body ) {
 		names: importNames.join( ', ' )
 	}).replace( /\t/g, body.indentStr );
 
-	body.trim().indent().prepend( intro ).trim().append( '\n\n});' );
+	transformBody( mod, body, {
+		intro: intro,
+		outro: '\n\n});'
+	});
 
 	return body.toString();
 }

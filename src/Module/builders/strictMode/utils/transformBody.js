@@ -1,20 +1,23 @@
-import getImportReplacements from './getImportReplacements';
+import gatherImports from './gatherImports';
 import getExportNames from './getExportNames';
 import estraverse from 'estraverse';
 
-export default function replaceReferences ( mod, body ) {
+export default function transformBody ( mod, body, options ) {
 	var scope,
 		blockScope,
-		importReplacements = {},
+		importedBindings = {},
+		toRewrite = {},
 		exportNames = [],
 		alreadyExported = {},
-		exportBlock,
+		shouldExportEarly = {},
+		earlyExports,
+		lateExports,
 		defaultValue;
 
 	scope = mod.ast._scope;
 	blockScope = mod.ast._blockScope;
 
-	importReplacements = getImportReplacements( mod.imports );
+	gatherImports( mod.imports, importedBindings, toRewrite );
 	exportNames = getExportNames( mod.exports );
 
 	// scope is now the global scope
@@ -30,13 +33,13 @@ export default function replaceReferences ( mod, body ) {
 			}
 
 			// Catch illegal reassignments
-			disallowIllegalReassignment( node, importReplacements, scope );
+			disallowIllegalReassignment( node, toRewrite, scope );
 
 			// Rewrite assignments to exports
 			rewriteExportAssignments( body, node, exportNames, scope, alreadyExported, ~mod.ast.body.indexOf( parent ) );
 
 			// Rewrite import identifiers
-			rewriteImportIdentifiers( body, node, importReplacements, scope );
+			rewriteImportIdentifiers( body, node, toRewrite, scope );
 		},
 
 		leave: function ( node ) {
@@ -80,6 +83,10 @@ export default function replaceReferences ( mod, body ) {
 		}
 
 		if ( x.declaration ) {
+			if ( x.node.declaration.type === 'FunctionDeclaration' ) {
+				shouldExportEarly[ x.node.declaration.id.name ] = true; // TODO what about `function foo () {}; export { foo }`?
+			}
+
 			body.remove( x.start, x.valueStart );
 		} else {
 			body.remove( x.start, x.next );
@@ -87,19 +94,40 @@ export default function replaceReferences ( mod, body ) {
 	});
 
 	// Append export block (this is the same for all module types, unlike imports)
-	exportBlock = [];
+	earlyExports = [];
+	lateExports = [];
+
 	exportNames.forEach( name => {
-		if ( !alreadyExported[ name ] ) {
-			exportBlock.push( `exports.${name} = ${name};` );
+		var chain;
+
+		if ( chain = importedBindings[ name ] ) {
+			// special case - a binding from another module
+			earlyExports.push( `Object.defineProperty(exports, '${name}', { get: function () { return ${chain}; }});` );
+		} else if ( shouldExportEarly[ name ] ) {
+			earlyExports.push( `exports.${name} = ${name};` );
+		} else if ( !alreadyExported[ name ] ) {
+			lateExports.push( `exports.${name} = ${name};` );
 		}
 	});
 
-	if ( exportBlock.length ) {
-		body.trim().append( '\n\n' + exportBlock.join( '\n' ) );
+	if ( lateExports.length ) {
+		body.trim().append( '\n\n' + lateExports.join( '\n' ) );
 	}
+
+	// Prepend require() statements
+	if ( options.header ) {
+		body.prepend( options.header + '\n\n' );
+	}
+
+	// Function exports should be exported immediately after 'use strict'
+	if ( earlyExports.length ) {
+		body.trim().prepend( earlyExports.join( '\n' ) + '\n\n' );
+	}
+
+	body.trim().indent().prepend( options.intro ).trim().append( options.outro );
 }
 
-function disallowIllegalReassignment ( node, importReplacements, scope ) {
+function disallowIllegalReassignment ( node, toRewrite, scope ) {
 	var assignee, name, replacement, message;
 
 	if ( node.type === 'AssignmentExpression' ) {
@@ -122,7 +150,7 @@ function disallowIllegalReassignment ( node, importReplacements, scope ) {
 	}
 
 	name = assignee.name;
-	replacement = importReplacements[ name ];
+	replacement = toRewrite[ name ];
 
 	if ( !!replacement && !scope.contains( name ) ) {
 		throw new Error( message + '`' + name + '`' );
@@ -161,12 +189,12 @@ function rewriteExportAssignments ( body, node, exports, scope, alreadyExported,
 	}
 }
 
-function rewriteImportIdentifiers ( body, node, importReplacements, scope ) {
+function rewriteImportIdentifiers ( body, node, toRewrite, scope ) {
 	var name, replacement;
 
 	if ( node.type === 'Identifier' ) {
 		name = node.name;
-		replacement = importReplacements[ name ];
+		replacement = toRewrite[ name ];
 
 		if ( replacement && !scope.contains( name ) ) {
 			// rewrite

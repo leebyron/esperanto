@@ -1,5 +1,6 @@
-var intro = '(function () {\n\n\t\'use strict\';\n\n';
+import transformBody from './utils/transformBody';
 
+var intro = '(function () {\n\n\t\'use strict\';\n\n';
 var outro = '\n\n}).call(global);';
 
 export default function strict ( mod, body ) {
@@ -22,11 +23,11 @@ export default function strict ( mod, body ) {
 		return replacement;
 	}).join( '\n' );
 
-	body.trim()
-		.prepend( importBlock ? ( importBlock + '\n\n' ) : '' )
-		.indent();
-
-	body.prepend( intro.replace( /\t/g, body.indentStr ) ).trim().append( outro );
+	transformBody( mod, body, {
+		intro: intro.replace( /\t/g, body.indentStr ),
+		header: importBlock,
+		outro: outro
+	});
 
 	return body.toString();
 }

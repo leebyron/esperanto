@@ -1,5 +1,6 @@
 import template from '../../../utils/template';
 import reorderImports from './utils/reorderImports';
+import transformBody from './utils/transformBody';
 
 var introTemplate;
 
@@ -20,8 +21,6 @@ export default function strict ( mod, body, options ) {
 		}
 	});
 
-	body.trim();
-
 	intro = introTemplate({
 		amdDeps: [ 'exports' ].concat( importPaths ).map( quote ).join( ', ' ),
 		cjsDeps: [ 'exports' ].concat( importPaths.map( req ) ).join( ', ' ),
@@ -30,7 +29,10 @@ export default function strict ( mod, body, options ) {
 		name: options.name
 	}).replace( /\t/g, body.indentStr );
 
-	body.trim().indent().prepend( intro ).trim().append( '\n\n}));' );
+	transformBody( mod, body, {
+		intro: intro,
+		outro: '\n\n}));'
+	});
 
 	return body.toString();
 }
