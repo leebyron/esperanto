@@ -12,7 +12,8 @@ export default function transformBody ( mod, body, options ) {
 		shouldExportEarly = {},
 		earlyExports,
 		lateExports,
-		defaultValue;
+		defaultValue,
+		capturedUpdates = null;
 
 	scope = mod.ast._scope;
 	blockScope = mod.ast._blockScope;
@@ -32,17 +33,38 @@ export default function transformBody ( mod, body, options ) {
 				blockScope = node._blockScope;
 			}
 
+			// Special case: if you have a variable declaration that updates existing
+			// bindings as a side-effect, e.g. `var a = b++`, where `b` is an exported
+			// value, we can't simply append `exports.b = b` to the update (as we
+			// normally would) because that would be syntactically invalid. Instead,
+			// we capture the change and update the export (and any others) after the
+			// variable declaration
+			if ( node.type === 'VariableDeclaration' ) {
+				let previous = capturedUpdates;
+				capturedUpdates = [];
+				capturedUpdates.previous = previous;
+			}
+
 			// Catch illegal reassignments
 			disallowIllegalReassignment( node, toRewrite, scope );
 
 			// Rewrite assignments to exports
-			rewriteExportAssignments( body, node, exportNames, scope, alreadyExported, ~mod.ast.body.indexOf( parent ) );
+			rewriteExportAssignments( body, node, exportNames, scope, alreadyExported, ~mod.ast.body.indexOf( parent ), capturedUpdates );
 
 			// Rewrite import identifiers
 			rewriteImportIdentifiers( body, node, toRewrite, scope );
 		},
 
 		leave: function ( node ) {
+			// Special case - see above
+			if ( node.type === 'VariableDeclaration' ) {
+				if ( capturedUpdates.length ) {
+					body.replace( node.end, node.end, capturedUpdates.map( n => ` exports.${n} = ${n};` ).join( '' ) );
+				}
+
+				capturedUpdates = capturedUpdates.previous;
+			}
+
 			if ( node._scope ) {
 				scope = scope.parent;
 			} else if ( node._blockScope ) {
@@ -157,7 +179,7 @@ function disallowIllegalReassignment ( node, toRewrite, scope ) {
 	}
 }
 
-function rewriteExportAssignments ( body, node, exports, scope, alreadyExported, isTopLevelNode ) {
+function rewriteExportAssignments ( body, node, exports, scope, alreadyExported, isTopLevelNode, capturedUpdates ) {
 	var assignee, name;
 
 	if ( node.type === 'AssignmentExpression' ) {
@@ -174,6 +196,11 @@ function rewriteExportAssignments ( body, node, exports, scope, alreadyExported,
 
 	name = assignee.name;
 	if ( ~exports.indexOf( name ) ) {
+		if ( !!capturedUpdates ) {
+			capturedUpdates.push( name );
+			return;
+		}
+
 		// special case - increment/decrement operators
 		if ( node.operator === '++' || node.operator === '--' ) {
 			body.replace( node.end, node.end, `, exports.${name} = ${name}` );

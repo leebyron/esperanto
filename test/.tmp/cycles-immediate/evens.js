@@ -2,6 +2,8 @@
 
  'use strict';
 
+ exports.isEven = isEven;
+ 
  var __imports_0 = require('./odds');
  
  /* jshint esnext:true */
@@ -19,6 +21,5 @@
  }
  
  exports.nextEven = nextEven;
- exports.isEven = isEven;
 
 }).call(global);

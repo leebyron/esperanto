@@ -1,5 +1,5 @@
 process.chdir( __dirname );
 
-//require( './fastMode' )();
+require( './fastMode' )();
 require( './strictMode' )();
 // require( './bundle' )();

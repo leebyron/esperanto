@@ -2,6 +2,8 @@
 
   'use strict';
 
+  exports.callsFoo = callsFoo;
+  
   function foo() {
     return 1;
   }
@@ -10,7 +12,5 @@
   function callsFoo() {
     return foo();
   }
-  
-  exports.callsFoo = callsFoo;
 
 }).call(global);

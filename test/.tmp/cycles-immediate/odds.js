@@ -2,6 +2,8 @@
 
  'use strict';
 
+ exports.nextOdd = nextOdd;
+ 
  var __imports_0 = require('./evens');
  
  /* jshint esnext:true */
@@ -21,7 +23,6 @@
    };
  })(__imports_0.isEven);
  
- exports.nextOdd = nextOdd;
  exports.isOdd = isOdd;
 
 }).call(global);

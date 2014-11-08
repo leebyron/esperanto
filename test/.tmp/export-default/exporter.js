@@ -2,6 +2,8 @@
 
   'use strict';
 
+  exports.change = change;
+  
   /* jshint esnext:true */
   
   var a = 42;
@@ -18,7 +20,5 @@
   // value of `a` will be used and will be incorrect.
   a = 0;
   assert.equal(a, 0);
-  
-  exports.change = change;
 
 }).call(global);

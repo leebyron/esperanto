@@ -2,6 +2,8 @@
 
   'use strict';
 
+  exports.getb = getb;
+  
   var __imports_0 = require('./b');
   
   /* jshint esnext:true */
@@ -12,7 +14,6 @@
   
   var a = 1;
   
-  exports.getb = getb;
   exports.a = a;
 
 }).call(global);

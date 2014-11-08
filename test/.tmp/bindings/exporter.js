@@ -2,6 +2,8 @@
 
   'use strict';
 
+  exports.incr = incr;
+  
   /* jshint esnext:true */
   
   var count = 0;
@@ -11,6 +13,5 @@
   }
   
   exports.count = count;
-  exports.incr = incr;
 
 }).call(global);
