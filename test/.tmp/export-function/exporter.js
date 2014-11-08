@@ -1,22 +1,14 @@
-(function (__export) {
+(function () {
 
   'use strict';
-  
-  __export('foo', function () { return foo; });
-  
+
   /* jshint esnext:true */
   
   function foo() {
     return 121;
   }
   assert.equal(foo(), 121);
+  
+  exports.foo = foo;
 
-}).call(global, function(prop, get) {
-
-  Object.defineProperty(exports, prop, {
-    enumerable: true,
-    get: get,
-    set: function () {}
-  });
-
-});
+}).call(global);

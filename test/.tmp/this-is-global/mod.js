@@ -1,7 +1,7 @@
 (function () {
 
   'use strict';
-  
+
   /* jshint esnext:true */
   
   assert.strictEqual(

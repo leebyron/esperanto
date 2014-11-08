@@ -4,17 +4,17 @@
 
 	if (typeof define === 'function' && define.amd) {
 		// export as AMD
-		define(['asap'], factory);
+		define(['exports', 'asap'], factory);
 	} else if (typeof module !== 'undefined' && module.exports && typeof require === 'function') {
 		// node/browserify
-		factory(require('asap'));
+		factory(exports, require(asap));
 	} else {
 		// browser global
 		global.myModule = {};
-		factory(global.__asap);
+		factory(global.myModule, global.__asap);
 	}
 
-}(typeof window !== 'undefined' ? window : this, function (__asap) {
+}(typeof window !== 'undefined' ? window : this, function (exports, __asap) {
 
 	'use strict';
 

@@ -1,7 +1,7 @@
 (function () {
 
   'use strict';
-  
+
   var foo = require('./exporter');
   
   /* jshint esnext:true */

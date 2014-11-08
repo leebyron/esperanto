@@ -4,35 +4,23 @@
 
 	if (typeof define === 'function' && define.amd) {
 		// export as AMD
-		define(['exports'], exporter);
+		define(['exports'], factory);
 	} else if (typeof module !== 'undefined' && module.exports && typeof require === 'function') {
 		// node/browserify
-		exporter(exports);
+		factory(exports);
 	} else {
 		// browser global
 		global.myModule = {};
-		exporter(global.myModule);
+		factory(global.myModule);
 	}
 
-	function exporter (exports) {
-		exports.default = factory.call(global, function (prop, get) {
-			Object.defineProperty(exports, prop, {
-				enumerable: true,
-				get: get,
-				set: function () {
-					throw new Error('Cannot reassign imported binding of namespace `' + prop + '`');
-				}
-			});
-		});
-	}
-
-}(typeof window !== 'undefined' ? window : this, function (__export) {
+}(typeof window !== 'undefined' ? window : this, function (exports) {
 
 	'use strict';
 
 	var foo = 'bar', answer = 42;
 	
-	__export('foo', function () { return foo; });
-	__export('answer', function () { return answer; });
+	exports.foo = foo;
+	exports.answer = answer;
 
 }));

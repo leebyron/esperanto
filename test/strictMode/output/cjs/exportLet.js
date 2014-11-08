@@ -1,17 +1,8 @@
-(function (__export) {
+(function () {
 
 	'use strict';
-	
-	__export('foo', function () { return foo; });
-	
-	let foo = 'bar';
 
-}).call(global, function(prop, get) {
+	let answer = 41;
+	answer++, exports.answer = answer;
 
-	Object.defineProperty(exports, prop, {
-		enumerable: true,
-		get: get,
-		set: function () {}
-	});
-
-});
+}).call(global);

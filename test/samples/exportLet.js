@@ -1,1 +1,2 @@
-export let foo = 'bar';
+export let answer = 41;
+answer++;

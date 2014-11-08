@@ -1,10 +1,7 @@
-(function (__export) {
+(function () {
 
  'use strict';
- 
- __export('nextEven', function () { return nextEven; });
- __export('isEven', function () { return isEven; });
- 
+
  var __imports_0 = require('./odds');
  
  /* jshint esnext:true */
@@ -20,13 +17,8 @@
  function isEven(n) {
    return n % 2 === 0;
  }
+ 
+ exports.nextEven = nextEven;
+ exports.isEven = isEven;
 
-}).call(global, function(prop, get) {
-
- Object.defineProperty(exports, prop, {
-  enumerable: true,
-  get: get,
-  set: function () {}
- });
-
-});
+}).call(global);

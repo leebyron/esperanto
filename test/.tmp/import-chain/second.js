@@ -1,19 +1,11 @@
-(function (__export) {
+(function () {
 
 	'use strict';
-	
-	__export('value', function () { return __imports_0.value; });
-	
+
 	var __imports_0 = require('./first');
 	
 	/* jshint esnext:true */
+	
+	exports.value = value;
 
-}).call(global, function(prop, get) {
-
-	Object.defineProperty(exports, prop, {
-		enumerable: true,
-		get: get,
-		set: function () {}
-	});
-
-});
+}).call(global);

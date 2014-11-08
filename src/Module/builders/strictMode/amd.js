@@ -1,133 +1,43 @@
-import getExportBlock from './utils/getExportBlock';
 import template from '../../../utils/template';
+import reorderImports from './utils/reorderImports';
 
-var introTemplate, outroWithExports;
+var introTemplate;
 
-introTemplate = template( `define(<%= AMD_DEPS %>function (<%= IMPORT_NAMES %>) {
+introTemplate = template( 'define(<%= paths %>function (<%= names %>) {\n\n\t\'use strict\';\n\n' );
 
-` );
-
-outroWithExports = `
-
-	function __export(prop, get) {
-		Object.defineProperty(exports, prop, {
-			enumerable: true,
-			get: get,
-			set: function () {
-				throw new Error('Cannot reassign imported binding of namespace \u0060' + prop + '\u0060');
-			}
-		});
-	}
-
-});`;
-
-export default function strict ( mod, body, options ) {
+export default function strict ( mod, body ) {
 	var importPaths = [],
 		importNames = [],
-		globalNames,
-		cjsDeps,
-		exportDeclaration,
-		exportedValue,
 		intro,
-		outro,
-		defaultValue,
-		hasNonDefaultExports,
-		importBlock,
-		exportBlock,
-		header,
-		footer,
 		i;
 
 	// ensure empty imports are at the end
-	i = mod.imports.length;
-	while ( i-- ) {
-		if ( !mod.imports[i].specifiers.length ) {
-			mod.imports.splice( mod.imports.length - 1, 0, mod.imports.splice( i, 1 )[0] );
-		}
-	}
+	reorderImports( mod.imports );
 
 	// gather imports, and remove import declarations
 	mod.imports.forEach( ( x, i ) => {
 		importPaths[i] = x.path;
 
-		if ( x.specifiers.length ) {
+		if ( x.specifiers.length ) { // don't add empty imports
 			importNames[i] = x.name;
 		}
-
-		body.remove( x.start, x.next );
 	});
-
-	// ...and export statements (but keep declarations)
-	mod.exports.forEach( x => {
-		var name;
-
-		if ( x.default ) {
-			defaultValue = body.slice( x.valueStart, x.end );
-			if ( x.node.declaration && x.node.declaration.id && ( name = x.node.declaration.id.name ) ) {
-				// if you have a default export like
-				//
-				//     export default function foo () {...}
-				//
-				// you need to rewrite it as
-				//
-				//     function foo () {...}
-				//     exports.default = foo;
-				//
-				// as the `foo` reference may be used elsewhere
-				body.replace( x.start, x.end, defaultValue + '\nexports.default = ' + name + ';' );
-			} else {
-				body.replace( x.start, x.end, 'exports.default = ' + defaultValue );
-			}
-
-			return;
-		}
-
-		hasNonDefaultExports = true;
-
-		if ( x.declaration ) {
-			body.remove( x.start, x.valueStart );
-		} else {
-			body.remove( x.start, x.next );
-		}
-	});
-
-	body.trim();
 
 	if ( mod.exports.length ) {
 		importPaths.unshift( 'exports' );
 		importNames.unshift( 'exports' );
 	}
 
-	if ( hasNonDefaultExports ) {
-		exportBlock = getExportBlock( mod );
-		body.append( '\n\n' + exportBlock );
-		outro = outroWithExports;
-	} else {
-		outro = '\n\n});';
-	}
-
 	intro = introTemplate({
-		AMD_DEPS: importPaths.length ? '[' + importPaths.map( quote ).join( ', ' ) + '], ' : '',
-		IMPORT_NAMES: importNames.join( ', ' )
+		paths: importPaths.length ? '[' + importPaths.map( quote ).join( ', ' ) + '], ' : '',
+		names: importNames.join( ', ' )
 	}).replace( /\t/g, body.indentStr );
 
-	body.trim().prepend( "'use strict';\n\n" ).trim().indent().prepend( intro ).append( outro );
+	body.trim().indent().prepend( intro ).trim().append( '\n\n});' );
 
 	return body.toString();
 }
 
-function isFunctionDeclaration ( x ) {
-	return x.node.declaration && x.node.declaration.type === 'FunctionExpression';
-}
-
 function quote ( str ) {
 	return "'" + str + "'";
-}
-
-function req ( path ) {
-	return `require('${path}')`;
-}
-
-function globalify ( name ) {
-	return `global.${name}`;
 }

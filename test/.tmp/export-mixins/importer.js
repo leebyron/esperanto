@@ -1,7 +1,7 @@
 (function () {
 
 	'use strict';
-	
+
 	var __imports_0 = require('./exporter');
 	
 	assert.equal(__imports_0.default, 1);

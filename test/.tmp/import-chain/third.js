@@ -1,7 +1,7 @@
 (function () {
 
 	'use strict';
-	
+
 	var __imports_0 = require('./second');
 	
 	/* jshint esnext:true */

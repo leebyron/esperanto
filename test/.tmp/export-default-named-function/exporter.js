@@ -1,10 +1,7 @@
-(function (__export) {
+(function () {
 
   'use strict';
-  
-  
-  __export('callsFoo', function () { return callsFoo; });
-  
+
   function foo() {
     return 1;
   }
@@ -13,13 +10,7 @@
   function callsFoo() {
     return foo();
   }
+  
+  exports.callsFoo = callsFoo;
 
-}).call(global, function(prop, get) {
-
-  Object.defineProperty(exports, prop, {
-    enumerable: true,
-    get: get,
-    set: function () {}
-  });
-
-});
+}).call(global);

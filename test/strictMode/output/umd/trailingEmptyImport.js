@@ -4,17 +4,17 @@
 
 	if (typeof define === 'function' && define.amd) {
 		// export as AMD
-		define(['foo', 'polyfills'], factory);
+		define(['exports', 'foo', 'polyfills'], factory);
 	} else if (typeof module !== 'undefined' && module.exports && typeof require === 'function') {
 		// node/browserify
-		factory(require('foo'), require('polyfills'));
+		factory(exports, require(foo), require(polyfills));
 	} else {
 		// browser global
 		global.myModule = {};
-		factory(global.__foo);
+		factory(global.myModule, global.__foo);
 	}
 
-}(typeof window !== 'undefined' ? window : this, function (__foo) {
+}(typeof window !== 'undefined' ? window : this, function (exports, __foo) {
 
 	'use strict';
 

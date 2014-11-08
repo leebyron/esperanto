@@ -6,10 +6,6 @@ module.exports = function () {
 	describe( 'fast mode', function () {
 		var tests;
 
-		function getModuleName ( path ) {
-			return '__' + path.split( '/' ).pop().replace( /\.js$/, '' );
-		}
-
 		tests = [
 			{ file: 'exportDefault', description: 'transpiles default exports' },
 			{ file: 'earlyExport', description: 'transpiles exports that are not the final statement' },

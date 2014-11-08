@@ -38,9 +38,13 @@ module.exports = function () {
 		});
 
 		before( function () {
-			return require( '../utils/build' )().then( function ( lib ) {
-				esperanto = lib;
-			});
+			return sander.Promise.all([
+				require( '../utils/build' )().then( function ( lib ) {
+					esperanto = lib;
+				}),
+
+				sander.rimraf( '.tmp' )
+			]);
 		});
 
 		describe( 'esperanto.toAmd()', function () {
@@ -51,7 +55,11 @@ module.exports = function () {
 							getModuleName: getModuleName
 						});
 
-						assert.equal( actual, expected, 'AMD: Expected\n>\n' + actual + '\n>\n\nto match\n\n>\n' + expected + '\n>' );
+						assert.equal( actual, expected, 'AMD: Expected\n>\n' +
+							makeWhitespaceVisible( actual ) +
+						'\n>\n\nto match\n\n>\n' +
+							makeWhitespaceVisible( expected ) +
+						'\n>' );
 					});
 				});
 			});
@@ -65,7 +73,11 @@ module.exports = function () {
 							getModuleName: getModuleName
 						});
 
-						assert.equal( actual, expected, 'CJS: Expected\n>\n' + actual + '\n>\n\nto match\n\n>\n' + expected + '\n>' );
+						assert.equal( actual, expected, 'CJS: Expected\n>\n' +
+							makeWhitespaceVisible( actual ) +
+						'\n>\n\nto match\n\n>\n' +
+							makeWhitespaceVisible( expected ) +
+						'\n>' );
 					});
 				});
 			});
@@ -80,7 +92,11 @@ module.exports = function () {
 							getModuleName: getModuleName
 						});
 
-						assert.equal( actual, expected, 'UMD: Expected\n>\n' + actual + '\n>\n\nto match\n\n>\n' + expected + '\n>' );
+						assert.equal( actual, expected, 'UMD: Expected\n>\n' +
+							makeWhitespaceVisible( actual ) +
+						'\n>\n\nto match\n\n>\n' +
+							makeWhitespaceVisible( expected ) +
+						'\n>' );
 					});
 				});
 			});
@@ -162,3 +178,19 @@ module.exports = function () {
 		});
 	});
 };
+
+function makeWhitespaceVisible ( str ) {
+	return str.replace( /^\t+/gm, function ( match ) {
+		// replace leading tabs
+		return match.replace( /\t/g, '--->' );
+	}).replace( /^( +)/gm, function ( match, $1 ) {
+		// replace leading spaces
+		return $1.replace( / /g, '*' );
+	}).replace( /\t+$/gm, function ( match ) {
+		// replace trailing tabs
+		return match.replace( /\t/g, '--->' );
+	}).replace( /( +)$/gm, function ( match, $1 ) {
+		// replace trailing spaces
+		return $1.replace( / /g, '*' );
+	});
+}

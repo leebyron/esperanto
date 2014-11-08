@@ -1,9 +1,7 @@
-(function (__export) {
+(function () {
 
 	'use strict';
-	
-	__export('b', function () { return b; });
-	
+
 	var __imports_0 = require('./first');
 	
 	/* jshint esnext:true */
@@ -14,13 +12,7 @@
 	assert.equal(a_, 1);
 	assert.equal(b, 9);
 	assert.equal(c, 'c');
+	
+	exports.b = b;
 
-}).call(global, function(prop, get) {
-
-	Object.defineProperty(exports, prop, {
-		enumerable: true,
-		get: get,
-		set: function () {}
-	});
-
-});
+}).call(global);

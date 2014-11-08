@@ -1,7 +1,7 @@
 (function () {
 
 	'use strict';
-	
+
 	var __foo = require('foo');
 	var __bar = require('bar');
 	var __baz = require('baz');

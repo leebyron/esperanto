@@ -1,10 +1,7 @@
-(function (__export) {
+(function () {
 
   'use strict';
-  
-  __export('getb', function () { return getb; });
-  __export('a', function () { return a; });
-  
+
   var __imports_0 = require('./b');
   
   /* jshint esnext:true */
@@ -14,13 +11,8 @@
   }
   
   var a = 1;
+  
+  exports.getb = getb;
+  exports.a = a;
 
-}).call(global, function(prop, get) {
-
-  Object.defineProperty(exports, prop, {
-    enumerable: true,
-    get: get,
-    set: function () {}
-  });
-
-});
+}).call(global);

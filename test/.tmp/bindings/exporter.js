@@ -1,24 +1,16 @@
-(function (__export) {
+(function () {
 
   'use strict';
-  
-  __export('count', function () { return count; });
-  __export('incr', function () { return incr; });
-  
+
   /* jshint esnext:true */
   
   var count = 0;
   
   function incr() {
-    count++;
+    count++, exports.count = count;
   }
+  
+  exports.count = count;
+  exports.incr = incr;
 
-}).call(global, function(prop, get) {
-
-  Object.defineProperty(exports, prop, {
-    enumerable: true,
-    get: get,
-    set: function () {}
-  });
-
-});
+}).call(global);
