@@ -1,5 +1,3 @@
-import disallowNames from './utils/disallowNames';
-
 var template = `(function (global, factory) {
 
 	'use strict';
@@ -26,8 +24,6 @@ export default function defaults ( mod, body, options ) {
 		exportedValue,
 		intro,
 		i;
-
-	disallowNames( mod );
 
 	// ensure empty imports are at the end
 	i = mod.imports.length;

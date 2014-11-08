@@ -1,44 +1,31 @@
 import Module from './Module';
 import builders from './Module/builders';
+import disallowNames from './utils/disallowNames';
 import Bundle from './Bundle';
 
-var formats = {
-	toAmd: 'amd',
-	toCjs: 'cjs',
-	toUmd: 'umd'
-};
-
-function transpileMethod ( methodName ) {
+function transpileMethod ( format ) {
 	return function ( source, options ) {
-		options = options || {};
+		var module,
+			builder;
 
-		return new Module({
-			source: source,
-			getModuleName: options.getModuleName
-		})[ methodName ]( options );
+		options = options || {};
+		module = new Module({ source: source, getModuleName: options.getModuleName });
+
+		if ( options.defaultOnly ) {
+			disallowNames( module );
+			builder = builders.defaultsMode[ format ];
+		} else {
+			builder = builders.strictMode[ format ];
+		}
+
+		return builder( module, module.body.clone(), options );
 	};
 }
 
-function altTranspileMethod ( format ) {
-	return function ( source, options ) {
-		var module,
-			builder,
-			mode;
-
-		options = options || {};
-		mode = options.defaultOnly ? 'defaultsMode' : 'strictMode';
-
-		module = new Module({ source: source, getModuleName: options.getModuleName });
-		builder = builders[ mode ][ format ];
-
-		return builder( module, module.body.clone(), options );
-	}
-}
-
 export default {
-	toAmd: altTranspileMethod( 'amd' ),
-	toCjs: altTranspileMethod( 'cjs' ),
-	toUmd: altTranspileMethod( 'umd' ),
+	toAmd: transpileMethod( 'amd' ),
+	toCjs: transpileMethod( 'cjs' ),
+	toUmd: transpileMethod( 'umd' ),
 
 	bundle: function ( options ) {
 		var bundle = new Bundle( options );

@@ -1,5 +1,3 @@
-import disallowNames from './utils/disallowNames';
-
 var template = 'define(__IMPORT_PATHS__function (__IMPORT_NAMES__) {\n\n';
 
 export default function defaults ( mod, body, options ) {
@@ -9,8 +7,6 @@ export default function defaults ( mod, body, options ) {
 		exportedValue,
 		intro,
 		i;
-
-	disallowNames( mod );
 
 	// ensure empty imports are at the end
 	i = mod.imports.length;
