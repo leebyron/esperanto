@@ -6,4 +6,5 @@ out
 demo/dist
 test/lib
 lib
-.semantics-tmp
+.tmp
+.tmp-bundle
