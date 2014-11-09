@@ -22,7 +22,7 @@ export default function transformBody ( bundle, mod, body, prefix ) {
 	scope = mod.ast._scope;
 	blockScope = mod.ast._blockScope;
 
-	gatherImports( mod.imports, bundle.externalModules, importedBindings, toRewrite );
+	gatherImports( mod.imports, bundle.externalModules, importedBindings, toRewrite, bundle._chains );
 	Object.keys( toRewrite ).forEach( k => readOnly[k] = toRewrite[k] );
 
 	scope.names.forEach( n => toRewrite[n] = prefix + '__' + n );
@@ -72,7 +72,9 @@ export default function transformBody ( bundle, mod, body, prefix ) {
 
 	// remove imports
 	mod.imports.forEach( x => {
-		body.remove( x.start, x.next );
+		if ( !x.passthrough ) {
+			body.remove( x.start, x.next );
+		}
 	});
 
 	// Remove export statements (but keep declarations)
@@ -80,7 +82,6 @@ export default function transformBody ( bundle, mod, body, prefix ) {
 		var name;
 
 		if ( x.default ) {
-			defaultValue = body.slice( x.valueStart, x.end );
 			if ( x.node.declaration && x.node.declaration.id && ( name = x.node.declaration.id.name ) ) {
 				// if you have a default export like
 				//
@@ -92,8 +93,16 @@ export default function transformBody ( bundle, mod, body, prefix ) {
 				//     exports.default = foo;
 				//
 				// as the `foo` reference may be used elsewhere
+				defaultValue = body.slice( x.valueStart, x.end ); // in case rewrites occured inside the function body
 				body.replace( x.start, x.end, defaultValue + '\nvar ' + prefix + '__default = ' + prefix + '__' + name + ';' );
 			} else {
+				// TODO this is a bit convoluted...
+				if ( x.node.declaration && ( name = x.node.declaration.name ) ) {
+					defaultValue = prefix + '__' + name;
+				} else {
+					defaultValue = body.slice( x.valueStart, x.end );
+				}
+
 				body.replace( x.start, x.end, 'var ' + prefix + '__default = ' + defaultValue );
 			}
 
@@ -111,7 +120,30 @@ export default function transformBody ( bundle, mod, body, prefix ) {
 		}
 	});
 
+	if ( mod._exportsNamespace ) {
+		let namespaceExportBlock = 'var ' + prefix + ' = {\n',
+			namespaceExports = [];
 
+		mod.exports.forEach( x => {
+			if ( x.declaration ) {
+				namespaceExports.push( body.indentStr + 'get ' + x.name + ' () { return ' + prefix + '__' + x.name + '; }' );
+			}
+
+			else if ( x.default ) {
+				namespaceExports.push( body.indentStr + 'get default () { return ' + prefix + '__default; }' );
+			}
+
+			else {
+				x.specifiers.forEach( s => {
+					namespaceExports.push( body.indentStr + 'get ' + s.name + ' () { return ' + s.name + '; }' );
+				});
+			}
+		});
+
+		namespaceExportBlock += namespaceExports.join( ',\n' ) + '\n};\n\n';
+
+		body.prepend( namespaceExportBlock );
+	}
 
 }
 

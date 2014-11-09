@@ -2,7 +2,7 @@ import MagicString from 'magic-string';
 import transformBody from './transformBody';
 import annotateAst from '../../../utils/annotateAst';
 
-export default function combine ( options ) {
+export default function Bundle$_combine ( options ) {
 	var getModuleName = this.getModuleName;
 
 	options = options || {};

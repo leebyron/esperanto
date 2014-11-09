@@ -3,7 +3,7 @@ import Module from '../../../Module';
 import resolve from '../../../utils/resolve';
 import sortModules from '../../utils/sortModules';
 
-export default function Bundle$collect () {
+export default function Bundle$_collect () {
 	var entry = this.entry.replace( /\.js$/, '' ),
 		modules = [],
 		moduleLookup = this.moduleLookup,
@@ -14,7 +14,8 @@ export default function Bundle$collect () {
 
 	return fetchModule( entry ).then( () => {
 		this.modules = sortModules( modules[0], modules );
-		this.combine();
+		this._resolveChains();
+		this._combine();
 	});
 
 	function fetchModule ( modulePath ) {

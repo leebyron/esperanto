@@ -35,6 +35,6 @@ export default {
 
 	bundle: function ( options ) {
 		var bundle = new Bundle( options );
-		return bundle.collect().then( () => bundle );
+		return bundle._collect().then( () => bundle );
 	}
 };

@@ -1,3 +1,3 @@
 // temporary, until we can ditch requirejs in favour of esperanto.bundle()
-import collect from './collect/index';
-export default collect;
+import _collect from './_collect/index';
+export default _collect;
