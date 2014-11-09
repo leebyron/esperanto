@@ -39,6 +39,10 @@ export default function annotateAst ( ast ) {
 			}
 
 			if ( createsScope( node ) ) {
+				if ( node.id ) {
+					scope.add( node.id.name );
+				}
+
 				scope = node._scope = new Scope({
 					parent: scope,
 					params: node.params.map( x => x.name ) // TODO rest params?
@@ -92,7 +96,7 @@ function createsBlockScope ( node ) {
 }
 
 function declaresVar ( node ) {
-	return node.type === 'VariableDeclarator'; // TODO const, class, function
+	return node.type === 'VariableDeclarator'; // TODO const, class? (function taken care of already)
 }
 
 function declaresLet ( node ) {

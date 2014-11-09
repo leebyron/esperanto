@@ -4,7 +4,7 @@ import resolve from '../../../utils/resolve';
 import sortModules from '../../utils/sortModules';
 
 export default function Bundle$collect () {
-	var entry = this.entry,
+	var entry = this.entry.replace( /\.js$/, '' ),
 		modules = [],
 		moduleLookup = this.moduleLookup,
 		promiseByPath = {},
@@ -18,14 +18,12 @@ export default function Bundle$collect () {
 	});
 
 	function fetchModule ( modulePath ) {
-		if ( !/\.js$/.test( modulePath ) ) {
-			modulePath += '.js';
-		}
+		modulePath = modulePath.replace( /\.js$/, '' );
 
 		if ( !promiseByPath[ modulePath ] ) {
-			promiseByPath[ modulePath ] = sander.readFile( base, modulePath ).catch( function ( err ) {
+			promiseByPath[ modulePath ] = sander.readFile( base, modulePath + '.js' ).catch( function ( err ) {
 				if ( err.code === 'ENOENT' ) {
-					return sander.readFile( base, modulePath.replace( /\.js$/, '/index.js' ) );
+					return sander.readFile( base, modulePath + '/index.js' );
 				}
 
 				throw err;
@@ -43,13 +41,19 @@ export default function Bundle$collect () {
 
 				promises = module.imports.map( x => {
 					var importPath = resolve( x.path, modulePath );
+
+					// short-circuit cycles
+					if ( promiseByPath[ importPath ] ) {
+						return;
+					}
+
 					return fetchModule( importPath );
 				});
 
 				return Promise.all( promises );
 			}).catch( function ( err ) {
 				if ( err.code === 'ENOENT' ) {
-					if ( modulePath === entry || modulePath === entry + '.js' ) {
+					if ( modulePath === entry ) {
 						throw new Error( 'Could not find entry module (' + entry + ')' );
 					}
 

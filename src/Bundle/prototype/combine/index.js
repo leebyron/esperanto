@@ -1,42 +1,18 @@
 import MagicString from 'magic-string';
-//import replaceReferences from '../../../utils/replaceReferences';
+import transformBody from './transformBody';
+import annotateAst from '../../../utils/annotateAst';
 
 export default function combine ( options ) {
 	var getModuleName = this.getModuleName;
 
 	options = options || {};
 
-	var body = this.modules.map( m => {
-		var modBody = m.body.clone(),
-			prefix = getModuleName( m.file );
+	var body = this.modules.map( mod => {
+		var modBody = mod.body.clone(),
+			prefix = getModuleName( mod.file );
 
-		// replaceReferences( m, modBody, {
-		// 	varPrefix: prefix,
-		// 	joiner: '__'
-		// });
-
-		// remove imports
-		m.imports.forEach( x => {
-			modBody.remove( x.start, x.next );
-		});
-
-		// remove or replace exports
-		m.exports.forEach( x => {
-			if ( x.default ) {
-				if ( x.node.declaration ) {
-					if ( x.node.declaration.type === 'Identifier' ) {
-						modBody.replace( x.start, x.end, `var ${prefix}__default = ${prefix}__${x.node.declaration.name};` );
-					} else {
-						throw new Error( 'TODO' );
-					}
-				}
-			}
-
-			else {
-				console.log( 'x', x );
-				modBody.remove( x.start, x.end );
-			}
-		});
+		annotateAst( mod.ast );
+		transformBody( this, mod, modBody, prefix );
 
 		return modBody.trim().toString();
 	}).join( '\n\n' );

@@ -1,13 +1,5 @@
 export default function gatherImports ( imports, importedBindings, toRewrite ) {
-	var replacements = {};
-
 	imports.forEach( x => {
-		/*if ( x.passthrough ) {
-			// we have a case like `export { foo } from './bar'` -
-			// we don't want `foo` to create a local binding
-			return;
-		}*/
-
 		x.specifiers.forEach( s => {
 			var name, replacement;
 
@@ -26,6 +18,4 @@ export default function gatherImports ( imports, importedBindings, toRewrite ) {
 			}
 		});
 	});
-
-	return replacements;
 }

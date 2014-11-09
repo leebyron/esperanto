@@ -9,9 +9,5 @@ export default function resolve ( importPath, importerPath ) {
 		resolved = path.join( path.dirname( importerPath ), importPath );
 	}
 
-	if ( !/\.js$/.test( resolved ) ) {
-		resolved += '.js';
-	}
-
-	return resolved;
+	return resolved.replace( /\.js$/, '' );
 }

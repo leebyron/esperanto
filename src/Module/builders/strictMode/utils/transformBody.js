@@ -1,6 +1,8 @@
+import estraverse from 'estraverse';
 import gatherImports from './gatherImports';
 import getExportNames from './getExportNames';
-import estraverse from 'estraverse';
+import disallowIllegalReassignment from '../../../../utils/disallowIllegalReassignment';
+import rewriteIdentifiers from '../../../../utils/rewriteIdentifiers';
 
 export default function transformBody ( mod, body, options ) {
 	var scope,
@@ -52,7 +54,7 @@ export default function transformBody ( mod, body, options ) {
 			rewriteExportAssignments( body, node, exportNames, scope, alreadyExported, ~mod.ast.body.indexOf( parent ), capturedUpdates );
 
 			// Rewrite import identifiers
-			rewriteImportIdentifiers( body, node, toRewrite, scope );
+			rewriteIdentifiers( body, node, toRewrite, scope );
 		},
 
 		leave: function ( node ) {
@@ -149,36 +151,6 @@ export default function transformBody ( mod, body, options ) {
 	body.trim().indent().prepend( options.intro ).trim().append( options.outro );
 }
 
-function disallowIllegalReassignment ( node, toRewrite, scope ) {
-	var assignee, name, replacement, message;
-
-	if ( node.type === 'AssignmentExpression' ) {
-		assignee = node.left;
-	} else if ( node.type === 'UpdateExpression' ) {
-		assignee = node.argument;
-	} else {
-		return; // not an assignment
-	}
-
-	if ( assignee.type === 'MemberExpression' ) {
-		assignee = assignee.object;
-		message = 'Cannot reassign imported binding of namespace ';
-	} else {
-		message = 'Cannot reassign imported binding ';
-	}
-
-	if ( assignee.type !== 'Identifier' ) {
-		return; // not assigning to a binding
-	}
-
-	name = assignee.name;
-	replacement = toRewrite[ name ];
-
-	if ( !!replacement && !scope.contains( name ) ) {
-		throw new Error( message + '`' + name + '`' );
-	}
-}
-
 function rewriteExportAssignments ( body, node, exports, scope, alreadyExported, isTopLevelNode, capturedUpdates ) {
 	var assignee, name;
 
@@ -212,20 +184,6 @@ function rewriteExportAssignments ( body, node, exports, scope, alreadyExported,
 		// export it again later
 		if ( isTopLevelNode ) {
 			alreadyExported[ name ] = true;
-		}
-	}
-}
-
-function rewriteImportIdentifiers ( body, node, toRewrite, scope ) {
-	var name, replacement;
-
-	if ( node.type === 'Identifier' ) {
-		name = node.name;
-		replacement = toRewrite[ name ];
-
-		if ( replacement && !scope.contains( name ) ) {
-			// rewrite
-			body.replace( node.start, node.end, replacement );
 		}
 	}
 }
