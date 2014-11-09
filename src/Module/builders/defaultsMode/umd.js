@@ -19,7 +19,7 @@ var introTemplate = template( `(function (global, factory) {
 
 ` );
 
-export default function defaults ( mod, body, options ) {
+export default function umd ( mod, body, options ) {
 	var importNames = [],
 		importPaths = [],
 		exportDeclaration,

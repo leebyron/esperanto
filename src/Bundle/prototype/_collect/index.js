@@ -13,6 +13,8 @@ export default function Bundle$_collect () {
 		externalModules = this.externalModules;
 
 	return fetchModule( entry ).then( () => {
+		this.entryModule = this.moduleLookup[ this.entry ];
+
 		this.modules = sortModules( modules[0], modules );
 		this._resolveChains();
 		this._combine();
@@ -34,7 +36,8 @@ export default function Bundle$_collect () {
 				module = new Module({
 					source: source,
 					file: modulePath,
-					getModuleName: getModuleName
+					getModuleName: getModuleName,
+					name: getModuleName( modulePath )
 				});
 
 				modules.push( module );

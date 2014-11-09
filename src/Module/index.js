@@ -5,6 +5,7 @@ import parse from './prototype/parse';
 var Module = function ( options ) {
 	this.source = options.source;
 	this.file = options.file;
+	this.name = options.name;
 
 	this.ast = acorn.parse( this.source, {
 		ecmaVersion: 6,

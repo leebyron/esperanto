@@ -1,5 +1,6 @@
 import Module from './Module';
-import builders from './Module/builders';
+import moduleBuilders from './Module/builders';
+import bundleBuilders from './Bundle/builders';
 import disallowNames from './utils/disallowNames';
 import annotateAst from './utils/annotateAst';
 import Bundle from './Bundle';
@@ -17,11 +18,11 @@ function transpileMethod ( format ) {
 		if ( options.defaultOnly ) {
 			// ensure there are no named imports/exports
 			disallowNames( module );
-			builder = builders.defaultsMode[ format ];
+			builder = moduleBuilders.defaultsMode[ format ];
 		} else {
 			// annotate AST with scope info
 			annotateAst( module.ast );
-			builder = builders.strictMode[ format ];
+			builder = moduleBuilders.strictMode[ format ];
 		}
 
 		return builder( module, body, options );
@@ -35,6 +36,34 @@ export default {
 
 	bundle: function ( options ) {
 		var bundle = new Bundle( options );
-		return bundle._collect().then( () => bundle );
+		return bundle._collect().then( function () {
+			return {
+				toAmd: options => transpile( 'amd', options ),
+				toCjs: options => transpile( 'cjs', options ),
+				toUmd: options => transpile( 'umd', options )
+			};
+
+			function transpile ( format, options ) {
+				var entry, builder;
+
+				options = options || {};
+
+				if ( options.defaultOnly ) {
+					// ensure there are no named imports/exports
+					entry = bundle.entryModule;
+					entry.exports.forEach( x => {
+						if ( !x.default ) {
+							throw new Error( 'Entry module cannot have named exports in defaultOnly mode' );
+						}
+					});
+
+					builder = bundleBuilders.defaultsMode[ format ];
+				} else {
+					builder = bundleBuilders.strictMode[ format ];
+				}
+
+				return builder( bundle, bundle.body.clone(), options );
+			}
+		});
 	}
 };

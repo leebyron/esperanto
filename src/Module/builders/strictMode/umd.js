@@ -4,7 +4,7 @@ import transformBody from './utils/transformBody';
 
 var introTemplate;
 
-export default function strict ( mod, body, options ) {
+export default function umd ( mod, body, options ) {
 	var importPaths = [],
 		importNames = [],
 		intro,

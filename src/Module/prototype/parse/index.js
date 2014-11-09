@@ -46,6 +46,13 @@ export default function Module$parse ( options ) {
 			declaration = processExport( node, source );
 			exports.push( declaration );
 
+			if ( declaration.default ) {
+				if ( this.defaultExport ) {
+					throw new Error( 'Duplicate default exports' );
+				}
+				this.defaultExport = declaration;
+			}
+
 			if ( node.source ) {
 				// it's both an import and an export, e.g.
 				//

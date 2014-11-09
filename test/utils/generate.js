@@ -9,15 +9,6 @@ function getModuleName ( path ) {
 }
 
 require( './build' )().then( function ( esperanto ) {
-	var profiles = [
-		{ outputdir: 'amd', method: 'toAmd', options: {} },
-		{ outputdir: 'cjs', method: 'toCjs', options: {} },
-		{ outputdir: 'umd', method: 'toUmd', options: { name: 'myModule', getModuleName: getModuleName } },
-		{ outputdir: 'amdDefaults', method: 'toAmd', options: { defaultOnly: true } },
-		{ outputdir: 'cjsDefaults', method: 'toCjs', options: { defaultOnly: true } },
-		{ outputdir: 'umdDefaults', method: 'toUmd', options: { name: 'myModule', defaultOnly: true, getModuleName: getModuleName } }
-	];
-
 	generateFastModeOutput();
 	generateStrictModeOutput();
 	generateBundleOutput();
@@ -103,6 +94,17 @@ require( './build' )().then( function ( esperanto ) {
 	}
 
 	function generateBundleOutput () {
+		var profiles = [
+			{ description: 'bundle.toAmd({ defaultOnly: true })', method: 'toAmd', outputdir: 'amdDefaults', options: { defaultOnly: true } },
+			{ description: 'bundle.toCjs({ defaultOnly: true })', method: 'toCjs', outputdir: 'cjsDefaults', options: { defaultOnly: true } },
+			//{ description: 'bundle.toEs6({ defaultOnly: true })', method: 'toEs6', outputdir: 'es6Defaults', options: { defaultOnly: true } },
+			{ description: 'bundle.toUmd({ defaultOnly: true })', method: 'toUmd', outputdir: 'umdDefaults', options: { defaultOnly: true, name: 'myModule' } },
+			{ description: 'bundle.toAmd()', method: 'toAmd', outputdir: 'amd' },
+			{ description: 'bundle.toCjs()', method: 'toCjs', outputdir: 'cjs' },
+			//{ description: 'bundle.toEs6()', method: 'toEs6', outputdir: 'es6' },
+			{ description: 'bundle.toUmd()', method: 'toUmd', outputdir: 'umd', options: { name: 'myModule' } }
+		];
+
 		return cleanup().then( buildAll ).catch( function ( err ) {
 			console.log( 'err', err );
 		});
@@ -125,7 +127,7 @@ require( './build' )().then( function ( esperanto ) {
 				var promises = profiles.map( function ( profile ) {
 					try {
 						var transpiled = bundle[ profile.method ]( profile.options );
-						return sander.writeFile( '../bundle/output', profile.outputdir, sourceBundle, 'main.js', transpiled );
+						return sander.writeFile( '../bundle/output', profile.outputdir, sourceBundle + '.js', transpiled );
 					} catch ( err ) {
 						// some modules can't be transpiled with defaultOnly
 						if ( !/defaultOnly/.test( err.message ) ) {

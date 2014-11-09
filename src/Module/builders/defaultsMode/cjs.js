@@ -1,4 +1,4 @@
-export default function defaults ( mod, body, options ) {
+export default function cjs ( mod, body, options ) {
 	var replacement, exportDeclaration;
 
 	mod.imports.forEach( x => {

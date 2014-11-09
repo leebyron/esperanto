@@ -1,2 +1,2 @@
-var bar = 'yes';
-export default bar;
+var message = 'yes';
+export default message;

@@ -3,7 +3,7 @@ import transformBody from './utils/transformBody';
 var intro = '(function () {\n\n\t\'use strict\';\n\n';
 var outro = '\n\n}).call(global);';
 
-export default function strict ( mod, body ) {
+export default function cjs ( mod, body ) {
 	var importBlock;
 
 	// Create block of require statements

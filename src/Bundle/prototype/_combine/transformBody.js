@@ -2,7 +2,6 @@ import estraverse from 'estraverse';
 import disallowIllegalReassignment from '../../../utils/disallowIllegalReassignment';
 import rewriteIdentifiers from '../../../utils/rewriteIdentifiers';
 import gatherImports from './gatherImports';
-import gatherExports from './gatherExports';
 
 export default function transformBody ( bundle, mod, body, prefix ) {
 	var scope,
@@ -11,12 +10,9 @@ export default function transformBody ( bundle, mod, body, prefix ) {
 		importedBindings = {},
 		toRewrite = {},
 		readOnly = {},
-		exportsToRewrite = {},
 		exportNames = [],
 		alreadyExported = {},
 		shouldExportEarly = {},
-		earlyExports,
-		lateExports,
 		defaultValue;
 
 	scope = mod.ast._scope;
@@ -99,11 +95,10 @@ export default function transformBody ( bundle, mod, body, prefix ) {
 				// TODO this is a bit convoluted...
 				if ( x.node.declaration && ( name = x.node.declaration.name ) ) {
 					defaultValue = prefix + '__' + name;
+					body.replace( x.start, x.end, 'var ' + prefix + '__default = ' + defaultValue + ';' );
 				} else {
-					defaultValue = body.slice( x.valueStart, x.end );
+					body.replace( x.start, x.valueStart, 'var ' + prefix + '__default = ' );
 				}
-
-				body.replace( x.start, x.end, 'var ' + prefix + '__default = ' + defaultValue );
 			}
 
 			return;

@@ -1,6 +1,6 @@
 var template = 'define(__IMPORT_PATHS__function (__IMPORT_NAMES__) {\n\n';
 
-export default function defaults ( mod, body, options ) {
+export default function amd ( mod, body, options ) {
 	var importNames = [],
 		importPaths = [],
 		exportDeclaration,

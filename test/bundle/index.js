@@ -12,6 +12,8 @@ module.exports = function () {
 	}
 
 	describe( 'esperanto.bundle()', function () {
+		var profiles, tests;
+
 		before( function () {
 			return Promise.all([
 				require( '../utils/build' )().then( function ( lib ) {
@@ -99,72 +101,66 @@ module.exports = function () {
 			});
 		});
 
-		// it( 'bundles as CommonJS', function () {
-		// 	return esperanto.bundle({
-		// 		base: 'bundle/input/1',
-		// 		entry: 'main'
-		// 	}).then( function ( bundle ) {
-		// 		var result = bundle.toCjs({
-		// 			defaultOnly: true,
-		// 			name: 'main',
-		// 			getModuleName: function ( path ) {
-		// 				return path.split( '/' ).pop();
-		// 			}
-		// 		});
+		profiles = [
+			{ description: 'bundle.toAmd({ defaultOnly: true })', method: 'toAmd', outputdir: 'amdDefaults', options: { defaultOnly: true } },
+			{ description: 'bundle.toCjs({ defaultOnly: true })', method: 'toCjs', outputdir: 'cjsDefaults', options: { defaultOnly: true } },
+			//{ description: 'bundle.toEs6({ defaultOnly: true })', method: 'toEs6', outputdir: 'es6Defaults', options: { defaultOnly: true } },
+			{ description: 'bundle.toUmd({ defaultOnly: true })', method: 'toUmd', outputdir: 'umdDefaults', options: { defaultOnly: true, name: 'myModule' } },
+			{ description: 'bundle.toAmd()', method: 'toAmd', outputdir: 'amd' },
+			{ description: 'bundle.toCjs()', method: 'toCjs', outputdir: 'cjs' },
+			//{ description: 'bundle.toEs6()', method: 'toEs6', outputdir: 'es6' },
+			{ description: 'bundle.toUmd()', method: 'toUmd', outputdir: 'umd', options: { name: 'myModule' } }
+		];
 
-		// 		console.log( 'bundle\n>\n%s\n>\n', result );
-		// 	});
-		// });
+		tests = [
+			{ dir: '1', description: 'bundles a simple collection of modules' },
+			{ dir: '2', description: 'bundles modules in index.js files' },
+			{ dir: '3', description: 'allows external imports' },
+			{ dir: '4', description: 'exports a default export' },
+			{ dir: '5', description: 'exports named exports', 'named': true }
+		];
 
-		// it( 'bundles modules', function () {
-		// 	return esperanto.bundle({
-		// 		base: 'bundle/input/1',
-		// 		entry: 'foo'
-		// 	}).then( function ( bundle ) {
-		// 		var result = bundle.toUmd({
-		// 			defaultOnly: true,
-		// 			name: 'foo',
-		// 			getModuleName: function ( path ) {
-		// 				return path.split( '/' ).pop();
-		// 			}
-		// 		});
+		profiles.forEach( function ( profile ) {
+			describe( profile.description + ':', function () {
+				tests.forEach( function ( t ) {
+					if ( t.named && profile.options && profile.options.defaultOnly ) {
+						return;
+					}
 
-		// 		console.log( 'bundle\n>\n%s\n>\n', result );
-		// 	});
-		// });
+					it( t.description, function () {
+						return esperanto.bundle({
+							base: path.resolve( 'bundle/input', t.dir ),
+							entry: t.entry || 'main'
+						}).then( function ( bundle ) {
+							var actual = bundle[ profile.method ]( profile.options );
 
-		// it( 'follows /index.js paths', function () {
-		// 	return esperanto.bundle({
-		// 		base: 'bundle/input/2',
-		// 		entry: 'foo'
-		// 	}).then( function ( bundle ) {
-		// 		var result = bundle.toUmd({
-		// 			defaultOnly: true,
-		// 			name: 'foo',
-		// 			getModuleName: function ( path ) {
-		// 				return path.split( '/' ).pop();
-		// 			}
-		// 		});
-
-		// 		console.log( 'bundle\n>\n%s\n>\n', result );
-		// 	});
-		// });
-
-		// it( 'keeps imports it can\'t resolve', function () {
-		// 	return esperanto.bundle({
-		// 		base: 'bundle/input/3',
-		// 		entry: 'foo'
-		// 	}).then( function ( bundle ) {
-		// 		var result = bundle.toUmd({
-		// 			defaultOnly: true,
-		// 			name: 'foo',
-		// 			getModuleName: function ( path ) {
-		// 				return path.split( '/' ).pop();
-		// 			}
-		// 		});
-
-		// 		console.log( 'bundle\n>\n%s\n>\n', result );
-		// 	});
-		// });
+							return sander.readFile( 'bundle/output/', profile.outputdir, t.dir + '.js' ).then( String ).then( function ( expected ) {
+								assert.equal( actual, expected, 'Expected\n>\n' +
+									makeWhitespaceVisible( actual ) +
+								'\n>\n\nto match\n\n>\n' +
+									makeWhitespaceVisible( expected ) +
+								'\n>' );
+							});
+						});
+					});
+				});
+			});
+		});
 	});
 };
+
+function makeWhitespaceVisible ( str ) {
+	return str.replace( /^\t+/gm, function ( match ) {
+		// replace leading tabs
+		return match.replace( /\t/g, '--->' );
+	}).replace( /^( +)/gm, function ( match, $1 ) {
+		// replace leading spaces
+		return $1.replace( / /g, '*' );
+	}).replace( /\t+$/gm, function ( match ) {
+		// replace trailing tabs
+		return match.replace( /\t/g, '--->' );
+	}).replace( /( +)$/gm, function ( match, $1 ) {
+		// replace trailing spaces
+		return $1.replace( / /g, '*' );
+	});
+}
