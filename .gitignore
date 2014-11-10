@@ -6,5 +6,4 @@ out
 demo/dist
 test/lib
 lib
-.tmp
-.tmp-bundle
+.*
