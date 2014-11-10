@@ -1,26 +1,21 @@
 import resolve from '../../utils/resolve';
 
-export default function sortModules ( entry, modules ) {
-	var moduleByPath = {},
-		seen = {},
+export default function sortModules ( entry, modules, moduleLookup ) {
+	var seen = {},
 		ordered = [];
-
-	modules.forEach( x => {
-		moduleByPath[ x.file ] = x;
-	});
 
 	function visit ( mod ) {
 		// ignore external modules, and modules we've
 		// already included
-		if ( !mod || seen[ mod.file ] ) {
+		if ( !mod || seen[ mod.id ] ) {
 			return;
 		}
 
-		seen[ mod.file ] = true;
+		seen[ mod.id ] = true;
 
 		mod.imports.forEach( x => {
-			var file = resolve( x.path, mod.file );
-			visit( moduleByPath[ file ] );
+			var id = resolve( x.path, mod.file );
+			visit( moduleLookup[ id ] );
 		});
 
 		ordered.push( mod );

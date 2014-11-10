@@ -9,7 +9,7 @@ export default function Bundle$_collect () {
 	var entry = this.entry.replace( /\.js$/, '' ),
 		modules = [],
 		moduleLookup = this.moduleLookup,
-		promiseByPath = {},
+		promiseById = {},
 		getModuleName = this.getModuleName,
 		base = this.base,
 		externalModules = this.externalModules,
@@ -18,18 +18,24 @@ export default function Bundle$_collect () {
 	return fetchModule( entry ).then( () => {
 		this.entryModule = this.moduleLookup[ this.entry ];
 
-		this.modules = sortModules( modules[0], modules );
+		this.modules = sortModules( modules[0], modules, moduleLookup );
 		this._resolveChains();
 		this._combine();
 	});
 
 	function fetchModule ( modulePath ) {
-		modulePath = modulePath.replace( /\.js$/, '' );
+		var moduleId, moduleName;
 
-		if ( !promiseByPath[ modulePath ] ) {
-			promiseByPath[ modulePath ] = sander.readFile( base, modulePath + '.js' ).catch( function ( err ) {
+		moduleId = modulePath.replace( /\.js$/, '' );
+		modulePath = moduleId + '.js';
+
+		moduleName = getModuleName( moduleId );
+
+		if ( !promiseById[ moduleId ] ) {
+			promiseById[ moduleId ] = sander.readFile( base, modulePath ).catch( function ( err ) {
 				if ( err.code === 'ENOENT' ) {
-					return sander.readFile( base, modulePath + '/index.js' );
+					modulePath = modulePath.replace( /\.js$/, '/index.js' );
+					return sander.readFile( base, modulePath );
 				}
 
 				throw err;
@@ -38,19 +44,20 @@ export default function Bundle$_collect () {
 
 				module = new Module({
 					source: source,
+					id: moduleId,
 					file: modulePath,
-					getModuleName: getModuleName,
-					name: getModuleName( modulePath )
+					name: moduleName,
+					getModuleName: getModuleName
 				});
 
 				modules.push( module );
-				moduleLookup[ modulePath ] = module;
+				moduleLookup[ moduleId ] = module;
 
 				promises = module.imports.map( x => {
 					var importPath = resolve( x.path, modulePath );
 
 					// short-circuit cycles
-					if ( promiseByPath[ importPath ] ) {
+					if ( promiseById[ importPath ] ) {
 						return;
 					}
 
@@ -62,24 +69,19 @@ export default function Bundle$_collect () {
 				var externalModule;
 
 				if ( err.code === 'ENOENT' ) {
-					if ( modulePath === entry ) {
+					if ( moduleId === entry ) {
 						throw new Error( 'Could not find entry module (' + entry + ')' );
 					}
 
-					if ( modulePath[0] === '.' ) {
-						// we're missing a local module
-						throw err;
-					}
-
 					// Most likely an external module
-					if ( !externalModuleLookup[ modulePath ] ) {
+					if ( !externalModuleLookup[ moduleId ] ) {
 						externalModule = {
-							name: getModuleName( modulePath ),
-							path: modulePath
+							name: getModuleName( moduleId ),
+							path: moduleId // TODO replace `path` with `id`
 						};
 
 						externalModules.push( externalModule );
-						externalModuleLookup[ modulePath ] = externalModule;
+						externalModuleLookup[ moduleId ] = externalModule;
 					}
 				} else {
 					throw err;
@@ -87,6 +89,6 @@ export default function Bundle$_collect () {
 			});
 		}
 
-		return promiseByPath[ modulePath ];
+		return promiseById[ moduleId ];
 	}
 }

@@ -9,12 +9,12 @@ export default function Bundle$_combine ( options ) {
 
 	var body = this.modules.map( mod => {
 		var modBody = mod.body.clone(),
-			prefix = getModuleName( mod.file );
+			prefix = getModuleName( mod.id );
 
 		annotateAst( mod.ast );
 		transformBody( this, mod, modBody, prefix );
 
-		return modBody.trim().toString();
+		return modBody.toString();
 	}).join( '\n\n' );
 
 	this.body = new MagicString( body );

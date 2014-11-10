@@ -9,19 +9,19 @@ export default function Bundle$_resolveChains () {
 
 		mod.imports.forEach( x => {
 			x.specifiers.forEach( s => {
-				var modulePath = resolve( x.path, mod.path );
+				var moduleId = resolve( x.path, mod.file );
 
 				if ( s.batch ) {
 					// if this is an internal module, we need to tell that module that
 					// it needs to export an object full of getters
-					if ( namespaceExporter = this.moduleLookup[ modulePath ] ) {
+					if ( namespaceExporter = this.moduleLookup[ moduleId ] ) {
 						namespaceExporter._exportsNamespace = true;
 					}
 
 					return; // TODO can batch imports be chained?
 				}
 
-				origin[ s.as ] = modulePath + '@' + s.name;
+				origin[ s.as ] = moduleId + '@' + s.name;
 			});
 		});
 
@@ -32,7 +32,7 @@ export default function Bundle$_resolveChains () {
 				var o = origin[ s.name ];
 
 				if ( o ) {
-					chains[ mod.file + '@' + s.name ] = o;
+					chains[ mod.id + '@' + s.name ] = o;
 				}
 			});
 		});
