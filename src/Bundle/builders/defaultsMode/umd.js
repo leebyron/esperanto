@@ -16,7 +16,7 @@ export default function umd ( bundle, body, options ) {
 	}
 
 	if ( x = entry.exports[0] ) {
-		exportStatement = 'return ' + entry.name + '__default;';
+		exportStatement = body.indentStr + 'return ' + entry.name + '__default;';
 		body.append( '\n\n' + exportStatement );
 	}
 

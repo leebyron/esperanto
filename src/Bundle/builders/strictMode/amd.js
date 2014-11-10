@@ -13,7 +13,7 @@ export default function amd ( bundle, body ) {
 		intro;
 
 	defaultsBlock = bundle.externalModules.map( x => {
-		return `var ${x.name}__default = ('default' in ${x.name} ? ${x.name}.default : ${x.name});`;
+		return body.indentStr + `var ${x.name}__default = ('default' in ${x.name} ? ${x.name}.default : ${x.name});`;
 	}).join( '\n' );
 
 	if ( defaultsBlock ) {
