@@ -32,7 +32,7 @@ export default function umd ( bundle, body, options ) {
 		names: bundle.externalModules.map( defaultify ).join( ', ' )
 	}).replace( /\t/g, body.indentStr );
 
-	body.indent().prepend( intro ).trim().append( '\n\n});' );
+	body.indent().prepend( intro ).trim().append( '\n\n}));' );
 	return body.toString();
 }
 
@@ -41,7 +41,7 @@ function quotePath ( m ) {
 }
 
 function req ( m ) {
-	return 'require(' + m.path + ')';
+	return 'require(\'' + m.path + '\')';
 }
 
 function globalify ( m ) {
