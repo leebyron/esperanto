@@ -11,11 +11,11 @@ export default function Module$parse ( options ) {
 		previousDeclaration,
 		uid = 0;
 
-	getModuleName = path => {
+	getModuleName = id => {
 		var name;
 
 		if ( options.getModuleName ) {
-			name = options.getModuleName( resolve( path, this.file ) );
+			name = options.getModuleName( id );
 		}
 
 		return name ? sanitize( name ) : '__imports_' + uid++;
@@ -37,7 +37,7 @@ export default function Module$parse ( options ) {
 
 			// give each imported module a name, falling back to
 			// __imports_x
-			declaration.name = getModuleName( declaration.path );
+			declaration.name = getModuleName( resolve( declaration.path, this.file ) ); // TODO `name` -> `id`
 
 			imports.push( declaration );
 		}
@@ -58,7 +58,7 @@ export default function Module$parse ( options ) {
 				//
 				//     `export { foo } from './bar';
 				passthrough = processImport( node, true );
-				passthrough.name = getModuleName( passthrough.path );
+				passthrough.name = getModuleName( resolve( passthrough.path, this.file ) );
 
 				passthrough.node = node;
 				passthrough.start = node.start;

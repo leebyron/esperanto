@@ -4,6 +4,7 @@ import parse from './prototype/parse';
 
 var Module = function ( options ) {
 	this.source = options.source;
+	this.id = options.id;
 	this.file = options.file;
 	this.name = options.name;
 
