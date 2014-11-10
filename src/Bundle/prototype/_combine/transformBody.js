@@ -13,7 +13,8 @@ export default function transformBody ( bundle, mod, body, prefix ) {
 		exportNames = [],
 		alreadyExported = {},
 		shouldExportEarly = {},
-		defaultValue;
+		defaultValue,
+		indentExclusionRanges = [];
 
 	scope = mod.ast._scope;
 	blockScope = mod.ast._blockScope;
@@ -49,6 +50,11 @@ export default function transformBody ( bundle, mod, body, prefix ) {
 
 			// Rewrite import and export identifiers
 			rewriteIdentifiers( body, node, toRewrite, scope );
+
+			// Add multi-line strings to exclusion ranges
+			if ( node.type === 'TemplateLiteral' ) {
+				indentExclusionRanges.push([ node.start, node.end ]);
+			}
 		},
 
 		leave: function ( node ) {
@@ -90,7 +96,8 @@ export default function transformBody ( bundle, mod, body, prefix ) {
 				//
 				// as the `foo` reference may be used elsewhere
 				defaultValue = body.slice( x.valueStart, x.end ); // in case rewrites occured inside the function body
-				body.replace( x.start, x.end, defaultValue + '\nvar ' + prefix + '__default = ' + prefix + '__' + name + ';' );
+				body.remove( x.start, x.valueStart );
+				body.replace( x.end, x.end, '\nvar ' + prefix + '__default = ' + prefix + '__' + name + ';' );
 			} else {
 				// TODO this is a bit convoluted...
 				if ( x.node.declaration && ( name = x.node.declaration.name ) ) {
@@ -140,6 +147,7 @@ export default function transformBody ( bundle, mod, body, prefix ) {
 		body.prepend( namespaceExportBlock );
 	}
 
+	body.trim().indent({ exclude: indentExclusionRanges });
 }
 
 function rewriteExportAssignments ( body, node, exports, scope, alreadyExported, isTopLevelNode ) {
