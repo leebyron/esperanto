@@ -15,7 +15,8 @@ export default function transformBody ( mod, body, options ) {
 		earlyExports,
 		lateExports,
 		defaultValue,
-		capturedUpdates = null;
+		capturedUpdates = null,
+		indentExclusionRanges = [];
 
 	scope = mod.ast._scope;
 	blockScope = mod.ast._blockScope;
@@ -55,6 +56,11 @@ export default function transformBody ( mod, body, options ) {
 
 			// Rewrite import identifiers
 			rewriteIdentifiers( body, node, toRewrite, scope );
+
+			// Add multi-line strings to exclusion ranges
+			if ( node.type === 'TemplateLiteral' ) {
+				indentExclusionRanges.push([ node.start, node.end ]);
+			}
 		},
 
 		leave: function ( node ) {
@@ -148,7 +154,9 @@ export default function transformBody ( mod, body, options ) {
 		body.trim().prepend( earlyExports.join( '\n' ) + '\n\n' );
 	}
 
-	body.trim().indent().prepend( options.intro ).trim().append( options.outro );
+	body.trim().indent({
+		exclude: indentExclusionRanges.length ? indentExclusionRanges : null
+	}).prepend( options.intro ).trim().append( options.outro );
 }
 
 function rewriteExportAssignments ( body, node, exports, scope, alreadyExported, isTopLevelNode, capturedUpdates ) {
