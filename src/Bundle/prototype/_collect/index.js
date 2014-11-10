@@ -3,6 +3,8 @@ import Module from '../../../Module';
 import resolve from '../../../utils/resolve';
 import sortModules from '../../utils/sortModules';
 
+var Promise = sander.Promise;
+
 export default function Bundle$_collect () {
 	var entry = this.entry.replace( /\.js$/, '' ),
 		modules = [],

@@ -117,7 +117,8 @@ module.exports = function () {
 			{ dir: '2', description: 'bundles modules in index.js files' },
 			{ dir: '3', description: 'allows external imports' },
 			{ dir: '4', description: 'exports a default export' },
-			{ dir: '5', description: 'exports named exports', 'named': true }
+			{ dir: '5', description: 'exports named exports', 'named': true },
+			{ dir: '6', description: 'gives legal names to nested imports' }
 		];
 
 		profiles.forEach( function ( profile ) {
