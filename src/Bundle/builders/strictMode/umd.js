@@ -7,6 +7,8 @@ export default function umd ( bundle, body, options ) {
 	var defaultsBlock,
 		entry = bundle.entryModule,
 		exportBlock,
+		importPaths,
+		importNames,
 		amdDeps,
 		cjsDeps,
 		globals,
@@ -18,26 +20,29 @@ export default function umd ( bundle, body, options ) {
 	}
 
 	defaultsBlock = bundle.externalModules.map( x => {
-		return `var ${x}__default = ('default' in ${x} ? ${x}.default : ${x});`;
+		return `var ${x.name}__default = ('default' in ${x.name} ? ${x.name}.default : ${x.name});`;
 	}).join( '\n' );
 
 	if ( defaultsBlock ) {
 		body.prepend( defaultsBlock + '\n\n' );
 	}
 
+	importPaths = bundle.externalModules.map( getPath );
+	importNames = bundle.externalModules.map( getName );
+
 	if ( entry.exports.length ) {
-		amdDeps = [ 'exports' ].concat( bundle.externalModules ).map( quote ).join( ', ' );
-		cjsDeps = [ 'exports' ].concat( bundle.externalModules.map( req ) ).join( ', ' );
-		globals = [ options.name ].concat( bundle.externalModules ).map( globalify ).join( ', ' );
-		names = [ 'exports' ].concat( bundle.externalModules ).join( ', ' );
+		amdDeps = [ 'exports' ].concat( importPaths ).map( quote ).join( ', ' );
+		cjsDeps = [ 'exports' ].concat( importPaths.map( req ) ).join( ', ' );
+		globals = [ options.name ].concat( importNames ).map( globalify ).join( ', ' );
+		names   = [ 'exports' ].concat( importNames ).join( ', ' );
 
 		exportBlock = getExportBlock( entry, body.indentStr );
 		body.append( '\n\n' + exportBlock );
 	} else {
-		amdDeps = bundle.externalModules.map( quote ).join( ', ' );
-		cjsDeps = bundle.externalModules.map( req ).join( ', ' );
-		globals = bundle.externalModules.map( globalify ).join( ', ' );
-		names = bundle.externalModules.join( ', ' );
+		amdDeps = importPaths.map( quote ).join( ', ' );
+		cjsDeps = importPaths.map( req ).join( ', ' );
+		globals = importNames.map( globalify ).join( ', ' );
+		names   = importNames.join( ', ' );
 	}
 
 	intro = introTemplate({
@@ -51,6 +56,9 @@ export default function umd ( bundle, body, options ) {
 	body.indent().prepend( intro ).trim().append( '\n\n});' );
 	return body.toString();
 }
+
+function getPath ( m ) { return m.path; }
+function getName ( m ) { return m.name; }
 
 function quote ( str ) {
 	return "'" + str + "'";

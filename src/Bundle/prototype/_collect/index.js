@@ -12,7 +12,8 @@ export default function Bundle$_collect () {
 		promiseByPath = {},
 		getModuleName = this.getModuleName,
 		base = this.base,
-		externalModules = this.externalModules;
+		externalModules = this.externalModules,
+		externalModuleLookup = this.externalModuleLookup;
 
 	return fetchModule( entry ).then( () => {
 		this.entryModule = this.moduleLookup[ this.entry ];
@@ -58,6 +59,8 @@ export default function Bundle$_collect () {
 
 				return Promise.all( promises );
 			}).catch( function ( err ) {
+				var externalModule;
+
 				if ( err.code === 'ENOENT' ) {
 					if ( modulePath === entry ) {
 						throw new Error( 'Could not find entry module (' + entry + ')' );
@@ -69,8 +72,14 @@ export default function Bundle$_collect () {
 					}
 
 					// Most likely an external module
-					if ( !~externalModules.indexOf( modulePath ) ) {
-						externalModules.push( modulePath );
+					if ( !externalModuleLookup[ modulePath ] ) {
+						externalModule = {
+							name: getModuleName( modulePath ),
+							path: modulePath
+						};
+
+						externalModules.push( externalModule );
+						externalModuleLookup[ modulePath ] = externalModule;
 					}
 				} else {
 					throw err;

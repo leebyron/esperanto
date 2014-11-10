@@ -12,7 +12,9 @@ var Bundle = function ( options ) {
 
 	this.modules = null;
 	this.moduleLookup = {};
+
 	this.externalModules = [];
+	this.externalModuleLookup = {};
 };
 
 Bundle.prototype = {

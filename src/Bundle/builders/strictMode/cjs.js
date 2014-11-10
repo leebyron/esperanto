@@ -7,7 +7,7 @@ export default function cjs ( bundle, body ) {
 		intro;
 
 	importBlock = bundle.externalModules.map( x => {
-		return `var ${x} = require('${x}');\nvar ${x}__default = ('default' in ${x} ? ${x}.default : ${x});`;
+		return `var ${x.name} = require('${x.path}');\nvar ${x.name}__default = ('default' in ${x.name} ? ${x.name}.default : ${x.name});`;
 	}).join( '\n' );
 
 	if ( importBlock ) {

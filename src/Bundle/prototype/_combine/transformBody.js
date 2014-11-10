@@ -18,7 +18,7 @@ export default function transformBody ( bundle, mod, body, prefix ) {
 	scope = mod.ast._scope;
 	blockScope = mod.ast._blockScope;
 
-	gatherImports( mod.imports, bundle.externalModules, importedBindings, toRewrite, bundle._chains );
+	gatherImports( mod.imports, bundle.externalModuleLookup, importedBindings, toRewrite, bundle._chains );
 	Object.keys( toRewrite ).forEach( k => readOnly[k] = toRewrite[k] );
 
 	scope.names.forEach( n => toRewrite[n] = prefix + '__' + n );

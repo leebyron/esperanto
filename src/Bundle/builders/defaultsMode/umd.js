@@ -20,7 +20,7 @@ export default function umd ( bundle, body, options ) {
 		body.append( '\n\n' + exportStatement );
 	}
 
-	amdDeps = bundle.externalModules.map( quote ).join( ', ' );
+	amdDeps = bundle.externalModules.map( quotePath ).join( ', ' );
 	cjsDeps = bundle.externalModules.map( req ).join( ', ' );
 	globals = bundle.externalModules.map( globalify ).join( ', ' );
 
@@ -36,20 +36,20 @@ export default function umd ( bundle, body, options ) {
 	return body.toString();
 }
 
-function quote ( str ) {
-	return "'" + str + "'";
+function quotePath ( m ) {
+	return "'" + m.path + "'";
 }
 
-function req ( path ) {
-	return 'require(' + path + ')';
+function req ( m ) {
+	return 'require(' + m.path + ')';
 }
 
-function globalify ( name ) {
-	return 'global.' + name;
+function globalify ( m ) {
+	return 'global.' + m.name;
 }
 
-function defaultify ( name ) {
-	return name + '__default';
+function defaultify ( m ) {
+	return m.name + '__default';
 }
 
 introTemplate = template( `(function (global, factory) {

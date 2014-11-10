@@ -2,6 +2,6 @@
 
 	'use strict';
 	
-	var fs = require('fs');
+	var fs = require('fs');;
 
 }).call(global);

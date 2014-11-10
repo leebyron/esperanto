@@ -14,14 +14,18 @@ export default function amd ( bundle, body ) {
 	}
 
 	intro = introTemplate({
-		amdDeps: bundle.externalModules.length ? '[' + bundle.externalModules.map( quote ).join( ', ' ) + '], ' : '',
-		names: bundle.externalModules.join( ', ' )
+		amdDeps: bundle.externalModules.length ? '[' + bundle.externalModules.map( quotePath ).join( ', ' ) + '], ' : '',
+		names: bundle.externalModules.map( getName ).join( ', ' )
 	}).replace( /\t/g, body.indentStr );
 
 	body.indent().prepend( intro ).trim().append( '\n\n});' );
 	return body.toString();
 }
 
-function quote ( str ) {
-	return "'" + str + "'";
+function quotePath ( m ) {
+	return "'" + m.path + "'";
+}
+
+function getName ( m ) {
+	return m.name;
 }

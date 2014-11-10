@@ -1,10 +1,10 @@
-export default function gatherImports ( imports, externalModules, importedBindings, toRewrite, chains ) {
+export default function gatherImports ( imports, externalModuleLookup, importedBindings, toRewrite, chains ) {
 	var replacements = {};
 
 	imports.forEach( x => {
 		var external;
 
-		if ( ~externalModules.indexOf( x.path ) ) {
+		if ( !!externalModuleLookup[ x.path ] ) {
 			external = true;
 		}
 
