@@ -21,6 +21,6 @@ export default function cjs ( bundle, body ) {
 
 	intro = '(function () {\n\n' + body.indentStr + "'use strict';\n\n";
 
-	body.indent().prepend( intro ).trim().append( '\n\n}).call(global);' );
+	body.prepend( intro ).trim().append( '\n\n}).call(global);' );
 	return body.toString();
 }

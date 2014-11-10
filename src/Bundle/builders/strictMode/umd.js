@@ -53,7 +53,7 @@ export default function umd ( bundle, body, options ) {
 		name: options.name
 	}).replace( /\t/g, body.indentStr );
 
-	body.indent().prepend( intro ).trim().append( '\n\n});' );
+	body.prepend( intro ).trim().append( '\n\n});' );
 	return body.toString();
 }
 

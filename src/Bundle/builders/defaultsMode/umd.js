@@ -16,7 +16,7 @@ export default function umd ( bundle, body, options ) {
 	}
 
 	if ( x = entry.exports[0] ) {
-		exportStatement = 'return ' + bundle.getModuleName( entry.file ) + '__default;';
+		exportStatement = 'return ' + entry.name + '__default;';
 		body.append( '\n\n' + exportStatement );
 	}
 
@@ -32,7 +32,7 @@ export default function umd ( bundle, body, options ) {
 		names: bundle.externalModules.map( defaultify ).join( ', ' )
 	}).replace( /\t/g, body.indentStr );
 
-	body.indent().prepend( intro ).trim().append( '\n\n}));' );
+	body.prepend( intro ).trim().append( '\n\n}));' );
 	return body.toString();
 }
 

@@ -14,12 +14,12 @@ export default function cjs ( bundle, body ) {
 	}
 
 	if ( x = entry.exports[0] ) {
-		exportStatement = 'module.exports = ' + bundle.getModuleName( entry.file ) + '__default;';
+		exportStatement = 'module.exports = ' + entry.name + '__default;';
 		body.append( '\n\n' + exportStatement );
 	}
 
 	intro = '(function () {\n\n' + body.indentStr + "'use strict';\n\n";
 
-	body.indent().prepend( intro ).trim().append( '\n\n}).call(global);' );
+	body.prepend( intro ).trim().append( '\n\n}).call(global);' );
 	return body.toString();
 }

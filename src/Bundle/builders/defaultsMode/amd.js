@@ -9,7 +9,7 @@ export default function amd ( bundle, body ) {
 		intro;
 
 	if ( x = entry.exports[0] ) {
-		exportStatement = 'return ' + bundle.getModuleName( entry.file ) + '__default;';
+		exportStatement = 'return ' + entry.name + '__default;';
 		body.append( '\n\n' + exportStatement );
 	}
 
@@ -18,7 +18,7 @@ export default function amd ( bundle, body ) {
 		names: bundle.externalModules.map( getName ).join( ', ' )
 	}).replace( /\t/g, body.indentStr );
 
-	body.indent().prepend( intro ).trim().append( '\n\n});' );
+	body.prepend( intro ).trim().append( '\n\n});' );
 	return body.toString();
 }
 
