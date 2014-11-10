@@ -7,7 +7,7 @@
 		define(['exports', 'asap'], factory);
 	} else if (typeof module !== 'undefined' && module.exports && typeof require === 'function') {
 		// node/browserify
-		factory(exports, require(asap));
+		factory(exports, require('asap'));
 	} else {
 		// browser global
 		global.myModule = {};

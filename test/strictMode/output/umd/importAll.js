@@ -7,7 +7,7 @@
 		define(['exports', 'fs'], factory);
 	} else if (typeof module !== 'undefined' && module.exports && typeof require === 'function') {
 		// node/browserify
-		factory(exports, require(fs));
+		factory(exports, require('fs'));
 	} else {
 		// browser global
 		global.myModule = {};

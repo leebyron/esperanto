@@ -7,7 +7,7 @@
 		define(['exports', 'baz'], factory);
 	} else if (typeof module !== 'undefined' && module.exports && typeof require === 'function') {
 		// node/browserify
-		factory(exports, require(baz));
+		factory(exports, require('baz'));
 	} else {
 		// browser global
 		global.myModule = {};

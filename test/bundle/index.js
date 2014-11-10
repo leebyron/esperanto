@@ -104,11 +104,9 @@ module.exports = function () {
 		profiles = [
 			{ description: 'bundle.toAmd({ defaultOnly: true })', method: 'toAmd', outputdir: 'amdDefaults', options: { defaultOnly: true } },
 			{ description: 'bundle.toCjs({ defaultOnly: true })', method: 'toCjs', outputdir: 'cjsDefaults', options: { defaultOnly: true } },
-			//{ description: 'bundle.toEs6({ defaultOnly: true })', method: 'toEs6', outputdir: 'es6Defaults', options: { defaultOnly: true } },
 			{ description: 'bundle.toUmd({ defaultOnly: true })', method: 'toUmd', outputdir: 'umdDefaults', options: { defaultOnly: true, name: 'myModule' } },
 			{ description: 'bundle.toAmd()', method: 'toAmd', outputdir: 'amd' },
 			{ description: 'bundle.toCjs()', method: 'toCjs', outputdir: 'cjs' },
-			//{ description: 'bundle.toEs6()', method: 'toEs6', outputdir: 'es6' },
 			{ description: 'bundle.toUmd()', method: 'toUmd', outputdir: 'umd', options: { name: 'myModule' } }
 		];
 

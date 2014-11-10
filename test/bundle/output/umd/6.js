@@ -11,17 +11,17 @@
 	} else {
 		// browser global
 		global.myModule = {};
-		factory(global.utils/external);
+		factory(global.external);
 	}
 
-}(typeof window !== 'undefined' ? window : this, function (utils/external) {
+}(typeof window !== 'undefined' ? window : this, function (external) {
 
 	'use strict';
 
-	var utils/external__default = ('default' in utils/external ? utils/external.default : utils/external);
-	
+var external__default = ('default' in external ? external.default : external);
+
 	var foo__default = 'this is a message';
-	
+
 	console.log( foo__default );
 
 });

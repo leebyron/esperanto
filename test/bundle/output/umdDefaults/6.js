@@ -7,18 +7,18 @@
 		define(['utils/external'], factory);
 	} else if (typeof module !== 'undefined' && module.exports && typeof require === 'function') {
 		// node/browserify
-		module.exports = factory(require(utils/external));
+		module.exports = factory(require('utils/external'));
 	} else {
 		// browser global
-		global.myModule = factory(global.utils/external);
+		global.myModule = factory(global.external);
 	}
 
-}(typeof window !== 'undefined' ? window : this, function (utils/external__default) {
+}(typeof window !== 'undefined' ? window : this, function (external__default) {
 
 	'use strict';
 
 	var foo__default = 'this is a message';
-	
+
 	console.log( foo__default );
 
-});
+}));
