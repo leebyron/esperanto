@@ -2,7 +2,7 @@
 
 	'use strict';
 
-	var external = require('external');
-	var external__default = ('default' in external ? external.default : external);
+	var Correct = require('external');
+	var Correct__default = ('default' in Correct ? Correct.default : Correct);
 
 }).call(global);

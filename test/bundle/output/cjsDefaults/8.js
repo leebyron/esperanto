@@ -2,6 +2,6 @@
 
 	'use strict';
 
-	var external__default = require('external');
+	var ImplicitlyNamed__default = require('external');
 
 }).call(global);

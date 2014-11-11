@@ -11,13 +11,13 @@
 	} else {
 		// browser global
 		global.myModule = {};
-		factory(global.external);
+		factory(global.ImplicitlyNamed);
 	}
 
-}(typeof window !== 'undefined' ? window : this, function (external) {
+}(typeof window !== 'undefined' ? window : this, function (ImplicitlyNamed) {
 
 	'use strict';
 
-	var external__default = ('default' in external ? external.default : external);
+	var ImplicitlyNamed__default = ('default' in ImplicitlyNamed ? ImplicitlyNamed.default : ImplicitlyNamed);
 
 });

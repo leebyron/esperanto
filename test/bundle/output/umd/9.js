@@ -11,13 +11,13 @@
 	} else {
 		// browser global
 		global.myModule = {};
-		factory(global.external);
+		factory(global.Correct);
 	}
 
-}(typeof window !== 'undefined' ? window : this, function (external) {
+}(typeof window !== 'undefined' ? window : this, function (Correct) {
 
 	'use strict';
 
-	var external__default = ('default' in external ? external.default : external);
+	var Correct__default = ('default' in Correct ? Correct.default : Correct);
 
 });
