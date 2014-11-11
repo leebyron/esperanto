@@ -6,7 +6,7 @@ var introTemplate;
 
 introTemplate = template( 'define(<%= paths %>function (<%= names %>) {\n\n\t\'use strict\';\n\n' );
 
-export default function amd ( mod, body, options ) {
+export default function amd ( mod, body ) {
 	var importPaths = [],
 		importNames = [],
 		intro,

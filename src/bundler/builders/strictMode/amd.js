@@ -7,12 +7,12 @@ export default function amd ( bundle, body ) {
 	var defaultsBlock,
 		entry = bundle.entryModule,
 		exportBlock,
-		externalModules,
+		externalModules = bundle.externalModules,
 		importPaths,
 		importNames,
 		intro;
 
-	defaultsBlock = bundle.externalModules.map( x => {
+	defaultsBlock = externalModules.map( x => {
 		return body.indentStr + `var ${x.name}__default = ('default' in ${x.name} ? ${x.name}.default : ${x.name});`;
 	}).join( '\n' );
 
@@ -21,14 +21,14 @@ export default function amd ( bundle, body ) {
 	}
 
 	if ( entry.exports.length ) {
-		importPaths = [ 'exports' ].concat( bundle.externalModules.map( getPath ) );
-		importNames = [ 'exports' ].concat( bundle.externalModules.map( getName ) );
+		importPaths = [ 'exports' ].concat( externalModules.map( getPath ) );
+		importNames = [ 'exports' ].concat( externalModules.map( getName ) );
 
 		exportBlock = getExportBlock( entry, body.indentStr );
 		body.append( '\n\n' + exportBlock );
 	} else {
-		importPaths = bundle.externalModules.map( getPath );
-		importNames = bundle.externalModules.map( getName );
+		importPaths = externalModules.map( getPath );
+		importNames = externalModules.map( getName );
 	}
 
 	intro = introTemplate({

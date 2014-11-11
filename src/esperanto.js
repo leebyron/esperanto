@@ -9,8 +9,7 @@ function transpileMethod ( format ) {
 	return function ( source, options ) {
 		var module,
 			body,
-			builder,
-			getModuleName;
+			builder;
 
 		options = options || {};
 		module = getStandaloneModule({ source: source, getModuleName: options.getModuleName });

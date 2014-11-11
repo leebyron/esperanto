@@ -7,7 +7,7 @@ export default function cjs ( mod, body ) {
 	var importBlock;
 
 	// Create block of require statements
-	importBlock = mod.imports.map( ( x, i ) => {
+	importBlock = mod.imports.map( x => {
 		var specifier, name, replacement;
 
 		specifier = x.specifiers[0];
@@ -16,7 +16,7 @@ export default function cjs ( mod, body ) {
 			// empty import
 			replacement = `require('${x.path}');`;
 		} else {
-			name = specifier.batch ? specifier.name : mod.getName( x.path );// '__imports_' + i;//x.name;'__imports_' + i;//x.name;
+			name = specifier.batch ? specifier.name : mod.getName( x.path );
 			replacement = `var ${name} = require('${x.path}');`;
 		}
 

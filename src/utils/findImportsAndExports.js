@@ -1,82 +1,8 @@
-import resolve from './resolve';
-import sanitize from './sanitize';
-
-function processImport ( node, passthrough ) {
-	return {
-		path: node.source.value,
-		specifiers: node.specifiers.map( s => {
-			var id;
-
-			if ( s.type === 'ImportBatchSpecifier' ) {
-				return {
-					batch: true,
-					name: s.name.name
-				};
-			}
-
-			id = s.id.name;
-
-			return {
-				default: !!s.default,
-				name: s.default ? 'default' : id,
-				as: s.name ? s.name.name : id
-			};
-		}),
-		passthrough: !!passthrough
-	};
-}
-
-function processExport ( node, source ) {
-	var d, value;
-
-	if ( d = node.declaration ) {
-		value = source.slice( d.start, d.end );
-
-		if ( /Declaration/.test( d.type ) ) {
-			// inline declarations, e.g
-			//
-			//     export var foo = 'bar';
-			//     export function baz () {...}
-			return {
-				declaration: true,
-				default: !!node.default,
-				name: node.default ? 'default' : getDeclarationName( d ),
-				value: value,
-				valueStart: d.start
-			};
-		}
-
-		// literals, e.g. `export default 42`
-		return {
-			default: true,
-			name: 'default',
-			value: value,
-			valueStart: d.start
-		};
-	}
-
-	// named exports, e.g. `export { foo, bar };`
-	return {
-		specifiers: node.specifiers.map( s => ({ name: s.id.name }) )
-	};
-}
-
-function getDeclarationName ( declaration ) {
-	if ( declaration.type === 'VariableDeclaration' ) {
-		return declaration.declarations[0].id.name;
-	}
-
-	if ( declaration.type === 'FunctionDeclaration' ) {
-		return declaration.id.name;
-	}
-}
-
 export default function findImportsAndExports ( mod, source, ast, imports, exports ) {
-	var previousDeclaration,
-		uid = 0;
+	var previousDeclaration;
 
 	ast.body.forEach( node => {
-		var passthrough, declaration, name;
+		var passthrough, declaration;
 
 		if ( previousDeclaration ) {
 			previousDeclaration.next = node.start;
@@ -106,10 +32,6 @@ export default function findImportsAndExports ( mod, source, ast, imports, expor
 				// it's both an import and an export, e.g.
 				// `export { foo } from './bar';
 				passthrough = processImport( node, true );
-
-				passthrough.node = node;
-				passthrough.start = node.start;
-				passthrough.end = node.end;
 				imports.push( passthrough );
 
 				declaration.passthrough = passthrough;
@@ -117,10 +39,6 @@ export default function findImportsAndExports ( mod, source, ast, imports, expor
 		}
 
 		if ( declaration ) {
-			declaration.start = node.start;
-			declaration.end = node.end;
-			declaration.node = node;
-
 			previousDeclaration = declaration;
 		}
 	});
@@ -128,5 +46,86 @@ export default function findImportsAndExports ( mod, source, ast, imports, expor
 	// catch any trailing semicolons
 	if ( previousDeclaration ) {
 		previousDeclaration.next = source.length;
+	}
+}
+
+function processImport ( node, passthrough ) {
+	return {
+		node: node,
+		start: node.start,
+		end: node.end,
+		passthrough: !!passthrough,
+
+		path: node.source.value,
+		specifiers: node.specifiers.map( s => {
+			var id;
+
+			if ( s.type === 'ImportBatchSpecifier' ) {
+				return {
+					batch: true,
+					name: s.name.name
+				};
+			}
+
+			id = s.id.name;
+
+			return {
+				default: !!s.default,
+				name: s.default ? 'default' : id,
+				as: s.name ? s.name.name : id
+			};
+		})
+	};
+}
+
+function processExport ( node, source ) {
+	var result, d;
+
+	result = {
+		node: node,
+		start: node.start,
+		end: node.end
+	};
+
+	if ( d = node.declaration ) {
+		result.value = source.slice( d.start, d.end );
+		result.valueStart = d.start;
+
+		if ( /Declaration/.test( d.type ) ) {
+			// inline declarations, e.g
+			//
+			//     export var foo = 'bar';
+			//     export function baz () {...}
+			result.declaration = true; // TODO remove in favour of result.type
+			result.type = 'declaration';
+			result.default = !!node.default;
+			result.name = node.default ? 'default' : getDeclarationName( d );
+
+		}
+
+		else {
+			// literals, e.g. `export default 42`
+			result.type = 'literal';
+			result.default = true;
+			result.name = 'default';
+		}
+	}
+
+	else {
+		// named exports, e.g. `export { foo, bar };`
+		result.type = 'named';
+		result.specifiers = node.specifiers.map( s => ({ name: s.id.name }) ) // TODO as?
+	}
+
+	return result;
+}
+
+function getDeclarationName ( declaration ) {
+	if ( declaration.type === 'VariableDeclaration' ) {
+		return declaration.declarations[0].id.name;
+	}
+
+	if ( declaration.type === 'FunctionDeclaration' ) {
+		return declaration.id.name;
 	}
 }
