@@ -10,7 +10,7 @@ export default function getStandaloneModule ( options ) {
 	mod = {
 		id: options.id,
 		file: options.file,
-		name: options.name, // TODO we shouldn't know this yet
+		//name: options.name, // TODO we shouldn't know this yet
 		source: options.source,
 		body: new MagicString( options.source ),
 		ast: acorn.parse( options.source, {

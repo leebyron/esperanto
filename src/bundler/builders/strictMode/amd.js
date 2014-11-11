@@ -13,7 +13,8 @@ export default function amd ( bundle, body ) {
 		intro;
 
 	defaultsBlock = externalModules.map( x => {
-		return body.indentStr + `var ${x.name}__default = ('default' in ${x.name} ? ${x.name}.default : ${x.name});`;
+		var name = bundle.uniqueNames[ x.id ];
+		return body.indentStr + `var ${name}__default = ('default' in ${name} ? ${name}.default : ${name});`;
 	}).join( '\n' );
 
 	if ( defaultsBlock ) {
@@ -22,13 +23,13 @@ export default function amd ( bundle, body ) {
 
 	if ( entry.exports.length ) {
 		importPaths = [ 'exports' ].concat( externalModules.map( getPath ) );
-		importNames = [ 'exports' ].concat( externalModules.map( getName ) );
+		importNames = [ 'exports' ].concat( externalModules.map( m => bundle.uniqueNames[ m.id ] ) );
 
-		exportBlock = getExportBlock( entry, body.indentStr );
+		exportBlock = getExportBlock( bundle, entry, body.indentStr );
 		body.append( '\n\n' + exportBlock );
 	} else {
 		importPaths = externalModules.map( getPath );
-		importNames = externalModules.map( getName );
+		importNames = externalModules.map( m => bundle.uniqueNames[ m.id ] );
 	}
 
 	intro = introTemplate({
@@ -44,7 +45,6 @@ function quote ( str ) {
 	return "'" + str + "'";
 }
 
-function getPath ( m ) { return m.path; }
-function getName ( m ) { return m.name; }
+function getPath ( m ) { return m.id; }
 
 introTemplate = template( 'define(<%= amdDeps %>function (<%= names %>) {\n\n\t\'use strict\';\n\n' );

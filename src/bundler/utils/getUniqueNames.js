@@ -2,7 +2,7 @@ import resolve from '../../utils/resolve';
 import sanitize from '../../utils/sanitize';
 
 // TODO use sensible names, inferring from defaults where poss
-export default function getUniqueNames ( modules, userNames, getName ) {
+export default function getUniqueNames ( modules, userNames ) {
 	var keys, names = {}, used = {};
 
 	// copy user-specified names
@@ -23,8 +23,6 @@ export default function getUniqueNames ( modules, userNames, getName ) {
 				names[ id ] = x.name;
 				used[ x.name ] = true;
 			}
-
-			x.name = getName( id ); // TODO remove...
 		});
 	});
 
@@ -35,7 +33,6 @@ export default function getUniqueNames ( modules, userNames, getName ) {
 
 		// is this already named?
 		if ( names[ mod.id ] ) {
-			mod.name = names[ mod.id ]; // TODO is this used anywhere?
 			return;
 		}
 
@@ -55,7 +52,7 @@ export default function getUniqueNames ( modules, userNames, getName ) {
 		}
 
 		used[ name ] = true;
-		mod.name = names[ mod.id ] = name;
+		names[ mod.id ] = name;
 	});
 
 	return names;

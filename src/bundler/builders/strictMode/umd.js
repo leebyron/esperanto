@@ -20,15 +20,16 @@ export default function umd ( bundle, body, options ) {
 	}
 
 	defaultsBlock = bundle.externalModules.map( x => {
-		return body.indentStr + `var ${x.name}__default = ('default' in ${x.name} ? ${x.name}.default : ${x.name});`;
+		var name = bundle.uniqueNames[ x.id ];
+		return body.indentStr + `var ${name}__default = ('default' in ${name} ? ${name}.default : ${name});`;
 	}).join( '\n' );
 
 	if ( defaultsBlock ) {
 		body.prepend( defaultsBlock + '\n\n' );
 	}
 
-	importPaths = bundle.externalModules.map( getPath );
-	importNames = bundle.externalModules.map( getName );
+	importPaths = bundle.externalModules.map( getId );
+	importNames = bundle.externalModules.map( m => bundle.uniqueNames[ m.id ] );
 
 	if ( entry.exports.length ) {
 		amdDeps = [ 'exports' ].concat( importPaths ).map( quote ).join( ', ' );
@@ -36,7 +37,7 @@ export default function umd ( bundle, body, options ) {
 		globals = [ options.name ].concat( importNames ).map( globalify ).join( ', ' );
 		names   = [ 'exports' ].concat( importNames ).join( ', ' );
 
-		exportBlock = getExportBlock( entry, body.indentStr );
+		exportBlock = getExportBlock( bundle, entry, body.indentStr );
 		body.append( '\n\n' + exportBlock );
 	} else {
 		amdDeps = importPaths.map( quote ).join( ', ' );
@@ -57,8 +58,7 @@ export default function umd ( bundle, body, options ) {
 	return body.toString();
 }
 
-function getPath ( m ) { return m.path; }
-function getName ( m ) { return m.name; }
+function getId ( m ) { return m.id; }
 
 function quote ( str ) {
 	return "'" + str + "'";

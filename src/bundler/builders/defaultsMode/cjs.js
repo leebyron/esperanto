@@ -6,7 +6,8 @@ export default function cjs ( bundle, body ) {
 		intro;
 
 	importBlock = bundle.externalModules.map( x => {
-		return body.indentStr + `var ${x.name}__default = require('${x.path}');`;
+		var name = bundle.uniqueNames[ x.id ];
+		return body.indentStr + `var ${name}__default = require('${x.id}');`;
 	}).join( '\n' );
 
 	if ( importBlock ) {
@@ -14,7 +15,7 @@ export default function cjs ( bundle, body ) {
 	}
 
 	if ( x = entry.exports[0] ) {
-		exportStatement = body.indentStr + 'module.exports = ' + entry.name + '__default;';
+		exportStatement = body.indentStr + 'module.exports = ' + bundle.uniqueNames[ bundle.entry ] + '__default;';
 		body.append( '\n\n' + exportStatement );
 	}
 

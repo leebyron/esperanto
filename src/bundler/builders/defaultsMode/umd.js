@@ -16,40 +16,32 @@ export default function umd ( bundle, body, options ) {
 	}
 
 	if ( x = entry.exports[0] ) {
-		exportStatement = body.indentStr + 'return ' + entry.name + '__default;';
+		exportStatement = body.indentStr + 'return ' + bundle.uniqueNames[ bundle.entry ] + '__default;';
 		body.append( '\n\n' + exportStatement );
 	}
 
-	amdDeps = bundle.externalModules.map( quotePath ).join( ', ' );
+	amdDeps = bundle.externalModules.map( quoteId ).join( ', ' );
 	cjsDeps = bundle.externalModules.map( req ).join( ', ' );
-	globals = bundle.externalModules.map( globalify ).join( ', ' );
+	globals = bundle.externalModules.map( m => 'global.' + bundle.uniqueNames[ m.id ] ).join( ', ' );
 
 	intro = introTemplate({
 		amdDeps: amdDeps,
 		cjsDeps: cjsDeps,
 		globals: globals,
 		name: options.name,
-		names: bundle.externalModules.map( defaultify ).join( ', ' )
+		names: bundle.externalModules.map( m => bundle.uniqueNames[ m.id ] + '__default' ).join( ', ' )
 	}).replace( /\t/g, body.indentStr );
 
 	body.prepend( intro ).trim().append( '\n\n}));' );
 	return body.toString();
 }
 
-function quotePath ( m ) {
-	return "'" + m.path + "'";
+function quoteId ( m ) {
+	return "'" + m.id + "'";
 }
 
 function req ( m ) {
-	return 'require(\'' + m.path + '\')';
-}
-
-function globalify ( m ) {
-	return 'global.' + m.name;
-}
-
-function defaultify ( m ) {
-	return m.name + '__default';
+	return 'require(\'' + m.id + '\')';
 }
 
 introTemplate = template( `(function (global, factory) {

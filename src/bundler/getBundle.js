@@ -17,7 +17,7 @@ export default function getBundle ( options ) {
 		promiseById = {},
 		skip = options.skip,
 		names = options.names,
-		getName = moduleNameHelper( options.getModuleName ),
+		//getName = moduleNameHelper( options.getModuleName ),
 		base = options.base ? path.resolve( options.base ) : process.cwd(),
 		externalModules = [],
 		externalModuleLookup = {};
@@ -33,14 +33,14 @@ export default function getBundle ( options ) {
 				entry: entry,
 				entryModule: entryModule,
 				base: base,
-				getName: getName,
+				//getName: getName,
 				modules: modules,
 				moduleLookup: moduleLookup,
 				externalModules: externalModules,
 				externalModuleLookup: externalModuleLookup,
 				skip: skip,
 				names: names,
-				uniqueNames: getUniqueNames( modules, options.names, getName ),
+				uniqueNames: getUniqueNames( modules, options.names ),
 				chains: resolveChains( modules, moduleLookup )
 			};
 
@@ -55,7 +55,7 @@ export default function getBundle ( options ) {
 		moduleId = modulePath.replace( /\.js$/, '' );
 		modulePath = moduleId + '.js';
 
-		moduleName = getName( moduleId );
+		//moduleName = getName( moduleId );
 
 		if ( !promiseById[ moduleId ] ) {
 			promiseById[ moduleId ] = sander.readFile( base, modulePath ).catch( function ( err ) {
@@ -72,8 +72,8 @@ export default function getBundle ( options ) {
 					source: source,
 					id: moduleId,
 					file: modulePath,
-					name: moduleName,
-					getModuleName: getName
+					//name: moduleName,
+					//getModuleName: getName
 				});
 
 				modules.push( module );
@@ -109,8 +109,8 @@ export default function getBundle ( options ) {
 					// Most likely an external module
 					if ( !externalModuleLookup[ moduleId ] ) {
 						externalModule = {
-							name: getName( moduleId ),
-							path: moduleId // TODO replace `path` with `id`
+							//name: getName( moduleId ),
+							id: moduleId
 						};
 
 						externalModules.push( externalModule );
