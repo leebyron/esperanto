@@ -10,6 +10,7 @@ export default function Bundle$_collect () {
 		modules = [],
 		moduleLookup = this.moduleLookup,
 		promiseById = {},
+		skip = this.skip,
 		getModuleName = this.getModuleName,
 		base = this.base,
 		externalModules = this.externalModules,

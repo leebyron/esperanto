@@ -65,7 +65,7 @@ function quote ( str ) {
 }
 
 function req ( path ) {
-	return 'require(' + path + ')';
+	return 'require(\'' + path + '\')';
 }
 
 function globalify ( name ) {
