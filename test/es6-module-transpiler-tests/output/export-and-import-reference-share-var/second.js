@@ -2,13 +2,13 @@
 
 	'use strict';
 
-	var __imports_0 = require('./first');
+	var first = require('./first');
 	
 	/* jshint esnext:true */
 	
-	var a_ = __imports_0.a, b = 9, c = 'c';
+	var a_ = first.a, b = 9, c = 'c';
 	
-	assert.equal(__imports_0.a, 1);
+	assert.equal(first.a, 1);
 	assert.equal(a_, 1);
 	assert.equal(b, 9);
 	assert.equal(c, 'c');

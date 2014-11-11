@@ -4,12 +4,12 @@
 
   exports.geta = geta;
   
-  var __imports_0 = require('./a');
+  var a = require('./a');
   
   /* jshint esnext:true */
   
   function geta() {
-    return __imports_0.a;
+    return a.a;
   }
   
   var b = 2;

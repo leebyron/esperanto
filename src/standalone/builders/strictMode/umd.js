@@ -17,7 +17,7 @@ export default function umd ( mod, body, options ) {
 		importPaths[i] = x.path;
 
 		if ( x.specifiers.length ) {
-			importNames[i] = x.name;
+			importNames[i] = mod.getName( x.path );// '__imports_' + i;//x.name;
 		}
 	});
 

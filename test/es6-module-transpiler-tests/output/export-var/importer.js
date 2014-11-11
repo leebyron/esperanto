@@ -2,10 +2,10 @@
 
 	'use strict';
 
-	var __imports_0 = require('./exporter');
+	var exporter = require('./exporter');
 	
 	/* jshint esnext:true */
 	
-	assert.equal(__imports_0.a, 1);
+	assert.equal(exporter.a, 1);
 
 }).call(global);

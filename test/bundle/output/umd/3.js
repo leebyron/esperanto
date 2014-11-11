@@ -7,7 +7,7 @@
 		define(['external'], factory);
 	} else if (typeof module !== 'undefined' && module.exports && typeof require === 'function') {
 		// node/browserify
-		factory(require(external));
+		factory(require('external'));
 	} else {
 		// browser global
 		global.myModule = {};

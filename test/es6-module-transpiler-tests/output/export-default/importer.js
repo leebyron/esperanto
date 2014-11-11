@@ -2,16 +2,16 @@
 
   'use strict';
 
-  var __imports_0 = require('./exporter');
-  var __imports_1 = require('./exporter');
+  var exporter = require('./exporter');
+  var exporter = require('./exporter');
   
   /* jshint esnext:true */
   
-  assert.equal(__imports_0.default, 42);
+  assert.equal(exporter.default, 42);
   
-  __imports_1.change();
+  exporter.change();
   assert.equal(
-    __imports_0.default,
+    exporter.default,
     42,
     'default export should not be bound'
   );

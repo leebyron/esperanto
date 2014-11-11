@@ -1,7 +1,7 @@
-define(['external'], function (Correct) {
+define(['external'], function (external) {
 
 	'use strict';
 
-	var Correct__default = ('default' in Correct ? Correct.default : Correct);
+	var external__default = ('default' in external ? external.default : external);
 
 });

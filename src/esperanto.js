@@ -1,18 +1,19 @@
-import Module from './Module';
-import moduleBuilders from './Module/builders';
-import bundleBuilders from './Bundle/builders';
+import getStandaloneModule from './standalone/getModule';
+import getBundle from './bundler/getBundle';
+import moduleBuilders from './standalone/builders';
+import bundleBuilders from './bundler/builders';
 import disallowNames from './utils/disallowNames';
 import annotateAst from './utils/annotateAst';
-import Bundle from './Bundle';
 
 function transpileMethod ( format ) {
 	return function ( source, options ) {
 		var module,
 			body,
-			builder;
+			builder,
+			getModuleName;
 
 		options = options || {};
-		module = new Module({ source: source, getModuleName: options.getModuleName });
+		module = getStandaloneModule({ source: source, getModuleName: options.getModuleName });
 		body = module.body.clone();
 
 		if ( options.defaultOnly ) {
@@ -35,8 +36,7 @@ export default {
 	toUmd: transpileMethod( 'umd' ),
 
 	bundle: function ( options ) {
-		var bundle = new Bundle( options );
-		return bundle._collect().then( function () {
+		return getBundle( options ).then( function ( bundle ) {
 			return {
 				toAmd: options => transpile( 'amd', options ),
 				toCjs: options => transpile( 'cjs', options ),

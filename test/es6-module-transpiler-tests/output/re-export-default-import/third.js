@@ -2,10 +2,10 @@
 
 	'use strict';
 
-	var __imports_0 = require('./second');
+	var second = require('./second');
 	
 	/* jshint esnext:true */
 	
-	assert.equal(__imports_0.hi(), 'hi');
+	assert.equal(second.hi(), 'hi');
 
 }).call(global);

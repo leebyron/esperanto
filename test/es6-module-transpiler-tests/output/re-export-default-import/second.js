@@ -2,9 +2,9 @@
 
 	'use strict';
 
-	Object.defineProperty(exports, 'hi', { get: function () { return __imports_0.default; }});
+	Object.defineProperty(exports, 'hi', { get: function () { return first.default; }});
 	
-	var __imports_0 = require('./first');
+	var first = require('./first');
 	
 	/* jshint esnext:true */
 

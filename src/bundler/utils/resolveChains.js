@@ -1,10 +1,10 @@
-import resolve from '../../../utils/resolve';
+import resolve from '../../utils/resolve';
 
-export default function Bundle$_resolveChains () {
-	var chains = this._chains = {};
+export default function resolveChains ( modules, moduleLookup ) {
+	var chains = {};
 
 	// First pass - resolving intra-module chains
-	this.modules.forEach( mod => {
+	modules.forEach( mod => {
 		var origin = {}, namespaceExporter;
 
 		mod.imports.forEach( x => {
@@ -14,7 +14,7 @@ export default function Bundle$_resolveChains () {
 				if ( s.batch ) {
 					// if this is an internal module, we need to tell that module that
 					// it needs to export an object full of getters
-					if ( namespaceExporter = this.moduleLookup[ moduleId ] ) {
+					if ( namespaceExporter = moduleLookup[ moduleId ] ) {
 						namespaceExporter._exportsNamespace = true;
 					}
 
@@ -37,4 +37,6 @@ export default function Bundle$_resolveChains () {
 			});
 		});
 	});
+
+	return chains;
 }

@@ -2,7 +2,7 @@
 
 	'use strict';
 
-	var ImplicitlyNamed = require('external');
-var ImplicitlyNamed__default = ('default' in ImplicitlyNamed ? ImplicitlyNamed.default : ImplicitlyNamed);
+	var external = require('external');
+var external__default = ('default' in external ? external.default : external);
 
 }).call(global);

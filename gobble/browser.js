@@ -1,0 +1,24 @@
+var gobble = require( 'gobble' ),
+	sander = require( 'sander' ),
+	esperanto = require( '../' ),
+	transformer;
+
+gobble.cwd( __dirname, '..' );
+
+// TODO replace this with gobble-esperanto-bundle when ready
+module.exports = gobble( 'src' )
+	.transform( function ( inputdir, outputdir, options ) {
+		return esperanto.bundle({
+			base: inputdir,
+			entry: 'esperanto',
+			skip: [ 'Bundle' ]
+		}).then( function ( bundle ) {
+			return sander.writeFile( outputdir, 'esperanto.js', bundle.toUmd({
+				defaultOnly: true,
+				name: 'esperanto'
+			}) );
+		});
+	})
+	.transform( 'es6-transpiler', {
+		disallowUnknownReferences: false
+	});

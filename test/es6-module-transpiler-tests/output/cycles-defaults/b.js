@@ -2,10 +2,10 @@
 
 	'use strict';
 
-	var __imports_0 = require('./a');
+	var a = require('./a');
 	
 	/* jshint esnext:true */
 	
-	exports.default = { b: 2, get a() { return __imports_0.default.a; } };
+	exports.default = { b: 2, get a() { return a.default.a; } };
 
 }).call(global);

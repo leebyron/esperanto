@@ -1,7 +1,7 @@
-define(['external'], function (ImplicitlyNamed) {
+define(['external'], function (external) {
 
 	'use strict';
 
-	var ImplicitlyNamed__default = ('default' in ImplicitlyNamed ? ImplicitlyNamed.default : ImplicitlyNamed);
+	var external__default = ('default' in external ? external.default : external);
 
 });

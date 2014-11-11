@@ -2,14 +2,14 @@
 
 	'use strict';
 
-	var __imports_0 = require('./a');
-	var __imports_1 = require('./b');
+	var a = require('./a');
+	var b = require('./b');
 	
 	/* jshint esnext:true */
 	
-	assert.equal(__imports_1.geta(), 1);
-	assert.equal(__imports_0.a, 1);
-	assert.equal(__imports_0.getb(), 2);
-	assert.equal(__imports_1.b, 2);
+	assert.equal(b.geta(), 1);
+	assert.equal(a.a, 1);
+	assert.equal(a.getb(), 2);
+	assert.equal(b.b, 2);
 
 }).call(global);

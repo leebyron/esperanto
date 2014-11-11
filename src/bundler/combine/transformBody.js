@@ -1,6 +1,6 @@
 import estraverse from 'estraverse';
-import disallowIllegalReassignment from '../../../utils/disallowIllegalReassignment';
-import rewriteIdentifiers from '../../../utils/rewriteIdentifiers';
+import disallowIllegalReassignment from '../../utils/disallowIllegalReassignment';
+import rewriteIdentifiers from '../../utils/rewriteIdentifiers';
 import gatherImports from './gatherImports';
 
 export default function transformBody ( bundle, mod, body, prefix ) {
@@ -19,7 +19,7 @@ export default function transformBody ( bundle, mod, body, prefix ) {
 	scope = mod.ast._scope;
 	blockScope = mod.ast._blockScope;
 
-	gatherImports( mod.imports, bundle.externalModuleLookup, importedBindings, toRewrite, bundle._chains );
+	gatherImports( mod.imports, bundle.externalModuleLookup, importedBindings, toRewrite, bundle.chains );
 	Object.keys( toRewrite ).forEach( k => readOnly[k] = toRewrite[k] );
 
 	scope.names.forEach( n => toRewrite[n] = prefix + '__' + n );

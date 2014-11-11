@@ -17,12 +17,12 @@
 	assert.equal(second__c, 'c');
 
 (function (__export) {
-		__export('b', function () { return second__b; });
-	}(function (prop, get) {
-		Object.defineProperty(exports, prop, {
-			enumerable: true,
-			get: get
-		});
-	}));
+	__export('b', function () { return second__b; });
+}(function (prop, get) {
+	Object.defineProperty(exports, prop, {
+		enumerable: true,
+		get: get
+	});
+}));
 
 }).call(global);

@@ -2,9 +2,9 @@
 
 	'use strict';
 
-	var __imports_0 = require('./exporter');
+	var exporter = require('./exporter');
 	
-	assert.equal(__imports_0.default, 1);
-	assert.equal(__imports_0.bar, 2);
+	assert.equal(exporter.default, 1);
+	assert.equal(exporter.bar, 2);
 
 }).call(global);

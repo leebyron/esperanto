@@ -6,7 +6,7 @@ var introTemplate;
 
 introTemplate = template( 'define(<%= paths %>function (<%= names %>) {\n\n\t\'use strict\';\n\n' );
 
-export default function amd ( mod, body ) {
+export default function amd ( mod, body, options ) {
 	var importPaths = [],
 		importNames = [],
 		intro,
@@ -20,7 +20,7 @@ export default function amd ( mod, body ) {
 		importPaths[i] = x.path;
 
 		if ( x.specifiers.length ) { // don't add empty imports
-			importNames[i] = x.name;
+			importNames[i] = mod.getName( x.path );// '__imports_' + i;//x.name;
 		}
 	});
 

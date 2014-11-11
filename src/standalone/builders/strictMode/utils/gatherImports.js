@@ -1,4 +1,4 @@
-export default function gatherImports ( imports, importedBindings, toRewrite ) {
+export default function gatherImports ( imports, getName, importedBindings, toRewrite ) {
 	imports.forEach( x => {
 		x.specifiers.forEach( s => {
 			var name, replacement;
@@ -9,7 +9,7 @@ export default function gatherImports ( imports, importedBindings, toRewrite ) {
 				name = s.as;
 			}
 
-			replacement = s.batch ? s.name : ( x.name + '.' + s.name );
+			replacement = s.batch ? s.name : ( getName( x.path ) + '.' + s.name );
 
 			importedBindings[ name ] = replacement;
 

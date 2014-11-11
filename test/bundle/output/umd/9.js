@@ -7,17 +7,17 @@
 		define(['external'], factory);
 	} else if (typeof module !== 'undefined' && module.exports && typeof require === 'function') {
 		// node/browserify
-		factory(require(external));
+		factory(require('external'));
 	} else {
 		// browser global
 		global.myModule = {};
-		factory(global.Correct);
+		factory(global.external);
 	}
 
-}(typeof window !== 'undefined' ? window : this, function (Correct) {
+}(typeof window !== 'undefined' ? window : this, function (external) {
 
 	'use strict';
 
-	var Correct__default = ('default' in Correct ? Correct.default : Correct);
+	var external__default = ('default' in external ? external.default : external);
 
 });

@@ -1,6 +1,6 @@
 import resolve from '../../utils/resolve';
 
-export default function sortModules ( entry, modules, moduleLookup ) {
+export default function sortModules ( entry, moduleLookup ) {
 	var seen = {},
 		ordered = [];
 

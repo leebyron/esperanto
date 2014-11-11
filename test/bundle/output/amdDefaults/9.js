@@ -1,4 +1,4 @@
-define(['external'], function (Correct) {
+define(['external'], function (external) {
 
 	'use strict';
 

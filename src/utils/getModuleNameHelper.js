@@ -1,26 +1,24 @@
 import path from 'path';
-import sanitize from '../../utils/sanitize';
+import sanitize from './sanitize';
 
 export default function moduleNameHelper ( userFn ) {
 	var nameByPath = {}, usedNames = {}, getModuleName;
 
-	getModuleName = modulePath => {
+	getModuleName = moduleId => {
 		var parts, i, name;
 
-		modulePath = modulePath.replace( /\.js$/, '' );
-
 		// use existing value
-		if ( name = nameByPath[ modulePath ] ) {
+		if ( name = nameByPath[ moduleId ] ) {
 			return name;
 		}
 
 		// if user supplied a function, defer to it
-		if ( userFn && ( name = userFn( modulePath ) ) ) {
-			nameByPath[ modulePath ] = sanitize( name );
+		if ( userFn && ( name = userFn( moduleId ) ) ) {
+			nameByPath[ moduleId ] = sanitize( name );
 		}
 
 		else {
-			parts = modulePath.split( path.sep );
+			parts = moduleId.split( path.sep );
 			i = parts.length;
 
 			while ( i-- ) {
@@ -28,14 +26,14 @@ export default function moduleNameHelper ( userFn ) {
 
 				if ( !usedNames[ name ] ) {
 					usedNames[ name ] = true;
-					nameByPath[ modulePath ] = name;
+					nameByPath[ moduleId ] = name;
 
 					break;
 				}
 			}
 		}
 
-		return nameByPath[ modulePath ];
+		return nameByPath[ moduleId ];
 	};
 
 	return getModuleName;

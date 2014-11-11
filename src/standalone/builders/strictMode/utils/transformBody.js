@@ -21,7 +21,7 @@ export default function transformBody ( mod, body, options ) {
 	scope = mod.ast._scope;
 	blockScope = mod.ast._blockScope;
 
-	gatherImports( mod.imports, importedBindings, toRewrite );
+	gatherImports( mod.imports, mod.getName, importedBindings, toRewrite );
 	exportNames = getExportNames( mod.exports );
 
 	// scope is now the global scope

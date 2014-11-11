@@ -2,8 +2,8 @@
 
  'use strict';
 
- var __imports_0 = require('./evens');
- var __imports_1 = require('./odds');
+ var evens = require('./evens');
+ var odds = require('./odds');
  
  /* jshint esnext:true */
  
@@ -20,11 +20,11 @@
   * function declarations are available before what would be a module's
   * "execute" step, per the spec.
   */
- assert.equal(__imports_0.nextEven(1), 2);
- assert.equal(__imports_1.nextOdd(1), 3);
- assert.ok(__imports_1.isOdd(1));
- assert.ok(!__imports_1.isOdd(0));
- assert.ok(__imports_0.isEven(0));
- assert.ok(!__imports_0.isEven(1));
+ assert.equal(evens.nextEven(1), 2);
+ assert.equal(odds.nextOdd(1), 3);
+ assert.ok(odds.isOdd(1));
+ assert.ok(!odds.isOdd(0));
+ assert.ok(evens.isEven(0));
+ assert.ok(!evens.isEven(1));
 
 }).call(global);

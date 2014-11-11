@@ -10,10 +10,10 @@
 		module.exports = factory(require('external'));
 	} else {
 		// browser global
-		global.myModule = factory(global.Correct);
+		global.myModule = factory(global.external);
 	}
 
-}(typeof window !== 'undefined' ? window : this, function (Correct__default) {
+}(typeof window !== 'undefined' ? window : this, function (external__default) {
 
 	'use strict';
 

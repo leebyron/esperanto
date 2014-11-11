@@ -4,12 +4,12 @@
 
  exports.nextOdd = nextOdd;
  
- var __imports_0 = require('./evens');
+ var evens = require('./evens');
  
  /* jshint esnext:true */
  
  function nextOdd(n) {
-   return __imports_0.isEven(n) ? n + 1 : n + 2;
+   return evens.isEven(n) ? n + 1 : n + 2;
  }
  
  /**
@@ -21,7 +21,7 @@
    return function(n) {
      return !isEven(n);
    };
- })(__imports_0.isEven);
+ })(evens.isEven);
  
  exports.isOdd = isOdd;
 

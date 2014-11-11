@@ -2,6 +2,6 @@
 
 	'use strict';
 
-	var Correct__default = require('external');
+	var external__default = require('external');
 
 }).call(global);
