@@ -15,6 +15,9 @@ var Bundle = function ( options ) {
 
 	this.externalModules = [];
 	this.externalModuleLookup = {};
+
+	this.skip = options.skip;
+	this.names = options.names || {};
 };
 
 Bundle.prototype = {
