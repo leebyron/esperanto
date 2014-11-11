@@ -43,7 +43,7 @@ module.exports = function () {
 					esperanto = lib;
 				}),
 
-				sander.rimraf( '.tmp' )
+				sander.rimraf( 'es6-module-transpiler-tests/output' )
 			]);
 		});
 
@@ -140,12 +140,12 @@ module.exports = function () {
 			tests.forEach( function ( t ) {
 				it( t.dir, function () {
 					// Create CommonJS modules, then require the entry module
-					return sander.readdir( 'es6-module-transpiler', t.dir ).then( function ( files ) {
+					return sander.readdir( 'es6-module-transpiler-tests/input', t.dir ).then( function ( files ) {
 						var promises = files.map( function ( file ) {
-							return sander.readFile( 'es6-module-transpiler', t.dir, file ).then( String ).then( function ( source ) {
+							return sander.readFile( 'es6-module-transpiler-tests/input', t.dir, file ).then( String ).then( function ( source ) {
 								var transpiled = esperanto.toCjs( source );
 
-								return sander.writeFile( '.tmp', t.dir, file, transpiled );
+								return sander.writeFile( 'es6-module-transpiler-tests/output', t.dir, file, transpiled );
 							});
 						});
 
@@ -155,7 +155,7 @@ module.exports = function () {
 						var missingError;
 
 						try {
-							require( path.resolve( '.tmp', t.dir, t.entry ) );
+							require( path.resolve( 'es6-module-transpiler-tests/output', t.dir, t.entry ) );
 							if ( t.expectedError ) {
 								missingError = true;
 							}

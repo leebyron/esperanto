@@ -20,7 +20,7 @@ module.exports = function () {
 					esperanto = lib;
 				}),
 
-				sander.rimraf( '.tmp-bundle' )
+				sander.rimraf( 'es6-module-transpiler-tests/bundled-output' )
 			]);
 		});
 
@@ -65,18 +65,18 @@ module.exports = function () {
 				it( t.dir, function () {
 					// Create CommonJS modules, then require the entry module
 					return esperanto.bundle({
-						base: path.resolve( 'es6-module-transpiler', t.dir ),
+						base: path.resolve( 'es6-module-transpiler-tests/input', t.dir ),
 						entry: t.entry
 					})
 					.then( function ( bundle ) {
 						cjs = bundle.toCjs();
-						return sander.writeFile( '.tmp-bundle', t.dir + '.js', cjs );
+						return sander.writeFile( 'es6-module-transpiler-tests/bundled-output', t.dir + '.js', cjs );
 					})
 					.then( function () {
 						var missingError;
 
 						try {
-							require( path.resolve( '.tmp-bundle', t.dir ) );
+							require( path.resolve( 'es6-module-transpiler-tests/bundled-output', t.dir ) );
 							if ( t.expectedError ) {
 								missingError = true;
 							}
