@@ -116,22 +116,42 @@ module.exports = function () {
 			{ dir: '3', description: 'allows external imports' },
 			{ dir: '4', description: 'exports a default export' },
 			{ dir: '5', description: 'exports named exports', 'named': true },
-			{ dir: '6', description: 'gives legal names to nested imports' }
+			{ dir: '6', description: 'gives legal names to nested imports' },
+			{ dir: '7', description: 'modules can be skipped' },
+			{ dir: '8', description: 'external module names are guessed (affects UMD only)' },
+			{ dir: '9', description: 'external module names can be specified (affects UMD only)' }
 		];
 
 		profiles.forEach( function ( profile ) {
 			describe( profile.description + ':', function () {
 				tests.forEach( function ( t ) {
+					var config;
+
 					if ( t.named && profile.options && profile.options.defaultOnly ) {
 						return;
+					}
+
+					try {
+						config = require( './input/' + t.dir + '/_config' );
+					} catch ( e ) {
+						config = {};
 					}
 
 					it( t.description, function () {
 						return esperanto.bundle({
 							base: path.resolve( 'bundle/input', t.dir ),
-							entry: t.entry || 'main'
+							entry: t.entry || 'main',
+							skip: config.skip,
+							names: config.names
 						}).then( function ( bundle ) {
-							var actual = bundle[ profile.method ]( profile.options );
+							var options, actual;
+
+							options = profile.options || {};
+
+							actual = bundle[ profile.method ]({
+								defaultOnly: options.defaultOnly,
+								name: options.name
+							});
 
 							return sander.readFile( 'bundle/output/', profile.outputdir, t.dir + '.js' ).then( String ).then( function ( expected ) {
 								assert.equal( actual, expected, 'Expected\n>\n' +

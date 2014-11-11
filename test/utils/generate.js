@@ -120,9 +120,19 @@ require( './build' )().then( function ( esperanto ) {
 		}
 
 		function build ( sourceBundle ) {
+			var config;
+
+			try {
+				config = require( '../bundle/input/' + sourceBundle + '/_config' );
+			} catch ( e ) {
+				config = {};
+			}
+
 			return esperanto.bundle({
 				base: path.join( '../bundle/input', sourceBundle ),
-				entry: 'main'
+				entry: 'main',
+				skip: config.skip,
+				names: config.names
 			}).then( function ( bundle ) {
 				var promises = profiles.map( function ( profile ) {
 					try {
