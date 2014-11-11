@@ -21,6 +21,6 @@
 
 	var main__default = foo__answer * 2;
 
-return main__default;
+	return main__default;
 
 }));

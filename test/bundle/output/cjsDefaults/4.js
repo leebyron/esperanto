@@ -6,6 +6,6 @@
 
 	var main__default = foo__answer * 2;
 
-module.exports = main__default;
+	module.exports = main__default;
 
 }).call(global);

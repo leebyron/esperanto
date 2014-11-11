@@ -2,7 +2,7 @@
 
 	'use strict';
 
-var external__default = require('external');
+	var external__default = require('external');
 
 	var foo__bar = 'yes';
 	var foo__default = foo__bar;
