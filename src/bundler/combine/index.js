@@ -7,7 +7,7 @@ export default function Bundle$_combine ( bundle ) {
 
 	var body = bundle.modules.map( mod => {
 		var modBody = mod.body.clone(),
-			prefix = getModuleName( mod.id );
+			prefix = bundle.uniqueNames[ mod.id ];
 
 		annotateAst( mod.ast );
 		transformBody( bundle, mod, modBody, prefix );

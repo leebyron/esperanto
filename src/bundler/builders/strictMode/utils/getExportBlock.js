@@ -7,7 +7,7 @@ export default function getExportBlock ( entry, indentStr ) {
 
 	// create an export block
 	if ( entry.defaultExport ) {
-		exportBlock = 'exports.default = ' + entry.name + '__default;';
+		exportBlock = indentStr + 'exports.default = ' + entry.name + '__default;';
 	}
 
 	entry.exports.forEach( x => {
@@ -29,7 +29,7 @@ export default function getExportBlock ( entry, indentStr ) {
 	if ( statements.length ) {
 		exportBlock += '\n\n' + outroTemplate({
 			exportStatements: statements.join( '\n' )
-		});
+		}).replace( /\t/g, indentStr );
 	}
 
 	return exportBlock.trim();
@@ -37,13 +37,13 @@ export default function getExportBlock ( entry, indentStr ) {
 
 outroTemplate = template( `
 
-(function (__export) {
-<%= exportStatements %>
-}(function (prop, get) {
-	Object.defineProperty(exports, prop, {
-		enumerable: true,
-		get: get
-	});
-}));
+	(function (__export) {
+	<%= exportStatements %>
+	}(function (prop, get) {
+		Object.defineProperty(exports, prop, {
+			enumerable: true,
+			get: get
+		});
+	}));
 
 ` );

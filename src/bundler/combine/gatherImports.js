@@ -1,4 +1,4 @@
-export default function gatherImports ( imports, externalModuleLookup, importedBindings, toRewrite, chains ) {
+export default function gatherImports ( imports, externalModuleLookup, importedBindings, toRewrite, chains, uniqueNames ) {
 	var replacements = {};
 
 	imports.forEach( x => {
@@ -9,18 +9,19 @@ export default function gatherImports ( imports, externalModuleLookup, importedB
 		}
 
 		x.specifiers.forEach( s => {
-			var moduleName, specifierName, name, replacement, hash, isChained, separatorIndex;
+			var moduleId, moduleName, specifierName, name, replacement, hash, isChained, separatorIndex;
+
+			moduleId = x.id;
 
 			if ( s.batch ) {
 				name = s.name;
-				replacement = x.name;
+				replacement = uniqueNames[ moduleId ];
 			} else {
 				name = s.as;
-				moduleName = x.name;
 				specifierName = s.name;
 
 				// If this is a chained import, get the origin
-				hash = moduleName + '@' + specifierName;
+				hash = moduleId + '@' + specifierName;
 				while ( chains[ hash ] ) {
 					hash = chains[ hash ];
 					isChained = true;
@@ -28,9 +29,11 @@ export default function gatherImports ( imports, externalModuleLookup, importedB
 
 				if ( isChained ) {
 					separatorIndex = hash.indexOf( '@' );
-					moduleName = hash.substr( 0, separatorIndex );
+					moduleId = hash.substr( 0, separatorIndex );
 					specifierName = hash.substring( separatorIndex + 1 );
 				}
+
+				moduleName = uniqueNames[ moduleId ];
 
 				if ( !external || specifierName === 'default' ) {
 					replacement = moduleName + '__' + specifierName;

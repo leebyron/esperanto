@@ -50,7 +50,7 @@ export default function findImportsAndExports ( mod, source, ast, imports, expor
 }
 
 function processImport ( node, passthrough ) {
-	return {
+	var result = {
 		node: node,
 		start: node.start,
 		end: node.end,
@@ -76,6 +76,15 @@ function processImport ( node, passthrough ) {
 			};
 		})
 	};
+
+	// TODO have different types of imports - batch, default, named
+
+	if ( result.specifiers.length === 1 && result.specifiers[0].default ) {
+		result.default = true;
+		result.name = result.specifiers[0].as;
+	}
+
+	return result;
 }
 
 function processExport ( node, source ) {
