@@ -54,14 +54,21 @@ export default function Bundle$_collect () {
 				moduleLookup[ moduleId ] = module;
 
 				promises = module.imports.map( x => {
-					var importPath = resolve( x.path, modulePath );
+					var importId;
 
-					// short-circuit cycles
-					if ( promiseById[ importPath ] ) {
+					importId = resolve( x.path, modulePath );
+
+					// Some modules can be skipped
+					if ( skip && ~skip.indexOf( importId ) ) {
 						return;
 					}
 
-					return fetchModule( importPath );
+					// short-circuit cycles
+					if ( promiseById[ importId ] ) {
+						return;
+					}
+
+					return fetchModule( importId );
 				});
 
 				return Promise.all( promises );
