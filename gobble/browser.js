@@ -1,7 +1,6 @@
 var gobble = require( 'gobble' ),
 	sander = require( 'sander' ),
-	esperanto = require( '../' ),
-	transformer;
+	esperanto = require( '../' );
 
 gobble.cwd( __dirname, '..' );
 

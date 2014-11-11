@@ -1,9 +1,12 @@
 var gobble = require( 'gobble' ),
-	lib = require( './gobble/lib' ).moveTo( 'lib' ),
-	dist = require( './gobble/dist' ).moveTo( 'dist' );
+	lib = {
+		node: require( './gobble/lib' ).moveTo( 'lib' ),
+		browser: require( './gobble/browser' ).moveTo( 'dist' )
+	};
 
 module.exports = gobble([
-	lib,
-	// dist,
-	// dist.transform( 'uglifyjs', { ext: '.min.js' })
+	lib.node,
+
+	lib.browser,
+	lib.browser.transform( 'uglifyjs', { ext: '.min.js' })
 ]);
