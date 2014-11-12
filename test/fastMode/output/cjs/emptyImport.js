@@ -2,7 +2,7 @@
 
 	'use strict';
 	
-	require('polyfills');;
-	var foo = require('foo');;
+	require('polyfills');
+	var foo = require('foo');
 
 }).call(global);
