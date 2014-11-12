@@ -10,7 +10,7 @@ module.exports = gobble( 'src' )
 		return esperanto.bundle({
 			base: inputdir,
 			entry: 'esperanto',
-			skip: [ 'Bundle' ]
+			skip: [ 'bundler/getBundle' ]
 		}).then( function ( bundle ) {
 			return sander.writeFile( outputdir, 'esperanto.js', bundle.toUmd({
 				defaultOnly: true,
