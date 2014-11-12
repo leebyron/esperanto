@@ -5,7 +5,7 @@ var gobble = require( 'gobble' ),
 gobble.cwd( __dirname, '..' );
 
 module.exports = gobble( 'src' )
-	.transform( function ( inputdir, outputdir, options ) {
+	/*.transform( function ( inputdir, outputdir, options ) {
 		return esperanto.bundle({
 			base: inputdir,
 			entry: 'esperanto'
@@ -14,5 +14,8 @@ module.exports = gobble( 'src' )
 				defaultOnly: true
 			}) );
 		});
+	})*/
+	.transform( function ( code ) {
+		return esperanto.toCjs( code, { defaultOnly: true });
 	})
 	.transform( 'es6-transpiler' );
