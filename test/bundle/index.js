@@ -7,10 +7,6 @@ var path = require( 'path' ),
 global.assert = assert;
 
 module.exports = function () {
-	function getModuleName ( path ) {
-		return '__' + path.split( '/' ).pop();
-	}
-
 	describe( 'esperanto.bundle()', function () {
 		var profiles, tests;
 
@@ -69,7 +65,7 @@ module.exports = function () {
 						entry: t.entry
 					})
 					.then( function ( bundle ) {
-						cjs = bundle.toCjs();
+						cjs = bundle.toCjs({ strict: true });
 						return sander.writeFile( 'es6-module-transpiler-tests/bundled-output', t.dir + '.js', cjs );
 					})
 					.then( function () {
@@ -102,12 +98,12 @@ module.exports = function () {
 		});
 
 		profiles = [
-			{ description: 'bundle.toAmd({ defaultOnly: true })', method: 'toAmd', outputdir: 'amdDefaults', options: { defaultOnly: true } },
-			{ description: 'bundle.toCjs({ defaultOnly: true })', method: 'toCjs', outputdir: 'cjsDefaults', options: { defaultOnly: true } },
-			{ description: 'bundle.toUmd({ defaultOnly: true })', method: 'toUmd', outputdir: 'umdDefaults', options: { defaultOnly: true, name: 'myModule' } },
-			{ description: 'bundle.toAmd()', method: 'toAmd', outputdir: 'amd' },
-			{ description: 'bundle.toCjs()', method: 'toCjs', outputdir: 'cjs' },
-			{ description: 'bundle.toUmd()', method: 'toUmd', outputdir: 'umd', options: { name: 'myModule' } }
+			{ description: 'bundle.toAmd()', method: 'toAmd', outputdir: 'amdDefaults' },
+			{ description: 'bundle.toCjs()', method: 'toCjs', outputdir: 'cjsDefaults' },
+			{ description: 'bundle.toUmd()', method: 'toUmd', outputdir: 'umdDefaults', options: { name: 'myModule' } },
+			{ description: 'bundle.toAmd({ strict: true })', method: 'toAmd', outputdir: 'amd', options: { strict: true } },
+			{ description: 'bundle.toCjs({ strict: true })', method: 'toCjs', outputdir: 'cjs', options: { strict: true } },
+			{ description: 'bundle.toUmd({ strict: true })', method: 'toUmd', outputdir: 'umd', options: { strict: true, name: 'myModule' } }
 		];
 
 		tests = [
@@ -115,7 +111,7 @@ module.exports = function () {
 			{ dir: '2', description: 'bundles modules in index.js files' },
 			{ dir: '3', description: 'allows external imports' },
 			{ dir: '4', description: 'exports a default export' },
-			{ dir: '5', description: 'exports named exports', 'named': true },
+			{ dir: '5', description: 'exports named exports', 'strict': true },
 			{ dir: '6', description: 'gives legal names to nested imports' },
 			{ dir: '7', description: 'modules can be skipped' },
 			{ dir: '8', description: 'external module names are guessed (affects UMD only)' },
@@ -127,7 +123,7 @@ module.exports = function () {
 				tests.forEach( function ( t ) {
 					var config;
 
-					if ( t.named && profile.options && profile.options.defaultOnly ) {
+					if ( t.strict && ( !profile.options || !profile.options.strict ) ) {
 						return;
 					}
 
@@ -149,7 +145,7 @@ module.exports = function () {
 							options = profile.options || {};
 
 							actual = bundle[ profile.method ]({
-								defaultOnly: options.defaultOnly,
+								strict: options.strict,
 								name: options.name
 							});
 

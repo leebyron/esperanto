@@ -32,10 +32,7 @@ module.exports = function () {
 			tests.forEach( function ( t ) {
 				it( t.description, function () {
 					return sander.readFile( 'fastMode/output/amd', t.file ).then( String ).then( function ( expected ) {
-						var actual = esperanto.toAmd( t.source, {
-							defaultOnly: true
-						});
-
+						var actual = esperanto.toAmd( t.source );
 						assert.equal( actual, expected, 'AMD: Expected\n>\n' + actual + '\n>\n\nto match\n\n>\n' + expected + '\n>' );
 					});
 				});
@@ -46,10 +43,7 @@ module.exports = function () {
 			tests.forEach( function ( t ) {
 				it( t.description, function () {
 					return sander.readFile( 'fastMode/output/cjs', t.file ).then( String ).then( function ( expected ) {
-						var actual = esperanto.toCjs( t.source, {
-							defaultOnly: true
-						});
-
+						var actual = esperanto.toCjs( t.source );
 						assert.equal( actual, expected, 'CJS: Expected\n>\n' + actual + '\n>\n\nto match\n\n>\n' + expected + '\n>' );
 					});
 				});
@@ -61,7 +55,6 @@ module.exports = function () {
 				it( t.description, function () {
 					return sander.readFile( 'fastMode/output/umd', t.file ).then( String ).then( function ( expected ) {
 						var actual = esperanto.toUmd( t.source, {
-							defaultOnly: true,
 							name: 'myModule'
 						});
 

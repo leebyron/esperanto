@@ -52,6 +52,7 @@ module.exports = function () {
 				it( t.description, function () {
 					return sander.readFile( 'strictMode/output/amd', t.file ).then( String ).then( function ( expected ) {
 						var actual = esperanto.toAmd( t.source, {
+							strict: true,
 							getModuleName: getModuleName
 						});
 
@@ -70,6 +71,7 @@ module.exports = function () {
 				it( t.description, function () {
 					return sander.readFile( 'strictMode/output/cjs', t.file ).then( String ).then( function ( expected ) {
 						var actual = esperanto.toCjs( t.source, {
+							strict: true,
 							getModuleName: getModuleName
 						});
 
@@ -89,6 +91,7 @@ module.exports = function () {
 					return sander.readFile( 'strictMode/output/umd', t.file ).then( String ).then( function ( expected ) {
 						var actual = esperanto.toUmd( t.source, {
 							name: 'myModule',
+							strict: true,
 							getModuleName: getModuleName
 						});
 
@@ -143,7 +146,9 @@ module.exports = function () {
 					return sander.readdir( 'es6-module-transpiler-tests/input', t.dir ).then( function ( files ) {
 						var promises = files.map( function ( file ) {
 							return sander.readFile( 'es6-module-transpiler-tests/input', t.dir, file ).then( String ).then( function ( source ) {
-								var transpiled = esperanto.toCjs( source );
+								var transpiled = esperanto.toCjs( source, {
+									strict: true
+								});
 
 								return sander.writeFile( 'es6-module-transpiler-tests/output', t.dir, file, transpiled );
 							});

@@ -15,9 +15,9 @@ require( './build' )().then( function ( esperanto ) {
 
 	function generateFastModeOutput () {
 		var profiles = [
-			{ outputdir: 'amd', method: 'toAmd', options: { defaultOnly: true } },
-			{ outputdir: 'cjs', method: 'toCjs', options: { defaultOnly: true } },
-			{ outputdir: 'umd', method: 'toUmd', options: { name: 'myModule', defaultOnly: true, getModuleName: getModuleName } }
+			{ outputdir: 'amd', method: 'toAmd' },
+			{ outputdir: 'cjs', method: 'toCjs' },
+			{ outputdir: 'umd', method: 'toUmd', options: { name: 'myModule', getModuleName: getModuleName } }
 		];
 
 		return cleanup().then( buildAll ).catch( function ( err ) {
@@ -42,7 +42,7 @@ require( './build' )().then( function ( esperanto ) {
 						return sander.writeFile( '../fastMode/output', profile.outputdir, sourceFile, transpiled );
 					} catch ( err ) {
 						// some modules can't be transpiled with defaultOnly
-						if ( !/defaultOnly/.test( err.message ) ) {
+						if ( !/strict mode/.test( err.message ) ) {
 							setTimeout( function () { throw err; });
 						}
 					}
@@ -55,9 +55,9 @@ require( './build' )().then( function ( esperanto ) {
 
 	function generateStrictModeOutput () {
 		var profiles = [
-			{ outputdir: 'amd', method: 'toAmd', options: { getModuleName: getModuleName } },
-			{ outputdir: 'cjs', method: 'toCjs', options: { getModuleName: getModuleName } },
-			{ outputdir: 'umd', method: 'toUmd', options: { name: 'myModule', getModuleName: getModuleName } }
+			{ outputdir: 'amd', method: 'toAmd', options: { strict: true, getModuleName: getModuleName } },
+			{ outputdir: 'cjs', method: 'toCjs', options: { strict: true, getModuleName: getModuleName } },
+			{ outputdir: 'umd', method: 'toUmd', options: { strict: true, name: 'myModule', getModuleName: getModuleName } }
 		];
 
 		return cleanup().then( buildAll ).catch( function ( err ) {
@@ -95,14 +95,12 @@ require( './build' )().then( function ( esperanto ) {
 
 	function generateBundleOutput () {
 		var profiles = [
-			{ description: 'bundle.toAmd({ defaultOnly: true })', method: 'toAmd', outputdir: 'amdDefaults', options: { defaultOnly: true } },
-			{ description: 'bundle.toCjs({ defaultOnly: true })', method: 'toCjs', outputdir: 'cjsDefaults', options: { defaultOnly: true } },
-			//{ description: 'bundle.toEs6({ defaultOnly: true })', method: 'toEs6', outputdir: 'es6Defaults', options: { defaultOnly: true } },
-			{ description: 'bundle.toUmd({ defaultOnly: true })', method: 'toUmd', outputdir: 'umdDefaults', options: { defaultOnly: true, name: 'myModule' } },
-			{ description: 'bundle.toAmd()', method: 'toAmd', outputdir: 'amd' },
-			{ description: 'bundle.toCjs()', method: 'toCjs', outputdir: 'cjs' },
-			//{ description: 'bundle.toEs6()', method: 'toEs6', outputdir: 'es6' },
-			{ description: 'bundle.toUmd()', method: 'toUmd', outputdir: 'umd', options: { name: 'myModule' } }
+			{ description: 'bundle.toAmd()', method: 'toAmd', outputdir: 'amdDefaults' },
+			{ description: 'bundle.toCjs()', method: 'toCjs', outputdir: 'cjsDefaults' },
+			{ description: 'bundle.toUmd()', method: 'toUmd', outputdir: 'umdDefaults', options: { name: 'myModule' } },
+			{ description: 'bundle.toAmd({ strict: true })', method: 'toAmd', outputdir: 'amd', options: { strict: true } },
+			{ description: 'bundle.toCjs({ strict: true })', method: 'toCjs', outputdir: 'cjs', options: { strict: true } },
+			{ description: 'bundle.toUmd({ strict: true })', method: 'toUmd', outputdir: 'umd', options: { strict: true, name: 'myModule' } }
 		];
 
 		return cleanup().then( buildAll ).catch( function ( err ) {
@@ -140,7 +138,7 @@ require( './build' )().then( function ( esperanto ) {
 						return sander.writeFile( '../bundle/output', profile.outputdir, sourceBundle + '.js', transpiled );
 					} catch ( err ) {
 						// some modules can't be transpiled with defaultOnly
-						if ( !/defaultOnly/.test( err.message ) ) {
+						if ( !/strict mode/.test( err.message ) ) {
 							setTimeout( function () { throw err; });
 						}
 					}
