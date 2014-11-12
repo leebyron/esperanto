@@ -136,7 +136,7 @@
 
 				try {
 					// we want to know if defaultOnly is disabled, regardless of whether it's set
-					defaultOnlyOutput = esperanto[ method ]( input, { defaultOnly: true, addUseStrict: true });
+					defaultOnlyOutput = esperanto[ method ]( input, { defaultOnly: true });
 
 					// it should NOT be disabled
 					setTimeout( function () {
@@ -157,7 +157,7 @@
 						return defaultOnlyOutput;
 					}
 
-					return esperanto[ method ]( input, { defaultOnly: false, addUseStrict: true });
+					return esperanto[ method ]( input, { defaultOnly: false });
 				}
 			}
 		}
