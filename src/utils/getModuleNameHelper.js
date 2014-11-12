@@ -1,4 +1,3 @@
-import path from 'path';
 import sanitize from './sanitize';
 
 export default function moduleNameHelper ( userFn ) {
@@ -18,7 +17,7 @@ export default function moduleNameHelper ( userFn ) {
 		}
 
 		else {
-			parts = moduleId.split( path.sep );
+			parts = moduleId.split( '/' );
 			i = parts.length;
 
 			while ( i-- ) {
